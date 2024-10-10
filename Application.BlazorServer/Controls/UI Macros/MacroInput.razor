@@ -1,0 +1,25 @@
+﻿
+<div class="col">
+	<label for="@(Id??InputParameter.Id)" class="form-label">
+		@(
+			Title ?? InputParameter.Title ?? InputName ?? InputParameter.InputName
+			)
+	</label>
+	@if (Required)
+	{
+		<label class="text-danger">&nbsp;*</label>
+	}
+
+	<div class="input-group mb-3">
+		<input type="@(Type??InputParameter.Type)"
+	  class="form-control" name="@(Id??InputParameter.Id)" id="@(Id??InputParameter.Id)" @oninput="HandleInput" value="@(DefaultValue??InputParameter.DefaultValue)" placeholder="@(Title ?? InputParameter.Title ?? InputName ?? InputParameter.InputName)"
+	  readonly="@(IsReadOnly ? IsReadOnly : InputParameter.IsReadOnly)">
+		@if (IsSelectable ? IsSelectable : InputParameter.IsSelectable)
+		{
+			<button class="btn btn-outline-primary" type="button" id="btn-select-@(Id??InputParameter.Id)" data-bs-toggle="modal" data-bs-target="#modal-@(Id??InputParameter.Id)" title="Select from existing @(Title ?? InputParameter.Title ?? InputName ?? InputParameter.InputName)">
+				<i class="bx bx-menu"></i>
+			</button>
+		}
+
+	</div>
+</div>

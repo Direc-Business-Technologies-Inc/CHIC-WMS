@@ -1,0 +1,685 @@
+﻿@layout MainLayout
+
+@page "/QCOrder"
+@using System.Text.RegularExpressions;
+
+<MacroBreadcrumbs Breadcrumbs=Breadcrumbs>
+	<div class="pt-0 pb-2">
+		<div class="mb-3">
+			<div class="btn-group float-end">
+				@{
+					string planList = string.Join("", FilteredPlanTypeGenerate.Select(x => $"<option>{x}</option>"));
+
+					string popoverContent = $@"<div class=""row row-cols-1"">
+				<div class=""col"">
+				<button type=""button"" class=""btn-close float-end"" onclick=""$('[data-bs-toggle=popover]').popover('hide')"" aria-label=""Close""></button>
+				</div>
+
+				<div class=""col"">
+				<label>Sales Order No.</label>
+				<div class=""input-group mb-3"">
+				<input type=""text"" id=""txt-sales-order-no"" class=""form-control"" readonly>
+				<button class=""btn btn-outline-primary"" type=""button"" id=""btn-select-sales-order-no"" data-bs-toggle=""modal"" data-bs-target=""#modal-sales-order-no"" title=""Select from existing Sales Orders"">
+				<i class=""bx bx-menu""></i>
+				</button>
+				</div>
+
+				<div class=""col"">
+				<label>SO Quantity</label>
+				<div class=""input-group mb-3"">
+				<input readonly type=""number"" id=""txt-so-quantity"" class=""form-control"" min=""0"" value=""0"">
+				</div>
+
+				<div class=""col"">
+				<label>Plan Type</label>
+				<div class=""input-group mb-3"">
+				<select class=""form-control"" name=""select-plan-type"" id=""select-plan-type"">
+						{planList}
+				</select>
+				</div>
+
+				<div class=""col"">
+				<label>Sample Size</label>
+				<div class=""input-group mb-3"">
+				<input type=""number"" id=""txt-so-sample-size"" class=""form-control"" min=""0"" value=""0"">
+				</div>
+
+				<div class=""col"">
+				<button type=""submit"" id=""btn-generate"" class=""btn btn-success float-end m-1"">Generate</button>
+				</div>
+
+				</div>
+				</div>";
+
+					string popoverTemplate = @"
+				<div class=""popover"" role=""tooltip"">
+				<div class=""popover-arrow"" style=""display:none;"">
+				</div><h3 class=""popover-header""></h3>
+				<div class=""popover-body""></div>
+				</div>";
+				}
+				<button type="button"
+						id="popover-generate-so"
+						class="btn btn-success text-nowrap m-1"
+						data-bs-toggle="popover"
+						data-bs-offset="0,0"
+						data-bs-placement="bottom"
+						data-bs-html="true"
+						data-bs-content="@popoverContent"
+						data-bs-template="@popoverTemplate">
+					Generate QC Order
+				</button>
+			</div>
+		</div>
+	</div>
+</MacroBreadcrumbs>
+
+<div class="row row-cols-12">
+	<div class="col">
+		<form id="wizard-validation-form" onSubmit="return false">
+			<div class="card py-1 pb-0">
+				<div class="card-body">
+					<div class="row row-cols-2">
+						<div class="col">
+							<div class="card-body">
+								<div class="row row-cols-1">
+									<MacroInput DefaultValue="@model.QCOrderDetails.QCOrderNo" Title="QC Order No." InputName="QC Order No" IsReadOnly=true IsSelectable=true ValueChanged="SelectInput"></MacroInput>
+									<MacroInput DefaultValue="@model.QCOrderDetails.InspectionPlan" Title="Inspection Plan Code / Name" InputName="Inspection Plan" IsReadOnly=true ValueChanged="SelectInput"></MacroInput>
+									<MacroInput DefaultValue="@model.QCOrderDetails.Customer" Title="Customer Code / Name" InputName="Customer" IsReadOnly=true ValueChanged="SelectInput"></MacroInput>
+									<MacroInput DefaultValue="@model.QCOrderDetails.Item" Title="Item Code / Name" InputName="Item" IsReadOnly=true ValueChanged="SelectInput"></MacroInput>
+									<div class="col">
+										<div class="row row-cols-2">
+											<div class="col">
+												<label for="txt-ref-no" class="form-label">Reference No</label>
+												<div class="input-group mb-3">
+													@* <input readonly type="text" class="form-control" name="txt-refno" id="txt-refno" aria-describedby="refno" placeholder="Reference No" @bind="@model.QCOrderDetails.RefNo"> *@
+													<input type="text" class="form-control" name="txt-refno" id="txt-refno" aria-describedby="refno" placeholder="Reference No" @bind="@model.QCOrderDetails.RefNo">
+												</div>
+											</div>
+											@*<MacroInput DefaultValue="@model.QCOrderDetails.RefNo" InputName="Reference No" ValueChanged="SelectInput"></MacroInput>*@
+											<div class="col">
+												<label for="txt-status" class="form-label">Status</label>
+												<div class="input-group mb-3">
+													<input readonly type="text" class="form-control" style="color: @(model.QCOrderDetails.Status == "" ? "black" : "white"); background-color: @(model.QCOrderDetails.Status == "Passed" ? "#71DD37" : model.QCOrderDetails.Status == "Failed" ? "#FF3E1D" : "");" name="txt-status" id="txt-status" aria-describedby="status" placeholder="Status" @bind="@model.QCOrderDetails.Status">
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="col">
+										<label>Remarks</label>
+										<div class="input-group mb-3">
+											<textarea style="height:22.950px" class="form-control" @bind="@model.QCOrderDetails.Remarks"></textarea>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<div class="col">
+							<div class="card-body">
+								<div class="row row-cols-2">
+									<div class="col">
+										<label>SO No.</label>
+										<div class="input-group mb-3">
+											<input readonly type="text" id="txt-header-doc-no" class="form-control" @bind="@model.QCOrderDetails.DocNo" />
+											<button class="btn btn-outline-primary" type="button" id="btn-select-doc-no" data-bs-toggle="modal" data-bs-target="#modal-document-no" title="Select from existing Sales Order">
+												<i class="bx bx-menu"></i>
+											</button>
+										</div>
+									</div>
+									<MacroInput DefaultValue="@model.QCOrderDetails.DocDate" InputName="Document Date" IsReadOnly=true ValueChanged="SelectInput"></MacroInput>
+									@* <MacroInput DefaultValue="@model.QCOrderDetails.PONo" InputName="PO No" ValueChanged="SelectInput"></MacroInput> *@
+									@* <MacroInput DefaultValue="@model.QCOrderDetails.ManufacturingLotNo" InputName="Manufacturing Lot No" ValueChanged="SelectInput"></MacroInput> *@
+									@* <MacroInput DefaultValue="@model.QCOrderDetails.ServiceOrderNo" InputName="Service Order No" ValueChanged="SelectInput"></MacroInput> *@
+									<MacroInput DefaultValue="@model.QCOrderDetails.StorageConditions" InputName="Storage Conditions" IsReadOnly=true ValueChanged="SelectInput"></MacroInput>
+									<div class="col">
+										<label>Document Type</label>
+										<div class="input-group mb-3">
+											<input readonly type="text" id="txt-header-doc-type" class="form-control" @bind="@model.QCOrderDetails.DocType" />
+										</div>
+									</div>
+									<div class="col">
+										<label>Inspection Plan Type</label>
+										<div class="input-group mb-3">
+											<input readonly type="text" id="select-plan-type-header" class="form-control" @bind="@model.QCOrderDetails.InspectionPlanType" />
+@* 											<select disabled class="form-control" name="select-plan-type-header" id="select-plan-type-header" value="model.QCOrderDetails.InspectionPlanType" onchange="(args) => InspectionPlanChange(args)">
+												foreach(string plan in FilteredPlanType){
+													<option>plan</option>
+												}
+											</select> *@
+										</div>
+									</div>
+									<MacroInput DefaultValue="@model.QCOrderDetails.Quantity" InputName="SO Quantity" IsReadOnly=true ValueChanged="SelectInput"></MacroInput>
+									<MacroInput DefaultValue="@model.QCOrderDetails.UoM" InputName="UoM" IsReadOnly=true ValueChanged="SelectInput"></MacroInput>
+									<div class="col">
+										<label>Sample Size</label>
+										<div class="input-group mb-3">
+											<input readonly type="text" id="txt-header-sample-size" class="form-control" @bind="@model.QCOrderDetails.SampleSize" />
+										</div>
+									</div>
+
+									@if (model.QCOrderDetails.InspectionPlanType.ToLowerInvariant().Contains("dosimetry quality"))
+									{
+										<div class="col">
+											<label>Dosimeter Used</label>
+											<div class="input-group mb-3">
+												<input readonly type="text" id="txt-header-doc-no" class="form-control" @bind="@model.QCOrderDetails.DosimetryUsed" />
+												<button class="btn btn-outline-primary" type="button" id="btn-select-dosimetry" data-bs-toggle="modal" data-bs-target="#modal-dosimetry-type" title="Select from Dosimetry Type">
+													<i class="bx bx-menu"></i>
+												</button>
+											</div>
+										</div>
+									}
+
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="col">
+					<div class="divider mb-0">
+						<div class="divider-text">SAMPLES</div>
+					</div>
+				</div>
+
+				<div class="card-body">
+					<div class="row row-cols-1">
+						<div class="bs-stepper wizard-vertical mt-2">
+							<div class="bs-stepper-header">
+								<div class="step active" data-target="#parameter-sample">
+									<button type="button" class="step-trigger">
+										<span class="bs-stepper-circle">1</span>
+										<span class="bs-stepper-label mt-1">
+											<span class="bs-stepper-title">Samples</span>
+											<span class="bs-stepper-subtitle">See Samples QC Status</span>
+										</span>
+									</button>
+								</div>
+								<div class="line">
+									<i class="bx bx-chevron-right"></i>
+								</div>
+								<div class="step" data-target="#parameter-sample-list">
+									<button type="button" class="step-trigger">
+										<span class="bs-stepper-circle">2</span>
+										<span class="bs-stepper-label mt-1">
+											<span class="bs-stepper-title">Sample List</span>
+											<span class="bs-stepper-subtitle">See Sampling Details</span>
+										</span>
+									</button>
+								</div>
+								<div class="line">
+									<i class="bx bx-chevron-right"></i>
+								</div>
+								<div class="step" data-target="#parameter-details">
+									<button type="button" class="step-trigger">
+										<span class="bs-stepper-circle">3</span>
+										<span class="bs-stepper-label mt-1">
+											<span class="bs-stepper-title">Parameter Details</span>
+											<span class="bs-stepper-subtitle">Input Parameter Values</span>
+										</span>
+									</button>
+								</div>
+							</div>
+							<div class="bs-stepper-content">
+								<div id="parameter-sample" class="content active">
+									<div class="content-header mb-3">
+										<h4 class="mb-0">Samples</h4>
+									</div>
+									<div class="row g-3">
+										<div class="card-body">
+											<div class="row row-cols-4">
+												<div class="col">
+													<label>Open</label>
+													<div class="input-group mb-3">
+														<input readonly type="text" id="txt-header-sample-size" class="form-control" @bind="@model.QCOrderDetails.SampleDetails.Open" />
+													</div>
+												</div>
+												<div class="col">
+													<label>Total No. of Passed</label>
+													<div class="input-group mb-3">
+														<input readonly type="text" id="txt-header-sample-size" class="form-control" @bind="@model.QCOrderDetails.SampleDetails.TotalNoOfPassed" />
+													</div>
+												</div>
+												<div class="col">
+													<label>Total No. of Failed</label>
+													<div class="input-group mb-3">
+														<input readonly type="text" id="txt-header-sample-size" class="form-control" @bind="@model.QCOrderDetails.SampleDetails.TotalNoOfFailed" />
+													</div>
+												</div>
+												<div class="col">
+													<label>Sample Size</label>
+													<div class="input-group mb-3">
+														<input readonly type="text" id="txt-header-sample-size" class="form-control" @bind="@model.QCOrderDetails.SampleDetails.TotalNoSamples" />
+													</div>
+												</div>
+											</div>
+										</div>
+										<div class="col-12 d-flex justify-content-end">
+											<button type="button" class="btn btn-label-secondary btn-prev d-none" disabled>
+												<i class="bx bx-chevron-left bx-sm ms-sm-n2"></i>
+												<span class="align-middle d-sm-inline-block">Previous</span>
+											</button>
+											<button type="button" class="btn btn-primary btn-next btn-next-samples">
+												<span class="align-middle d-sm-inline-block me-sm-1">Next</span>
+												<i class="bx bx-chevron-right bx-sm me-sm-n2"></i>
+											</button>
+										</div>
+									</div>
+								</div>
+								<div id="parameter-sample-list" class="content">
+									<div class="content-header mb-3">
+										<h4 class="mb-0">Sample List</h4>
+									</div>
+									<div class="row g-3">
+										<RadzenDataGrid AllowFiltering="false" AllowColumnResize="false" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true"
+														PageSize="5" AllowPaging="false" AllowVirtualization="true" Style="max-height:400px"
+														PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+														Data=model.QCOrderDetails.SampleDetails.SampleDetailList TItem="QCOrderViewModel.SampleDetail" LogicalFilterOperator="LogicalFilterOperator.Or"
+														CellRender="@CellRenderSampleList">
+											<EmptyTemplate>
+												<p style="color: lightgrey; font-size: 24px; text-align: center; margin: 2rem;">No records to display.</p>
+											</EmptyTemplate>
+											<Columns>
+												<RadzenDataGridColumn TItem="QCOrderViewModel.SampleDetail" Property="SampleNo" Title="Sample No." Width="170px" TextAlign="TextAlign.Center" />
+												<RadzenDataGridColumn TItem="QCOrderViewModel.SampleDetail" Title="Status" Width="150px" TextAlign="TextAlign.Center">
+													<Template Context="data">
+														@if (data.Status == "Failed")
+														{
+															<span style='color: white;'>@data.Status</span>
+														}
+														else if (data.Status == "Passed")
+														{
+															<span style='color: white;'>@data.Status</span>
+														}
+														else
+														{
+															<span style='color: black;'>@data.Status</span>
+														}
+													</Template>
+												</RadzenDataGridColumn>
+												<RadzenDataGridColumn TItem="QCOrderViewModel.SampleDetail" Property="NoOfPassed" Title="No of Passed" Width="170px" />
+												<RadzenDataGridColumn TItem="QCOrderViewModel.SampleDetail" Property="NoOfFailed" Title="No of Failed" Width="150px" />
+												<RadzenDataGridColumn TItem="QCOrderViewModel.SampleDetail" Property="QABy" Title="QA By" Width="120px" />
+												<RadzenDataGridColumn TItem="QCOrderViewModel.SampleDetail" Property="ApprovedBy" Title="Approved By" Width="160px" />
+												<RadzenDataGridColumn TItem="QCOrderViewModel.SampleDetail" Title="Action" Sortable="false" Filterable="false" Width="100px" TextAlign="TextAlign.Center">
+													<Template Context="data">
+														<RadzenButton Click="@((args) => SelectSampleDetail(data.SampleNo))" ButtonStyle="ButtonStyle.Success"><i class="fa fa-eye"></i></RadzenButton>
+													</Template>
+												</RadzenDataGridColumn>
+											</Columns>
+										</RadzenDataGrid>
+										<div class="col-12 d-flex justify-content-between">
+											<button type="button" class="btn btn-label-secondary btn-prev">
+												<i class="bx bx-chevron-left bx-sm ms-sm-n2"></i>
+												<span class="align-middle d-sm-inline-block">Previous</span>
+											</button>
+											<button type="button" class="btn btn-primary btn-next d-none" disabled>
+												<span class="align-middle d-sm-inline-block me-sm-1">Next</span>
+												<i class="bx bx-chevron-right bx-sm me-sm-n2"></i>
+											</button>
+										</div>
+									</div>
+								</div>
+								<div id="parameter-details" class="content">
+									<div class="content-header mb-3">
+										<h4 class="mb-0">Parameter Details (Sample No. @sampleNo)</h4>
+									</div>
+									<div class="row g-3">
+										<RadzenDataGrid AllowFiltering="true" AllowColumnResize="false" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true"
+														PageSize="5" AllowPaging="false" AllowVirtualization="true" Style="max-height:400px"
+														PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+														Data="model.ParameterList.Where(x => x.Visible == true)" TItem="QCOrderViewModel.ParameterDetail" LogicalFilterOperator="LogicalFilterOperator.Or"
+														CellRender="@CellRender">
+											<EmptyTemplate>
+												<p style="color: lightgrey; font-size: 24px; text-align: center; margin: 2rem;">No records to display.</p>
+											</EmptyTemplate>
+											<Columns>
+												<RadzenDataGridColumn TItem="QCOrderViewModel.ParameterDetail" Property="ParameterNo" Title="Parameter No." Width="160px" TextAlign="TextAlign.Center" />
+												<RadzenDataGridColumn TItem="QCOrderViewModel.ParameterDetail" Property="Parameter" Title="Parameter" Width="160px" />
+												<RadzenDataGridColumn TItem="QCOrderViewModel.ParameterDetail" Property="ParameterType" Title="Parameter Type" Width="200px" />
+												<RadzenDataGridColumn TItem="QCOrderViewModel.ParameterDetail" Property="UoM" Title="UoM" Width="160px" />
+												<RadzenDataGridColumn Visible="false" TItem="QCOrderViewModel.ParameterDetail" Property="Weight" Title="Parameter Weight" Width="160px" />
+												<RadzenDataGridColumn TItem="QCOrderViewModel.ParameterDetail" Property="MinValue" Title="MinValue" Width="160px" />
+												<RadzenDataGridColumn TItem="QCOrderViewModel.ParameterDetail" Property="MaxValue" Title="MaxValue" Width="160px" />
+												<RadzenDataGridColumn TItem="QCOrderViewModel.ParameterDetail" Property="TargetValue" Title="TargetValue" Width="160px" />
+												<RadzenDataGridColumn TItem="QCOrderViewModel.ParameterDetail" Title="ActualValue" Width="160px">
+													<Template Context="data">
+														@if (data.ParameterType == "Quantitative")
+														{
+															if (data.Active)
+															{
+																<input class="form-control form-control row-actual" type="number" name="Actual" @bind=data.ActualValue>
+																@* <input class="form-control form-control row-actual" type="number" name="Actual" min="0" @bind=data.ActualValue> *@
+															}
+															else
+															{
+																<input readonly class="form-control form-control row-actual" type="number" name="Actual" min="0" @bind=data.ActualValue>
+															}
+														}
+														else if (data.ParameterType == "Qualitative")
+														{
+															if (data.TargetValue == "Yes" || data.TargetValue == "No")
+															{
+																data.ActualValue = data.ActualValue == "" ? "Yes" : data.ActualValue;
+																if (data.Active)
+																{
+																	<select id="slc-target-value" class="form-control row-actual" @bind=data.ActualValue>
+																		<option selected>Yes</option>
+																		<option>No</option>
+																	</select>
+																}
+																else
+																{
+																	<select disabled id="slc-target-value" class="form-control row-actual" @bind=data.ActualValue>
+																		<option selected>Yes</option>
+																		<option>No</option>
+																	</select>
+																}
+															}
+															else if (data.TargetValue == "Passed" || data.TargetValue == "Failed")
+															{
+																data.ActualValue = data.ActualValue == "" ? "Passed" : data.ActualValue;
+																if (data.Active)
+																{
+																	<select id="slc-target-value" class="form-control row-actual" @bind=data.ActualValue>
+																		<option selected>Passed</option>
+																		<option>Failed</option>
+																	</select>
+																}
+																else
+																{
+																	<select disabled id="slc-target-value" class="form-control row-actual" @bind=data.ActualValue>
+																		<option selected>Passed</option>
+																		<option>Failed</option>
+																	</select>
+																}
+															}
+														}
+													</Template>
+												</RadzenDataGridColumn>
+												<RadzenDataGridColumn TItem="QCOrderViewModel.ParameterDetail" Title="Result" Width="160px" TextAlign="TextAlign.Center">
+													<Template Context="data">
+														@if (data.Result == "Failed")
+														{
+															<span style='color: white;'>@data.Result</span>
+														}
+														else if (data.Result == "Passed")
+														{
+															<span style='color: white;'>@data.Result</span>
+														}
+														else
+														{
+															<span style='color: black;'>@data.Result</span>
+														}
+													</Template>
+												</RadzenDataGridColumn>
+												<RadzenDataGridColumn TItem="QCOrderViewModel.ParameterDetail" Title="Remarks" Sortable="true" Filterable="false" Width="220px">
+													<Template Context="data">
+														@if (data.Result == "Failed" && model.QCOrderDetails.InspectionPlanType.ToLower().Contains("dosimetry"))
+														{
+															// Define the pattern to match the phrases you want to remove
+															string pattern = @"Failed because actual value (did not reach minimum value|exceeded maximum value)\b?";
+															if (data.ParameterType == "Quantitative" && Convert.ToDouble(data.ActualValue == "" ? "0" : data.ActualValue) > Convert.ToDouble(data.MaxValue == "" ? "0" : data.MaxValue))
+															{
+																data.Remarks = Regex.Replace(data.Remarks, pattern, "").Trim();
+																data.Remarks = data.Remarks + " Failed because actual value exceeded maximum value";
+															}
+															else if (data.ParameterType == "Quantitative" && Convert.ToDouble(data.ActualValue == "" ? "0" : data.ActualValue) < Convert.ToDouble(data.MinValue == "" ? "0" : data.MinValue))
+															{
+																data.Remarks = Regex.Replace(data.Remarks, pattern, "").Trim();
+																data.Remarks = data.Remarks + " Failed because actual value did not reach minimum value";
+															}
+														}
+														else if (data.Result == "Passed" && model.QCOrderDetails.InspectionPlanType.ToLower().Contains("dosimetry"))
+														{
+															// Define the pattern to match the phrases you want to remove
+															string pattern = @"\bFailed because actual value (did not reach minimum value|exceeded maximum value)\b";
+															data.Remarks = Regex.Replace(data.Remarks, pattern, "").Trim();
+														}
+														<textarea style="height:22.950px" class="form-control" @bind=data.Remarks></textarea>
+													</Template>
+												</RadzenDataGridColumn>
+											</Columns>
+										</RadzenDataGrid>
+										<div class="col-12 d-flex justify-content-between">
+											<button type="button" class="btn btn-label-secondary btn-prev">
+												<i class="bx bx-chevron-left bx-sm ms-sm-n2"></i>
+												<span class="align-middle d-sm-inline-block">Previous</span>
+											</button>
+											<button type="button" class="btn btn-success btn-submit">
+												<span class="align-middle d-sm-inline-block me-sm-1">Save Parameters</span>
+											</button>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				@if (model.QCOrderDetails.InspectionPlanType == "Dosimetry Quality Control Order")
+				{
+					<div class="col">
+						<div class="divider mb-0">
+							<div class="divider-text">DOSIMETRY REPORT</div>
+						</div>
+					</div>
+
+					<div class="card-body">
+						<div class="row row-cols-2">
+							<MacroInput DefaultValue="@model.QCOrderDetails.DosimetryReport.EBOperationLog" InputName="EB Operation Log" ValueChanged="SelectInput"></MacroInput>
+							<div class="col">
+								<label for="txt-status" class="form-label">Total Products Before Irradiation</label>
+								<div class="input-group mb-3">
+									<input type="number" min="0" class="form-control" name="txt-total-products-before-irradiation" id="txt-total-products-before-irradiation" aria-describedby="txt-total-products-before-irradiation" placeholder="Total Products Before Irradiation" @bind="@model.QCOrderDetails.DosimetryReport.TotalProductsBeforeIrradiation">
+								</div>
+							</div>
+							<MacroInput DefaultValue="@model.QCOrderDetails.DosimetryReport.NCReport" InputName="NC Report" ValueChanged="SelectInput"></MacroInput>
+							<div class="col">
+								<label for="txt-status" class="form-label">Total Products After Irradiation</label>
+								<div class="input-group mb-3">
+									<input type="text" min="0" class="form-control" name="txt-total-products-after-irradiation" id="txt-total-products-after-irradiation" aria-describedby="txt-total-products-after-irradiation" placeholder="Total Products After Irradiation" @bind="@model.QCOrderDetails.DosimetryReport.TotalProductsAfterIrradiation">
+								</div>
+							</div>
+							<div class="col">
+								<label for="txt-status" class="form-label">Dosimetry Report No</label>
+								<div class="input-group mb-3">
+									<input type="text" class="form-control" name="txt-dosimetry-report-no" id="txt-dosimetry-report-no" aria-describedby="txt-dosimetry-report-no" placeholder="Dosimetry Report No" @bind="@model.QCOrderDetails.DosimetryReport.DosimetryReportNo">
+								</div>
+							</div>
+							@*							<div class="col">
+						<label for="txt-status" class="form-label">Actual Energy, MeV</label>
+						<div class="input-group mb-3">
+						<input type="number" min="0" class="form-control" name="txt-actual-energy" id="txt-actual-energy" aria-describedby="actual-energy" placeholder="Actual Energy" @bind="@model.QCOrderDetails.DosimetryReport.ActualEnergy">
+						</div>
+						</div>*@
+							@*							<div class="col">
+						<label for="txt-status" class="form-label">Actual Power, kW</label>
+						<div class="input-group mb-3">
+						<input type="number" min="0" class="form-control" name="txt-actual-power" id="txt-actual-power" aria-describedby="actual-power" placeholder="Actual Power" @bind="@model.QCOrderDetails.DosimetryReport.ActualPower">
+						</div>
+						</div>*@
+							@*							<div class="col">
+						<label for="txt-status" class="form-label">Actual Frequency, Hz</label>
+						<div class="input-group mb-3">
+						<input type="number" min="0" class="form-control" name="txt-actual-frequency" id="txt-actual-frequency" aria-describedby="actual-frequency" placeholder="Actual Frequency" @bind="@model.QCOrderDetails.DosimetryReport.ActualFrequency">
+						</div>
+						</div>*@
+							@*							<div class="col">
+						<label>Dosimetry Remarks</label>
+						<div class="input-group mb-3">
+						<textarea style="height:22.950px" class="form-control" id="txt-dosimetry-remarks" @bind="@model.QCOrderDetails.DosimetryReport.Remarks"></textarea>
+						</div>
+						</div>*@
+						</div>
+					</div>
+				}
+
+				<div class="col">
+					<div class="divider mb-0">
+						<div class="divider-text"></div>
+					</div>
+				</div>
+
+				<div class="card-body pt-0 pb-2">
+					<div class="mb-3">
+						@*<button type="button" id="btn-save" class="btn btn-primary float-end m-1" @onclick="(args) => SaveQCOrder()">Save</button>*@
+						<button type="submit" id="btn-save" class="btn btn-primary float-end m-1">Save</button>
+
+						@*@if (model.QCOrderDetails.QCOrderNo != "" && model.QCOrderDetails.Status == "Passed")*@
+						@if (HeaderQCOrderNo != "" && HeaderQCOrderStatus == "Passed" && HeaderQCPlanType.ToLower().Contains("dosimetry") && CanCOI)
+						{
+							<button type="button" id="btn-endorse-coi" @onclick="() => ViewCOI()" class="btn btn-success float-end m-1">Endorse COI</button>
+							<button type="button" id="btn-view-coi" @onclick="() => Print()" class="btn btn-info float-end m-1">View COI</button>
+						}
+					</div>
+				</div>
+			</div>
+		</form>
+	</div>
+</div>
+
+<MacroSelectModal Size="xl" InputName="Sales Order No" Title="List of Sales Orders">
+	<div class="mb-3 row" style="justify-content:end">
+		<label for="html5-search-input" style="display:flex; align-items:center; flex-direction:row-reverse" class="col-md-1 col-form-label">Search:</label>
+		<div class="col-md-4">
+			<input class="form-control" type="text" placeholder="Search ..." id="html5-search-input" @bind="@SOGenerateSearchValue" @oninput="(EventArgs) => {SearchSOGenerate(EventArgs.Value.ToString());}" />
+		</div>
+	</div>
+	<RadzenDataGrid AllowFiltering="false" AllowColumnResize="false" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="5" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+					Data=filteredSOGenerate TItem="QCOrderViewModel.SalesOrderDetail" ColumnWidth="300px" LogicalFilterOperator="LogicalFilterOperator.Or">
+		<EmptyTemplate>
+			<p style="color: lightgrey; font-size: 24px; text-align: center; margin: 2rem;">No records to display.</p>
+		</EmptyTemplate>
+		<Columns>
+			<RadzenDataGridColumn TItem="QCOrderViewModel.SalesOrderDetail" Property="SONo" Title="SO No." Width="120px"></RadzenDataGridColumn>
+			<RadzenDataGridColumn TItem="QCOrderViewModel.SalesOrderDetail" Property="CustomerName" Title="Customer Name" Width="160px" />
+			<RadzenDataGridColumn TItem="QCOrderViewModel.SalesOrderDetail" Property="ItemName" Title="Item Name" Width="160px" />
+			<RadzenDataGridColumn TItem="QCOrderViewModel.SalesOrderDetail" Property="ReceivingDate" Title="Receiving Date" Width="120px" />
+			<RadzenDataGridColumn TItem="QCOrderViewModel.SalesOrderDetail" Title="Action" Sortable="false" Filterable="false" Width="80px" TextAlign="TextAlign.Center">
+				<Template Context="data">
+					<RadzenButton Click="@((args) => SelectInput("SO No", data.SONo.ToString()))" class="btn btn-rimary-logo"><i class="fa fa-hand-point-left"></i></RadzenButton>
+				</Template>
+			</RadzenDataGridColumn>
+		</Columns>
+	</RadzenDataGrid>
+</MacroSelectModal>
+
+<MacroSelectModal Size="xl" InputName="Inspection Plan" Title="List of Inspection Plans">
+	<RadzenDataGrid AllowFiltering="false" AllowColumnResize="false" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="5" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+					Data="model.InspectionPlanList.Where(x => x.PlanType == model.QCOrderDetails.InspectionPlanType)" TItem="QCOrderViewModel.InspectionPlan" ColumnWidth="300px" LogicalFilterOperator="LogicalFilterOperator.Or">
+		<EmptyTemplate>
+			<p style="color: lightgrey; font-size: 24px; text-align: center; margin: 2rem;">No records to display.</p>
+		</EmptyTemplate>
+		<Columns>
+			<RadzenDataGridColumn TItem="QCOrderViewModel.InspectionPlan" Property="InspectionPlanCode" Title="Inspection Plan Code" Width="160px" />
+			<RadzenDataGridColumn TItem="QCOrderViewModel.InspectionPlan" Property="InspectionPlanName" Title="Inspection Plan Name" Width="160px" />
+			<RadzenDataGridColumn TItem="QCOrderViewModel.InspectionPlan" Property="Version" Title="Version" Width="80px" />
+			<RadzenDataGridColumn TItem="QCOrderViewModel.InspectionPlan" Property="ItemName" Title="Item Name" Width="200px" />
+			<RadzenDataGridColumn TItem="QCOrderViewModel.InspectionPlan" Property="CustomerName" Title="Customer Name" Width="120px" />
+			<RadzenDataGridColumn TItem="QCOrderViewModel.InspectionPlan" Title="Action" Sortable="false" Filterable="false" Width="80px" TextAlign="TextAlign.Center">
+				<Template Context="data">
+					<RadzenButton Click="@((args) => SelectInput("Inspection Plan", data.InspectionPlanCode))" class="btn btn-rimary-logo"><i class="fa fa-hand-point-left"></i></RadzenButton>
+				</Template>
+			</RadzenDataGridColumn>
+		</Columns>
+	</RadzenDataGrid>
+</MacroSelectModal>
+
+<MacroSelectModal Size="xl" InputName="Document No" Title="List of Sales Orders">
+	<div class="mb-3 row" style="justify-content:end">
+		<label for="html5-search-input" style="display:flex; align-items:center; flex-direction:row-reverse" class="col-md-1 col-form-label">Search:</label>
+		<div class="col-md-4">
+			<input class="form-control" type="text" placeholder="Search ..." id="html5-search-input" @bind="@SOSearchValue" @oninput="(EventArgs) => {SearchSO(EventArgs.Value.ToString());}" />
+		</div>
+	</div>
+	<RadzenDataGrid AllowFiltering="false" AllowColumnResize="false" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="5" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+					Data=filteredSO TItem="QCOrderViewModel.SalesOrderDetail" ColumnWidth="300px" LogicalFilterOperator="LogicalFilterOperator.Or">
+		<EmptyTemplate>
+			<p style="color: lightgrey; font-size: 24px; text-align: center; margin: 2rem;">No records to display.</p>
+		</EmptyTemplate>
+		<Columns>
+			<RadzenDataGridColumn TItem="QCOrderViewModel.SalesOrderDetail" Property="SONo" Title="SO No." Width="120px" />
+			<RadzenDataGridColumn TItem="QCOrderViewModel.SalesOrderDetail" Property="CustomerName" Title="Customer Name" Width="160px" />
+			<RadzenDataGridColumn TItem="QCOrderViewModel.SalesOrderDetail" Property="ItemName" Title="Item Name" Width="160px" />
+			<RadzenDataGridColumn TItem="QCOrderViewModel.SalesOrderDetail" Property="ReceivingDate" Title="Receiving Date" Width="120px" />
+			<RadzenDataGridColumn TItem="QCOrderViewModel.SalesOrderDetail" Title="Action" Sortable="false" Filterable="false" Width="80px" TextAlign="TextAlign.Center">
+				<Template Context="data">
+					<RadzenButton Click="@((args) => SelectInput("Document No", data.SONo.ToString()))" class="btn btn-rimary-logo"><i class="fa fa-hand-point-left"></i></RadzenButton>
+				</Template>
+			</RadzenDataGridColumn>
+		</Columns>
+	</RadzenDataGrid>
+</MacroSelectModal>
+
+<MacroSelectModal Size="xl" InputName="QC Order No" Title="List of QC Orders">
+	<div class="mb-3 row" style="justify-content:end">
+		<label for="html5-search-input" style="display:flex; align-items:center; flex-direction:row-reverse" class="col-md-1 col-form-label">Search:</label>
+		<div class="col-md-4">
+			<input class="form-control" type="text" placeholder="Search ..." id="html5-search-input" @bind="@QCOrderSearchValue" @oninput="(EventArgs) => {SearchQCOrders(EventArgs.Value.ToString());}" />
+		</div>
+	</div>
+	<RadzenDataGrid AllowFiltering="false" AllowColumnResize="false" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="5" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+					Data=filteredQCOrders TItem="QCOrderViewModel.QCOrders" ColumnWidth="300px" LogicalFilterOperator="LogicalFilterOperator.Or">
+		<EmptyTemplate>
+			<p style="color: lightgrey; font-size: 24px; text-align: center; margin: 2rem;">No records to display.</p>
+		</EmptyTemplate>
+		<Columns>
+			<RadzenDataGridColumn TItem="QCOrderViewModel.QCOrders" Property="QCOrderNo" Title="QC Order No." Width="120px" />
+			<RadzenDataGridColumn TItem="QCOrderViewModel.QCOrders" Property="CustomerName" Title="Customer Name" Width="160px" />
+			<RadzenDataGridColumn TItem="QCOrderViewModel.QCOrders" Property="ItemName" Title="Item Name" Width="160px" />
+			<RadzenDataGridColumn TItem="QCOrderViewModel.QCOrders" Property="InspectionPlanType" Title="Plan Type" Width="160px" />
+			<RadzenDataGridColumn TItem="QCOrderViewModel.QCOrders" Title="Action" Sortable="false" Filterable="false" Width="80px" TextAlign="TextAlign.Center">
+				<Template Context="data">
+					<RadzenButton Click="@((args) => SelectQCOrder(data.QCOrderNo))" class="btn btn-rimary-logo"><i class="fa fa-hand-point-left"></i></RadzenButton>
+				</Template>
+			</RadzenDataGridColumn>
+		</Columns>
+	</RadzenDataGrid>
+</MacroSelectModal>
+@*
+<MacroSelectModal Size="xl" InputName="Sample Parameter" Title="List of Parameters">
+	<RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="5" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+					Data=model.SampleDetailList TItem="QCOrderViewModel.SampleDetail" ColumnWidth="300px" LogicalFilterOperator="LogicalFilterOperator.Or">
+		<EmptyTemplate>
+			<p style="color: lightgrey; font-size: 24px; text-align: center; margin: 2rem;">No records to display.</p>
+		</EmptyTemplate>
+		<Columns>
+			<RadzenDataGridColumn TItem="QCOrderViewModel.SampleDetail" Property="Sample" Title="Sample No." Width="160px" />
+			<RadzenDataGridColumn TItem="QCOrderViewModel.SampleDetail" Property="Status" Title="Status" Width="120px" />
+			<RadzenDataGridColumn TItem="QCOrderViewModel.SampleDetail" Property="NoOfPassed" Title="No of Passed" Width="120px" />
+			<RadzenDataGridColumn TItem="QCOrderViewModel.SampleDetail" Property="NoOfFailed" Title="No of Failed" Width="120px" />
+			<RadzenDataGridColumn TItem="QCOrderViewModel.SampleDetail" Property="QABy" Title="QA By" Width="120px" />
+			<RadzenDataGridColumn TItem="QCOrderViewModel.SampleDetail" Title="Action" Sortable="false" Filterable="false" Width="80px" TextAlign="TextAlign.Center">
+				<Template Context="data">
+					<RadzenButton Click="@((args) => SelectInput("Inspection Plan Code", data.Sample))" class="btn btn-rimary-logo"><i class="fa fa-hand-point-left"></i></RadzenButton>
+				</Template>
+			</RadzenDataGridColumn>
+		</Columns>
+	</RadzenDataGrid>
+</MacroSelectModal>*@
+
+<MacroSelectModal Size="md" InputName="Dosimetry Type" Title="List of Dosimetry Type">
+	<div class="mb-3 row" style="justify-content:end">
+		<label for="html5-search-input" style="display:flex; align-items:center; flex-direction:row-reverse" class="col-md-1 col-form-label">Search:</label>
+		<div class="col-md-4">
+			<input class="form-control" type="text" placeholder="Search ..." id="html5-search-input" @bind="@DosTypeSearchValue" @oninput="(EventArgs) => {SearchDosimetryType(EventArgs.Value.ToString());}" />
+		</div>
+	</div>
+	<RadzenDataGrid AllowFiltering="false" AllowColumnResize="false" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="5" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+					Data=filteredDosimetry TItem="QCOrderViewModel.DosimetryType" ColumnWidth="300px" LogicalFilterOperator="LogicalFilterOperator.Or">
+		<EmptyTemplate>
+			<p style="color: lightgrey; font-size: 24px; text-align: center; margin: 2rem;">No records to display.</p>
+		</EmptyTemplate>
+		<Columns>
+			<RadzenDataGridColumn TItem="QCOrderViewModel.DosimetryType" Property="Code" Title="Dosimetry Type" Width="120px" />
+			<RadzenDataGridColumn TItem="QCOrderViewModel.DosimetryType" Property="Name" Title="Dosimetry Name" Width="160px" />
+			<RadzenDataGridColumn TItem="QCOrderViewModel.DosimetryType" Title="Action" Sortable="false" Filterable="false" Width="80px" TextAlign="TextAlign.Center">
+				<Template Context="data">
+					<RadzenButton Click="@((args) => SelectInput("DosimetryType", data.Code.ToString()))" class="btn btn-rimary-logo"><i class="fa fa-hand-point-left"></i></RadzenButton>
+				</Template>
+			</RadzenDataGridColumn>
+		</Columns>
+	</RadzenDataGrid>
+</MacroSelectModal>

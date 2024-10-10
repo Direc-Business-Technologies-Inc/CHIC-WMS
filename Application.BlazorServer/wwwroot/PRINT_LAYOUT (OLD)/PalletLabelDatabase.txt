@@ -1,0 +1,2 @@
+"Code", "BinLocation", "CustomerName", "ItemName"
+"199-001-15", "C1-S2-11-05-I", "Avon", "Cosmetic Product"

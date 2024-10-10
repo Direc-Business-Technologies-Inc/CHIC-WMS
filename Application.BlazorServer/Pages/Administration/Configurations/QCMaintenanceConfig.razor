@@ -1,0 +1,79 @@
+﻿<div class="tab-pane fade show active" id="navs-pills-left-home" role="tabpanel">
+	<MacroContainer>
+		<div class="card-body pb-0">
+			<div class="row row-cols-2">
+				<div class="col-6 p-0">
+					<RadzenLabel Text="Select Plan Type" Component="DropDownMultipleChips" Style="margin-right: 8px; vertical-align: middle;" />
+					<RadzenDropDown @bind-Value=@Values Data=@PlanTypes TextProperty="PlanName" ValueProperty="PlanName" Name="DropDownMultipleChips"
+									Style="width: 100%; max-width: 400px;" Change="() => FilterPlanType()" />
+				</div>
+				<div class="col-6 p-0 d-flex align-items-end justify-content-end">
+					<input @bind=newRowsCount type="number" class="form-control-custom" style="width:5rem" min="1" id="txt-add-row" placeholder="Row Number" max="50" />
+					<button class="btn bt-sm btn-secondary" type="button" @onclick="() => AddParameterRow()"><span>Add</span></button>
+				</div>
+			</div>
+		</div>
+		<MacroContainer>
+			<RadzenDataGrid AllowFiltering="true" AllowColumnResize="false" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="5" AllowPaging="false" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+							Data=@tableData TItem="ConfigurationViewModel.QCMaintenanceItem" ColumnWidth="300px" LogicalFilterOperator="LogicalFilterOperator.Or"
+							@ref="parameterList" IsLoading=@isLoading AllowVirtualization="true" Style="max-height:400px">
+				<EmptyTemplate>
+					<p style="color: lightgrey; font-size: 24px; text-align: center; margin: 2rem;">No records to display.</p>
+				</EmptyTemplate>
+				<Columns>
+					<RadzenDataGridColumn TItem="ConfigurationViewModel.QCMaintenanceItem" Title="Parameter Type" Width="200px">
+						<Template Context="data">
+							<select value="@data.ParameterType" @onchange="(args => ChangeParameterType(args, data))" id="slc-parameter-type" class="form-control row-ptype">
+								<option data="Quantitative">Quantitative</option>
+								<option data="Qualitative">Qualitative</option>
+							</select>
+						</Template>
+					</RadzenDataGridColumn>
+					<RadzenDataGridColumn TItem="ConfigurationViewModel.QCMaintenanceItem" Title="Parameter" Width="200px">
+						<Template Context="data">
+							<textarea style="height:22.950px" class="form-control form-control row-param" name="parameter[]" @bind=data.Parameter></textarea>
+						</Template>
+					</RadzenDataGridColumn>
+					<RadzenDataGridColumn TItem="ConfigurationViewModel.QCMaintenanceItem" Title="UoM" Width="200px">
+						<Template Context="data">
+							<select required class="form-control form-control row-uom" name="select-uom" @bind=data.UoM>
+								@foreach (var uom in model.UoMList)
+								{
+									if (@uom.UgpCode == "N/A")
+									{
+										<option data=@uom.UgpCode selected>@uom.UgpName</option>
+									}
+									else
+									{
+										<option data=@uom.UgpCode>@uom.UgpName</option>
+									}
+								}
+							</select>
+						</Template>
+					</RadzenDataGridColumn>
+					<RadzenDataGridColumn TItem="ConfigurationViewModel.QCMaintenanceItem" Title="Specification Type" Width="200px">
+						<Template Context="data">
+							<select id="slc-specification-type" class="form-control row-type" @bind=data.SpecificationType>
+								<option data="Item Specifications">Item Specifications</option>
+								<option data="Palletizing">Palletizing</option>
+								<option data="Container Van Stuffing">Container Van Stuffing</option>
+							</select>
+						</Template>
+					</RadzenDataGridColumn>
+					<RadzenDataGridColumn TItem="ConfigurationViewModel.QCMaintenanceItem" Title="Action" Sortable="false" Filterable="false" TextAlign="TextAlign.Center" Width="150px">
+						<Template Context="data">
+							<RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" Variant="Variant.Flat" Shade="Shade.Lighter"
+										  Size="ButtonSize.Large" class="my-1 ms-1 rz-border-radius-10 rz-shadow-8" Click="@(args => DeleteRow(data))">
+							</RadzenButton>
+						</Template>
+					</RadzenDataGridColumn>
+				</Columns>
+			</RadzenDataGrid>
+		</MacroContainer>
+		<div class="card-body p-0">
+			<div class="mb-3">
+				<button type="button" id="btn-save" class="btn btn-success float-end m-1" @onclick="() => Save()">Save</button>
+			</div>
+		</div>
+	</MacroContainer>
+</div>

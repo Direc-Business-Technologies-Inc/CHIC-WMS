@@ -1,0 +1,141 @@
+﻿@layout MainLayout
+
+@page "/BinDashboard"
+
+<MacroBreadcrumbs Breadcrumbs=Breadcrumbs></MacroBreadcrumbs>
+
+<MacroBody>
+	<MacroContainer Columns="4">
+		<MacroInput DefaultValue="@model.BinMappingDetails.WarehouseCode" Title="Warehouse Code" InputName="Warehouse Code" IsReadOnly=true IsSelectable=true ValueChanged="SelectInput"></MacroInput>
+		<MacroInput DefaultValue="@model.BinMappingDetails.WarehouseName" Title="Warehouse Name" InputName="Warehouse Name" IsReadOnly=true ValueChanged="SelectInput"></MacroInput>
+		<MacroInput DefaultValue="@model.BinMappingDetails.Shelf" Title="Shelf" InputName="Shelf" IsReadOnly=true IsSelectable=true ValueChanged="SelectInput"></MacroInput>
+	</MacroContainer>
+	<div class="col">
+		<div class="divider mb-0">
+			<div class="divider-text"></div>
+		</div>
+	</div>
+	<MacroContainer Columns="4">
+		<div class="accordion-item card active">
+			@* 			<h2 class="accordion-header d-flex align-items-center">
+			<button type="button"
+			class="accordion-button"
+			data-bs-toggle="collapse"
+			data-bs-target="#color-details"
+			aria-expanded="true">
+			Color Details
+			</button>
+			</h2> *@
+			<div id="color-details" class="accordion-collapse collapse show">
+				<div class="accordion-body">
+					<div class="demo-inline-spacing mt-3">
+						<h5>Color Details</h5>
+						<ul class="list-group">
+							<li class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+								Available
+								<span class="badge" style="background-color:#3EB489;">&nbsp;&nbsp;&nbsp;</span>
+							</li>
+							<li class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+								Occupied
+								<span class="badge bg-danger">&nbsp;&nbsp;&nbsp;</span>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+	</MacroContainer>
+	<div class="col">
+		<div class="divider mb-0">
+			<div class="divider-text"></div>
+		</div>
+	</div>
+	<MacroContainer>
+		<div class="insideWrapper" id="insideWrapper">
+			<img id="imgBg" class="coveredImage" src="@model.BinMappingDetails.ImageUrl" />
+			<canvas class="coveringCanvas" id="imgPin"></canvas>
+			<div id="tooltip">
+				<div class="card-body">
+					<div class="row row-cols-1">
+						<div class="col" style="align-items:center;border-bottom: 1px dashed black;">
+							<h4>Bin Details</h4>
+						</div>
+						<div class="col" style="padding-top: 24px">
+							<b>SO No: </b>
+							<label id="lbl-so-no">12</label>
+						</div>
+						<div class="col">
+							<b>Customer: </b>
+							<label id="lbl-customer">Sample Customer</label>
+						</div>
+						<div class="col">
+							<b>Item Name: </b>
+							<label id="lbl-item-name">Sample Item</label>
+						</div>
+						<div class="col">
+							<b>Pallet No.: </b>
+							<label id="lbl-pallet-no">Sample Item</label>
+						</div>
+						<div class="col">
+							<b>No. of boxes per pallet: </b>
+							<label id="lbl-no-boxes-pallet">12</label>
+						</div>
+						<div class="col">
+							<b>Receiving Date: </b>
+							<label id="lbl-receiving-date">12.12.12</label>
+						</div>
+						<div class="col">
+							<b>Irradiation Date: </b>
+							<label id="lbl-irradiation-date">12/12/12</label>
+						</div>
+						<div class="col">
+							<b>Dispatch Date: </b>
+							<label id="lbl-dispatch-date">12-12-12</label>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</MacroContainer>
+</MacroBody>
+
+<MacroSelectModal Size="xl" InputName="Warehouse Code" Title="List of Warehouses">
+	<RadzenDataGrid AllowFiltering="false" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="5" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+					Data=@model.WarehouseList TItem="DashboardViewModel.BinDashboardViewModel.Warehouse" LogicalFilterOperator="LogicalFilterOperator.Or">
+		<Columns>
+			<RadzenDataGridColumn TItem="DashboardViewModel.BinDashboardViewModel.Warehouse" Property="WarehouseCode" Title="Warehouse Code" />
+			<RadzenDataGridColumn TItem="DashboardViewModel.BinDashboardViewModel.Warehouse" Property="WarehouseName" Title="Warehouse Name" />
+			<RadzenDataGridColumn TItem="DashboardViewModel.BinDashboardViewModel.Warehouse" Title="Action" Sortable="false" Filterable="false" Width="15%" TextAlign="TextAlign.Center">
+				<Template Context="data">
+					<RadzenButton Click="@((args) => SelectInput("WarehouseCode", data.WarehouseCode))" class="btn btn-rimary-logo"><i class="fa fa-hand-point-left"></i></RadzenButton>
+				</Template>
+			</RadzenDataGridColumn>
+		</Columns>
+	</RadzenDataGrid>
+</MacroSelectModal>
+
+<MacroSelectModal Size="xl" InputName="Shelf" Title="List of Shelves">
+	<RadzenDataGrid AllowFiltering="false" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="5" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+					Data=model.Shelves TItem="DashboardViewModel.BinDashboardViewModel.Shelf" LogicalFilterOperator="LogicalFilterOperator.Or">
+		<Columns>
+			<RadzenDataGridColumn TItem="DashboardViewModel.BinDashboardViewModel.Shelf" Property="ShelfName" Title="Shelf" />
+			<RadzenDataGridColumn TItem="DashboardViewModel.BinDashboardViewModel.Shelf" Title="Action" Sortable="false" Filterable="false" Width="15%" TextAlign="TextAlign.Center">
+				<Template Context="data">
+					<RadzenButton Click="@((args) => SelectInput("Shelf", data.ShelfName))" class="btn btn-rimary-logo"><i class="fa fa-hand-point-left"></i></RadzenButton>
+				</Template>
+			</RadzenDataGridColumn>
+		</Columns>
+	</RadzenDataGrid>
+</MacroSelectModal>
+
+@*<div id="popupContainer" class="popup-container">
+	<div class="popup-content">
+		<span id="closeButton" class="close-button">×</span>
+		<h2>Additional Details</h2>
+		<p>Insert your additional details here.</p>
+	</div>
+</div>
+
+<div id="dv-pin-details">
+	<button id="btn-show-pin-details" class="btn-primary" title="Bin Additional Details" type="button"><i id="i-show-pin-details" class="bx bx-chevron-left"></i></button>
+</div>*@

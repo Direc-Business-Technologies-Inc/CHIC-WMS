@@ -1,0 +1,350 @@
+﻿﻿<!-- menu -->
+<aside id="layout-menu" class="layout-menu-horizontal menu-horizontal menu bg-menu-theme flex-grow-0">
+	<div class="container-xxl d-flex h-100">
+		<ul class="menu-inner">
+
+
+
+			<!-- Dashboards -->
+			@foreach (var module in model.DistinctBy(x => x.GroupName))
+			{
+				//Hide Group if There's no Items Active
+				if (model.Where(x => x.GroupName == module.GroupName && x.Active == true).Count() < 1)
+				{
+					continue;
+				}
+
+				if (!CanViewGroup(module.GroupName))
+				{
+					continue;
+				}
+
+				<li class="menu-item">
+					<a href="javascript:void(0)" class="menu-link menu-toggle">
+						<i class="menu-icon tf-icons @module.IconGroup"></i>
+						<div data-i18n="@module.GroupName">@module.GroupName</div>
+					</a>
+					<ul class="menu-sub">
+						@foreach (var submodules in model.Where(x => x.GroupName == module.GroupName).DistinctBy(x => x.SubGroupName))
+						{
+							@* Hide Sub Group Module if There's no Items Active *@
+							@if (submodules.SubGroupName != "-")
+							{
+								if (model.Where(x => x.GroupName == @submodules.GroupName && x.SubGroupName == @submodules.SubGroupName && x.Active == true).Count() < 1)
+								{
+									continue;
+								}
+
+								if (!CanViewSubGroup(submodules.SubGroupName))
+								{
+									continue;
+								}
+
+								@* <ul class="menu-sub"> *@
+									<li class="menu-item">
+										<a href="javascript:void(0);" class="menu-link menu-toggle">
+											<i class="menu-icon tf-icons @submodules.IconSubGroup"></i>
+											<div data-i18n="@submodules.SubGroupName">@submodules.SubGroupName</div>
+										</a>
+
+										<ul class="menu-sub">
+											@foreach (var modulepage in model.Where(x => x.GroupName == @submodules.GroupName && x.SubGroupName == @submodules.SubGroupName && x.Active == true))
+											{
+												if (!CanViewModule(modulepage.ModuleId))
+												{
+													continue;
+												}
+
+												<li class="menu-item">
+													<a href="@modulepage.WebLink" class="menu-link">
+														@if (modulepage.Icon != "-")
+														{
+															<i class="menu-icon tf-icons @submodules.Icon"></i>
+														}
+														<div data-i18n="@modulepage.Name">@modulepage.Name</div>
+													</a>
+												</li>
+											}
+										</ul>
+									</li>
+								@* </ul> *@
+							}
+							else
+							{
+								@* <ul class="menu-sub"> *@
+								@foreach (var modulepage in model.Where(x => x.GroupName == @submodules.GroupName && x.SubGroupName == @submodules.SubGroupName && x.Active == true))
+								{
+									<li class="menu-item">
+										<a href="@modulepage.WebLink" class="menu-link">
+											@if (modulepage.Icon != "-")
+											{
+												<i class="menu-icon tf-icons @modulepage.Icon"></i>
+											}
+											<div data-i18n="@modulepage.Name">@modulepage.Name</div>
+										</a>
+									</li>
+								}
+								@* </ul> *@
+							}
+						}
+					</ul>
+				</li>
+			}
+
+			@* 			<!-- User Management -->
+			<li class="menu-item">
+			<a href="javascript:void(0)" class="menu-link menu-toggle">
+			<i class="menu-icon tf-icons bx bx-home-circle"></i>
+			<div data-i18n="Administration">Administration</div>
+			</a>
+			<ul class="menu-sub">
+			<li class="menu-item">
+			<a href="javascript:void(0);" class="menu-link menu-toggle">
+			<i class="menu-icon tf-icons fa-solid fa-users"></i>
+			<div data-i18n="Users">Users</div>
+			</a>
+			<ul class="menu-sub">
+			<li class="menu-item">
+			<a href="/UserManagement" class="menu-link">
+			<div data-i18n="User Management">User Management</div>
+			</a>
+			</li>
+			<li class="menu-item">
+			<a href="/UserGroup" class="menu-link">
+			<div data-i18n="User Group">User Group</div>
+			</a>
+			</li>
+			</ul>
+			</li>
+			</ul>
+			</li>
+
+			<!-- Configuration -->
+			<li class="menu-item">
+			<a href="javascript:void(0)" class="menu-link menu-toggle">
+			<i class="menu-icon tf-icons bx bx-pie-chart-alt-2"></i>
+			<div data-i18n="Dashboard">Dashboard</div>
+			</a>
+			<ul class="menu-sub">
+			<li class="menu-item">
+			<a href="/Home" class="menu-link">
+			<i class="menu-icon tf-icons bx bx-home-alt"></i>
+			<div data-i18n="Dashboard">Dashboard</div>
+			</a>
+			</li>
+			<li class="menu-item">
+			<a href="/DashboardNotification" class="menu-link">
+			<i class="menu-icon tf-icons bx bx-home-alt"></i>
+			<div data-i18n="Dashboard Notification">Dashboard Notification</div>
+			</a>
+			</li>
+			</ul>
+			</li>
+			<li class="menu-item">
+			<a href="javascript:void(0)" class="menu-link menu-toggle">
+			<i class="menu-icon tf-icons bx bx-search-alt"></i>
+			<div data-i18n="Quality Control">Quality Control</div>
+			</a>
+			<ul class="menu-sub">
+			<li class="menu-item">
+			<a href="/QCMaintenance" class="menu-link">
+			<i class="menu-icon tf-icons bx bx-search-alt"></i>
+			<div data-i18n="QC Maintenance">QC Maintenance</div>
+			</a>
+			</li>
+			<li class="menu-item">
+			<a href="/QCOrder" class="menu-link">
+			<i class="menu-icon tf-icons bx bx-user-check"></i>
+			<div data-i18n="QC Order">QC Order</div>
+			</a>
+			</li>
+			<li class="menu-item">
+			<a href="/CertificateOfIrradiationApproval" class="menu-link">
+			<i class="menu-icon tf-icons fa fa-person-circle-check"></i>
+			<div data-i18n="COI Approval">COI Approval</div>
+			</a>
+			</li>
+			</ul>
+			</li>
+			<li class="menu-item">
+			<a href="javascript:void(0)" class="menu-link menu-toggle">
+			<i class="menu-icon tf-icons bx bx-cabinet"></i>
+			<div data-i18n="Bins">Bins</div>
+			</a>
+			<ul class="menu-sub">
+			<li class="menu-item">
+			<a href="/BinMapping" class="menu-link">
+			<i class="menu-icon tf-icons bx bx-map-alt"></i>
+			<div data-i18n="Bin Mapping">Bin Mapping</div>
+			</a>
+			</li>
+			<li class="menu-item">
+			<a href="/BinDashboard" class="menu-link">
+			<i class="menu-icon tf-icons bx bx-map-alt"></i>
+			<div data-i18n="Bin Dashboard">Bin Dashboard</div>
+			</a>
+			</li>
+			</ul>
+			</li>
+			<li class="menu-item">
+			<a href="javascript:void(0)" class="menu-link menu-toggle">
+			<i class="menu-icon tf-icons bx bx-calendar"></i>
+			<div data-i18n="Schedules">Schedules</div>
+			</a>
+			<ul class="menu-sub">
+			<li class="menu-item">
+			<a href="/ReceivingSchedule" class="menu-link">
+			<i class="menu-icon tf-icons bx bxs-truck"></i>
+			<div data-i18n="Receiving Schedule">Receiving Schedule</div>
+			</a>
+			</li>
+			<li class="menu-item">
+			<a href="/DispatchSchedule" class="menu-link">
+			<i class="menu-icon tf-icons bx bx-package"></i>
+			<div data-i18n="Dispatch Schedule">Dispatch Schedule</div>
+			</a>
+			</li>
+			<li class="menu-item">
+			<a href="/IrradiationSchedule" class="menu-link">
+			<i class="menu-icon tf-icons bx bx-shield"></i>
+			<div data-i18n="Irradiation Schedule">Irradiation Schedule</div>
+			</a>
+			</li>
+			</ul>
+			</li>
+			<li class="menu-item">
+			<a href="javascript:void(0)" class="menu-link menu-toggle">
+			<i class="menu-icon tf-icons bx bx-printer"></i>
+			<div data-i18n="Forms and Reports">Forms and Reports</div>
+			</a>
+			<ul class="menu-sub">
+			<li class="menu-item">
+			<a href="/BinLabelPrinting" class="menu-link">
+			<i class="menu-icon tf-icons bx bx-file"></i>
+			<div data-i18n="Bin Label Printing">Bin Label Printing</div>
+			</a>
+			</li>
+			<li class="menu-item">
+			<a href="/IrradiationLabelPrinting" class="menu-link">
+			<i class="menu-icon tf-icons bx bx-file"></i>
+			<div data-i18n="Irradiation Label Printing">Irradiation Label Printing</div>
+			</a>
+			</li>
+			<li class="menu-item">
+			<a href="/PalletLabelPrinting" class="menu-link">
+			<i class="menu-icon tf-icons bx bx-file"></i>
+			<div data-i18n="Pallet Label Printing">Pallet Label Printing</div>
+			</a>
+			</li>
+			</ul>
+			</li>
+			<li class="menu-item">
+			<a href="javascript:void(0)" class="menu-link menu-toggle">
+			<i class="menu-icon tf-icons bx bx-user-check"></i>
+			<div data-i18n="Inventory">Inventory</div>
+			</a>
+			<ul class="menu-sub">
+			<li class="menu-item">
+			<a href="/Receiving" class="menu-link">
+			<i class="menu-icon tf-icons bx bx-user-check"></i>
+			<div data-i18n="Receiving">Receiving</div>
+			</a>
+			</li>
+			<li class="menu-item">
+			<a href="/InventoryTransfer" class="menu-link">
+			<i class="menu-icon tf-icons bx bx-user-check"></i>
+			<div data-i18n="Inventory Transfer">Inventory Transfer</div>
+			</a>
+			</li>
+			<li class="menu-item">
+			<a href="/Dispatch" class="menu-link">
+			<i class="menu-icon tf-icons bx bx-user-check"></i>
+			<div data-i18n="Dispatch">Dispatch</div>
+			</a>
+			</li>
+			<li class="menu-item">
+			<a href="/InventoryTransfer/ManualTransfer" class="menu-link">
+			<i class="menu-icon tf-icons bx bx-user-check"></i>
+			<div data-i18n="Manual Transfer">Manual Transfer</div>
+			</a>
+			</li>
+			</ul>
+			</li> *@
+			@*if (_userAuthentizations != null)
+			{
+			@foreach (var level1 in _userAuthentizations.Select(f => new { IconGroup = f.IconGroup, Group = f.Group }).GroupBy(x => x.Group).Select(t => t.First()))
+			{
+			<li class="nav-item">
+			<a href="#" class="nav-link">
+			<i class="nav-icon fas @level1.IconGroup"></i>
+			<p>
+			@level1.Group
+			<i class="right fas fa-angle-left"></i>
+			</p>
+			</a>
+			<ul class="nav nav-treeview">
+			@foreach (var level2 in _userAuthentizations.Where(x => x.Group == level1.Group).Select(f => new { IconSubGroup = f.IconSubGroup, SubGroup = f.SubGroup }).GroupBy(x => x.SubGroup).Select(t => t.First()))
+			{
+			<li class="nav-item indent">
+			<a href="#" class="nav-link">
+			<i class="nav-icon fas @level2.IconSubGroup"></i>
+			<p>
+			@level2.SubGroup
+			<i class="right fas fa-angle-left"></i>
+			</p>
+			</a>
+			<ul class="nav nav-treeview">
+			@foreach (var level3 in _userAuthentizations.Where(x => x.Group == level1.Group && x.SubGroup == level2.SubGroup).Select(f => new { WebLink = f.WebLink, Icon = f.Icon, Name = f.Name }))
+			{
+			<li class="nav-item indent-1">
+			<a href="@_hostDetails.Host/@level3.WebLink" class="nav-link">
+			<i class="indent nav-icon fas @level3.Icon"></i>
+			<p>@level3.Name</p>
+			</a>
+			</li>
+			}
+			</ul>
+			</li>
+			}
+			</ul>
+			</li>
+			}
+			}*@
+
+			<!-- Charts & Maps -->
+			@*<li class="menu-item">
+			<a href="javascript:void(0)" class="menu-link menu-toggle">
+			<i class="menu-icon tf-icons bx bx-bar-chart-square"></i>
+			<div data-i18n="Charts & Maps">Charts & Maps</div>
+			</a>
+			<ul class="menu-sub">
+			<li class="menu-item">
+			<a href="javascript:void(0);" class="menu-link menu-toggle">
+			<i class="menu-icon tf-icons bx bx-chart"></i>
+			<div data-i18n="Charts">Charts</div>
+			</a>
+			<ul class="menu-sub">
+			<li class="menu-item">
+			<a href="charts-apex.html" class="menu-link">
+			<div data-i18n="Apex Charts">Apex Charts</div>
+			</a>
+			</li>
+			<li class="menu-item">
+			<a href="charts-chartjs.html" class="menu-link">
+			<div data-i18n="ChartJS">ChartJS</div>
+			</a>
+			</li>
+			</ul>
+			</li>
+			<li class="menu-item">
+			<a href="maps-leaflet.html" class="menu-link">
+			<i class="menu-icon tf-icons bx bx-map-alt"></i>
+			<div data-i18n="Leaflet Maps">Leaflet Maps</div>
+			</a>
+			</li>
+			</ul>
+			</li>*@
+		</ul>
+	</div>
+</aside>
+<!--/ menu -->

@@ -1,0 +1,54 @@
+﻿@layout MainLayout
+
+@page "/PalletLabelPrinting"
+
+<MacroBreadcrumbs Breadcrumbs=Breadcrumbs></MacroBreadcrumbs>
+
+<MacroBody>
+	<MacroContainer Columns="2">
+		<div class="col-3">
+			<label for="txt-receiving-date" class="form-label">Receiving Date</label>
+			<div class="input-group mb-3">
+				<input type="text" id="txt-receiving-date" class="form-control" name="daterange" value="@DateTime.Today.ToString("MM-dd-yyyy") - @DateTime.Today.ToString("MM-dd-yyyy")" />
+			</div>
+		</div>
+	</MacroContainer>
+	<MacroContainer>
+		<div class="row row-cols-2 gx-0">
+			<div class="row d-flex align-items-center">
+				<h5>Sales Order Receiving Table</h5>
+			</div>
+			<div class="row mb-3 gx-0" style="justify-content:end">
+				<label for="html5-search-input" style="display:flex; align-items:center;" class="col-md-1 col-form-label">Search:</label>
+				<div class="col-md-6 ms-1">
+					<input class="form-control" type="text" placeholder="Search ..." id="html5-search-input" @bind="@searchValue" @oninput="(EventArgs) => {SearchPalletLabel(EventArgs.Value.ToString());}" />
+				</div>
+			</div>
+		</div>
+		@*Data=model.PalletLabelList TItem="PalletLabelViewModel.PalletLabel" ColumnWidth="300px" LogicalFilterOperator="LogicalFilterOperator.Or">*@
+		<RadzenDataGrid AllowFiltering="false" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="5" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+						Data=tableData TItem="PalletLabelViewModel.PalletLabel" ColumnWidth="300px" LogicalFilterOperator="LogicalFilterOperator.Or">
+			<EmptyTemplate>
+				<p style="color: lightgrey; font-size: 24px; text-align: center; margin: 2rem;">No records to display.</p>
+			</EmptyTemplate>
+			<Columns>
+				<RadzenDataGridColumn TItem="PalletLabelViewModel.PalletLabel" Property="SONo" Title="So No." Width="80px" />
+				<RadzenDataGridColumn TItem="PalletLabelViewModel.PalletLabel" Property="CustomerName" Title="Customer Name" Width="160px" />
+				<RadzenDataGridColumn TItem="PalletLabelViewModel.PalletLabel" Property="ItemName" Title="Item Name" Width="160px" />
+				<RadzenDataGridColumn TItem="PalletLabelViewModel.PalletLabel" Property="ReceivingDate" Title="Receiving Date" Width="200px" FormatString='{0:MM-dd-yyyy}' />
+				<RadzenDataGridColumn TItem="PalletLabelViewModel.PalletLabel" Property="DispatchDate" Title="Dispatch Date" Width="200px" FormatString='{0:MM-dd-yyyy}' />
+				<RadzenDataGridColumn TItem="PalletLabelViewModel.PalletLabel" Title="Action" Sortable="false" Filterable="false" Width="80px" TextAlign="TextAlign.Center">
+					<Template Context="data">
+						<RadzenButton Click="@((args) => SelectSchedule(data.SONo.ToString()))" ButtonStyle="ButtonStyle.Primary"><i class="fa fa-eye"></i></RadzenButton>
+					</Template>
+				</RadzenDataGridColumn>
+			</Columns>
+		</RadzenDataGrid>
+	</MacroContainer>
+
+	<div class="card-body pt-0 pb-2 d-none">
+		<div class="mb-3">
+			<a type="button" id="btn-save" href="/IrradiationSchedule" class="btn btn-danger float-end m-1">Cancel</a>
+		</div>
+	</div>
+</MacroBody>

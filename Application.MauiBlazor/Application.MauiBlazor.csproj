@@ -1,0 +1,186 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+    <PropertyGroup>
+        <TargetFrameworks>net7.0-android33.0</TargetFrameworks>
+        <!-- Uncomment to also build the tizen app. You will need to install tizen by following this: https://github.com/Samsung/Tizen.NET -->
+        <!-- <TargetFrameworks>$(TargetFrameworks);net7.0-tizen</TargetFrameworks> -->
+        <OutputType>Exe</OutputType>
+        <RootNamespace>Application.MauiBlazor</RootNamespace>
+        <UseMaui>true</UseMaui>
+        <SingleProject>true</SingleProject>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <EnableDefaultCssItems>false</EnableDefaultCssItems>
+
+        <!-- Display name -->
+        <ApplicationTitle>Application.MauiBlazor</ApplicationTitle>
+
+        <!-- App Identifier -->
+        <ApplicationId>com.companyname.application.mauiblazor</ApplicationId>
+        <ApplicationIdGuid>DFBFA95A-4D3A-4E2A-B650-A4594E18C590</ApplicationIdGuid>
+
+        <!-- Versions -->
+        <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
+        <ApplicationVersion>1</ApplicationVersion>
+
+        <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">14.2</SupportedOSPlatformVersion>
+        <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">14.0</SupportedOSPlatformVersion>
+        <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">24.0</SupportedOSPlatformVersion>
+        <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</SupportedOSPlatformVersion>
+        <TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</TargetPlatformMinVersion>
+        <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'tizen'">6.5</SupportedOSPlatformVersion>
+        <Platforms>AnyCPU;x64</Platforms>
+        <Copyright>Direc Business Technologies Inc</Copyright>
+        <RunAnalyzersDuringBuild>True</RunAnalyzersDuringBuild>
+        <RunAnalyzersDuringLiveAnalysis>True</RunAnalyzersDuringLiveAnalysis>
+        <EnableNETAnalyzers>True</EnableNETAnalyzers>
+        <AssemblyVersion>1.0</AssemblyVersion>
+        <FileVersion>1.0.0.0</FileVersion>
+        <Title>TEST TIMS</Title>
+        <Authors>Direc Business Technologies Inc</Authors>
+        <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
+        <EnforceCodeStyleInBuild>False</EnforceCodeStyleInBuild>
+        <Company>Direc Business Technologies Inc</Company>
+        <PackageIcon>TIMS128.png</PackageIcon>
+        <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
+        <AppxPackageSigningEnabled>False</AppxPackageSigningEnabled>
+        <AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
+        <AppxAutoIncrementPackageRevision>True</AppxAutoIncrementPackageRevision>
+        <AppxSymbolPackageEnabled>False</AppxSymbolPackageEnabled>
+        <GenerateTestArtifacts>True</GenerateTestArtifacts>
+        <AppInstallerUri>C:\Users\Direc\OneDrive\Desktop</AppInstallerUri>
+        <HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net7.0-android|AnyCPU'">
+      <Optimize>False</Optimize>
+      <EmbedAssembliesIntoApk>True</EmbedAssembliesIntoApk>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net7.0-ios|AnyCPU'">
+      <Optimize>False</Optimize>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net7.0-maccatalyst|AnyCPU'">
+      <Optimize>False</Optimize>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net7.0-windows10.0.19041.0|AnyCPU'">
+      <Optimize>False</Optimize>
+      <ApplicationTitle>TIMS  Mobile</ApplicationTitle>
+      <ApplicationId>com.dbti.timsmobile.mauiblazor</ApplicationId>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net7.0-android|AnyCPU'">
+      <Optimize>False</Optimize>
+      <AndroidPackageFormat>apk</AndroidPackageFormat>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net7.0-android|x64'">
+      <AndroidPackageFormat>apk</AndroidPackageFormat>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net7.0-android|x64'">
+      <EmbedAssembliesIntoApk>True</EmbedAssembliesIntoApk>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net7.0-android33.0|AnyCPU'">
+      <AndroidPackageFormat>apk</AndroidPackageFormat>
+      <ApplicationTitle>TEST TIMS</ApplicationTitle>
+      <ApplicationId>com.dbti.timstest</ApplicationId>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net7.0-android33.0|x64'">
+      <AndroidPackageFormat>apk</AndroidPackageFormat>
+      <ApplicationTitle>TEST TIMS</ApplicationTitle>
+      <ApplicationId>com.dbti.timstest</ApplicationId>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net7.0-android33.0|AnyCPU'">
+      <EmbedAssembliesIntoApk>True</EmbedAssembliesIntoApk>
+      <ApplicationTitle>TEST TIMS</ApplicationTitle>
+      <ApplicationId>com.dbti.timstest</ApplicationId>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net7.0-android33.0|x64'">
+      <EmbedAssembliesIntoApk>True</EmbedAssembliesIntoApk>
+      <ApplicationTitle>TEST TIMS</ApplicationTitle>
+      <ApplicationId>com.dbti.timstest</ApplicationId>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net7.0-windows10.0.19041.0|x64'">
+      <ApplicationTitle>TIMS  Mobile</ApplicationTitle>
+      <ApplicationId>com.dbti.timsmobile.mauiblazor</ApplicationId>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net7.0-windows10.0.19041.0|AnyCPU'">
+      <ApplicationTitle>TIMS  Mobile</ApplicationTitle>
+      <ApplicationId>com.dbti.timsmobile.mauiblazor</ApplicationId>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net7.0-windows10.0.19041.0|x64'">
+      <ApplicationTitle>TIMS  Mobile</ApplicationTitle>
+      <ApplicationId>com.dbti.timsmobile.mauiblazor</ApplicationId>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <!-- App Icon -->        
+		<MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appicon.svg" Color="#FFFFFF" />
+
+		<!-- Splash Screen -->
+        <MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#FFFFFF" BaseSize="128,128" />
+
+        <!-- Images -->
+        <MauiImage Include="Resources\Images\*" />
+        <MauiImage Update="Resources\Images\dotnet_bot.svg" BaseSize="168,208" />
+
+        <!-- Custom Fonts -->
+        <MauiFont Include="Resources\Fonts\*" />
+
+        <!-- Raw Assets (also remove the "Resources\Raw" prefix) -->
+        <MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Remove="appsettings.json" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="Resources\AppIcon\isi.png" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Include="Resources\AppIcon\isi.png">
+        <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      </Content>
+    </ItemGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Include="appsettings.json" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Include="..\..\..\..\..\Users\Danilo II Veroy\Downloads\TIMS128.png">
+        <Pack>True</Pack>
+        <PackagePath>\</PackagePath>
+      </None>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="BlazorStrap.V5" Version="5.1.102.51723" />
+        <PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.1.0" />
+        <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="7.0.14" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="7.0.0" />
+        <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="7.0.0" />
+		<PackageReference Include="Radzen.Blazor" Version="4.21.1" />
+		<PackageReference Include="RestSharp" Version="110.2.0" />
+		<PackageReference Include="RestSharp.Serializers.NewtonsoftJson" Version="110.2.0" />
+		<PackageReference Include="ZXingBlazor" Version="1.0.3" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Application.Libraries\Application.Libraries.csproj" />
+      <ProjectReference Include="..\Application.Models\Application.Models.csproj" />
+      <ProjectReference Include="..\DataManager.Libraries\DataManager.Libraries.csproj" />
+    </ItemGroup>
+</Project>

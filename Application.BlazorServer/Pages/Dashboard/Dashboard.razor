@@ -1,0 +1,47 @@
+﻿@layout MainLayout
+
+@page "/Home"
+
+<MacroBreadcrumbs Breadcrumbs=Breadcrumbs></MacroBreadcrumbs>
+
+<MacroBody>
+@* 	<MacroContainer>
+		<h4>Sales Order Status</h4>
+	</MacroContainer> *@
+	<MacroContainer>
+		<div class="row row-cols-2 gx-0">
+			<div class="row d-flex align-items-center">
+				<h5>Sales Order Status</h5>
+			</div>
+			<div class="row mb-3 gx-0" style="justify-content:end">
+				<label for="html5-search-input" style="display:flex; align-items:center;" class="col-md-1 col-form-label">Search:</label>
+				<div class="col-md-6 ms-1">
+				<input class="form-control" type="text" placeholder="Search ..." id="html5-search-input" @bind="@searchValue" @oninput="(EventArgs) => {SearchSalesOrder(EventArgs.Value.ToString());}" />
+			</div>
+		</div>
+		</div>
+		<RadzenDataGrid AllowFiltering="false" AllowColumnResize="false"
+						AllowAlternatingRows="false" FilterMode="FilterMode.Advanced"
+						AllowSorting="true" PageSize="5" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+						Data="@tableData" TItem="DashboardViewModel.SalesOrders" LogicalFilterOperator="LogicalFilterOperator.Or">
+			<EmptyTemplate>
+				<p style="color: lightgrey; font-size: 24px; text-align: center; margin: 2rem;">No records to display.</p>
+			</EmptyTemplate>
+			<Columns>
+				@* <RadzenDataGridColumn TItem="SalesOrders" Property="@nameof(SalesOrders.SOBatchNumber)" Title="SO Batch Number" Width="160px" /> *@
+				<RadzenDataGridColumn TItem="DashboardViewModel.SalesOrders" Property="@nameof(DashboardViewModel.SalesOrders.SONo)" Title="SONo" Width="80px" />
+				<RadzenDataGridColumn TItem="DashboardViewModel.SalesOrders" Property="@nameof(DashboardViewModel.SalesOrders.CustomerName)" Title="Customer Name" Width="160px" />
+				<RadzenDataGridColumn TItem="DashboardViewModel.SalesOrders" Property="@nameof(DashboardViewModel.SalesOrders.ItemCode)" Title="Item Code" Width="160px" />
+				<RadzenDataGridColumn TItem="DashboardViewModel.SalesOrders" Property="@nameof(DashboardViewModel.SalesOrders.ItemName)" Title="Item Name" Width="160px" />
+				<RadzenDataGridColumn TItem="DashboardViewModel.SalesOrders" Property="@nameof(DashboardViewModel.SalesOrders.ProductType)" Title="Product Type" Width="160px" />
+				@* <RadzenDataGridColumn TItem="SalesOrders" Property="@nameof(SalesOrders.CustomerBatchNo)" Title="Box Batch" Width="160px" /> *@
+				@* <RadzenDataGridColumn TItem="SalesOrders" Property="@nameof(SalesOrders.PalletStatus)" Title="Pallet Status" Width="160px" /> *@
+				<RadzenDataGridColumn TItem="DashboardViewModel.SalesOrders" Title="Additional Details" Frozen="true" Width="160px" TextAlign="TextAlign.Center">
+					<Template Context="data">
+						<RadzenButton Click="@((args) => SelectSalesOrder(data.SONo.ToString()))" ButtonStyle="ButtonStyle.Primary"><i class="fa fa-eye"></i></RadzenButton>
+					</Template>
+				</RadzenDataGridColumn>
+			</Columns>
+		</RadzenDataGrid>
+	</MacroContainer>
+</MacroBody>

@@ -1,0 +1,38 @@
+﻿@layout MainLayout
+
+@page "/UserGroup"
+
+<PageTitle>User Group</PageTitle>
+
+<MacroBreadcrumbs Breadcrumbs="Breadcrumbs"></MacroBreadcrumbs>
+
+<MacroBody>
+    <MacroContainer>
+        <div>
+			<button type="button" id="btnAddNewGroup" @onclick='() => {_navManager.NavigateTo($"UserGroupSetup/0");}'  class="btn btn-success float-end mb-3"><i class="fas fa-users"></i>  Add</button>
+            @*<a type="button" id="btnAddNewGroup" href="/UserGroupSetup/0" class="btn btn-success float-end mb-3"><i class="fas fa-users"></i>  Add</a>*@
+        </div>
+		<div class="mb-3 row" style="justify-content:end">
+			<label for="html5-search-input" style="display:flex; align-items:center; flex-direction:row-reverse" class="col-md-1 col-form-label">Search:</label>
+			<div class="col-md-3">
+				<input class="form-control" type="text" placeholder="Search ..." id="html5-search-input" @bind="@searchValue" @oninput="(EventArgs) => {SearchGroup(EventArgs.Value.ToString());}" />
+			</div>
+		</div>
+		<RadzenDataGrid AllowFiltering="false" AllowColumnResize="false" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="5" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+						Data=@groupTable TItem="UserViewModel.UserGroupsViewModel" LogicalFilterOperator="LogicalFilterOperator.Or">
+			<EmptyTemplate>
+				<p style="color: lightgrey; font-size: 24px; text-align: center; margin: 2rem;">No records to display.</p>
+			</EmptyTemplate>
+			<Columns>
+				<RadzenDataGridColumn TItem="UserViewModel.UserGroupsViewModel" Property="UserGrpId" Title="Group Id" />
+				<RadzenDataGridColumn TItem="UserViewModel.UserGroupsViewModel" Property="Name" Title="Group Name" />
+				@* <RadzenDataGridColumn TItem="UserViewModel.UserGroupsViewModel" Property="CreateDate" Title="Create Date" FormatString="{0:yyyy-MM-dd}" /> *@
+				<RadzenDataGridColumn TItem="UserViewModel.UserGroupsViewModel" Title="Action" Sortable="false" Filterable="false" TextAlign="TextAlign.Center">
+					<Template Context="data">
+						<RadzenButton ButtonStyle="ButtonStyle.Primary" Click="@(() => SelectGroup(data.UserGrpId))"><i class="fa fa-list-alt"></i></RadzenButton>
+					</Template>
+				</RadzenDataGridColumn>
+			</Columns>
+		</RadzenDataGrid>
+    </MacroContainer>
+</MacroBody>

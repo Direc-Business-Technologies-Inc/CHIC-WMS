@@ -1,0 +1,37 @@
+﻿@layout MainLayout
+
+@page "/DispatchNotifications"
+
+@if (_IsBusy)
+{
+	<MacroLoadingScreen></MacroLoadingScreen>
+}
+
+<MacroBreadcrumbs Breadcrumbs=Breadcrumbs>
+	@if (isMute)
+	{
+		<i style="margin-left:2%" class="bx bx-volume-mute bx-md" @onclick="() => SoundNotification(isMute)"></i>
+	}
+	else
+	{
+		<i style="margin-left:2%" class="bx bx-volume-full bx-md" @onclick="() => SoundNotification(isMute)"></i>
+	}
+</MacroBreadcrumbs>
+
+<div class="row" style="max-height: 65vh; height: 65vh;">
+	<div class="col text-center py-3 border rounded-2" style="max-height:inherit;">
+		<h5 class="mb-3">Scheduled Sales Orders To Be Dispatched</h5>
+		<div style="max-height:90%; overflow-y:auto;">
+			@foreach (var SO in _itemList.Where(x => x.EBStatus == "For Dispatch" && x.Status != "For Dispatch - Ready"))
+			{
+				<div class="d-flex justify-content-center col-12 mb-2" @onclick="() => SelectSO(SO)">
+					<div class="avatar avatar-xl text-center">
+						<span class="avatar-initial rounded bg-label-primary">
+							@SO.DocNum
+						</span>
+					</div>
+				</div>
+			}
+		</div>
+	</div>
+</div>

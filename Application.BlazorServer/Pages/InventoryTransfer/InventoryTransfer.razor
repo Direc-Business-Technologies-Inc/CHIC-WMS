@@ -1,0 +1,161 @@
+﻿@layout MainLayout
+@page "/InventoryTransfer"
+
+@if (_model.IsBusy)
+{
+	<MacroLoadingScreen></MacroLoadingScreen>
+}
+<h3>Inventory Transfer</h3>
+
+<BSToaster WrapperClass="m-3" Position="Position.Fixed" ZIndex="2000" />
+
+<div class="row">
+	<div class="col">
+		<div class="card">
+			<div class="card-body">
+				<div class="row">
+
+					<div class="col-6">
+						<div class="border rounded p-3 mb-3">
+							<div class="row">
+
+								<div class="col-12">
+									<div class="input-group mb-3">
+										<input type="text" class="form-control" placeholder="Pallet No." aria-label="Pallet No." aria-describedby="btn-scan-pallet" @bind=_model.PalletBarcode @onkeyup=OnPalletBarcodeEnter>
+										<button class="btn btn-outline-secondary" type="button" id="btn-scan-pallet"><i class='bx bx-qr-scan'></i></button>
+									</div>
+								</div>
+								<div class="col-12">
+									<div class="input-group mb-3">
+										@if (_isNoBin)
+										{
+											<input disabled type="text" class="form-control" placeholder="Bin" aria-label="Bin" aria-describedby="btn-scan-bin" @ref="_lrefBincode" @bind="_model.BinBarcode" @onkeyup=CheckIsExistBincode>
+											<button disabled class="btn btn-outline-secondary" type="button" id="btn-scan-bin" @ref="_lrefBtnBin"><i class='bx bx-qr-scan'></i></button>
+										}
+										else
+										{
+											<input type="text" class="form-control" placeholder="Bin" aria-label="Bin" aria-describedby="btn-scan-bin" @ref="_lrefBincode" @bind="_model.BinBarcode" @onkeyup=CheckIsExistBincode>
+											<button class="btn btn-outline-secondary" type="button" id="btn-scan-bin" @ref="_lrefBtnBin"><i class='bx bx-qr-scan'></i></button>
+										}
+									</div>
+								</div>
+							</div>
+
+
+							<div class="col d-none">
+							</div>
+
+							<div class="col">
+								<div class="mb-3">
+									<label for="inp-docdate" class="form-label">Transfer Date</label>
+									<RadzenDatePicker @bind-Value=@_model.inventoryTransfer.DocDate Style="width: 100%; display: block;" />
+								</div>
+								<div class="mb-3">
+									<label for="select-transfertype" class="form-label">Transfer Type</label>
+									<RadzenDropDown @bind-SearchText=SearchText FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" FilterOperator="StringFilterOperator.StartsWith" AllowFiltering="true"
+													Disabled Data=@_UTransferType TextProperty="Value" ValueProperty="Key" AllowClear="true"
+													@bind-Value=_model.inventoryTransfer.UTransferType
+													Style="width: 100%;" />
+								</div>
+								<div class="mb-3" readonly>
+									<label for="select-location" class="form-label">Source Location</label>
+									<RadzenDropDown @bind-SearchText=SearchText FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" FilterOperator="StringFilterOperator.StartsWith" AllowFiltering="true"
+													Disabled Data=@_model.locations TextProperty="Value" ValueProperty="Key" AllowClear="true" @bind-Value=_model.inventoryTransfer.LocationCode Style="width: 100%;" />
+								</div>
+								<div class="mb-3" readonly>
+									<label for="select-location" class="form-label">Destination Location</label>
+									<RadzenDropDown @bind-SearchText=SearchText FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" FilterOperator="StringFilterOperator.StartsWith" AllowFiltering="true"
+													Disabled Data=@_model.locations TextProperty="Value" ValueProperty="Key" AllowClear="true" @bind-Value=_model.inventoryTransfer.DestLocation Style="width: 100%;" />
+								</div>
+							</div>
+
+						</div>
+					</div>
+
+					@if (LineSelected is null)
+					{
+						<div class="col-6">
+							<div class="border rounded p-3 mb-3">
+								<div class="row">
+									<h5>Item Details</h5>
+									@* <div class="col-6">
+								<h6>Planned No. Of Boxes</h6>
+								</div>
+								<div class="col-6">
+								<h6>Actual No. Of Boxes</h6>
+								</div> *@
+
+									@foreach (var line in _model.inventoryTransfer.InventoryTransferLines)
+									{
+										<div class="row my-3">
+											<div class="col-12">
+												<h7>@line.ItemName</h7>
+											</div>
+											<div class="col-12">
+												<h7>S.O #: @line.SalesOrderNum </h7>
+											</div>
+											<div class="col-12 d-none">
+												<h7>FromWhse: @line.FromWarehousecode </h7>
+											</div>
+											<div class="col-12 d-none">
+												<h7>WhseCode: @line.Warehousecode </h7>
+											</div>
+											<div class="col-6">
+												<h7>Pallet Code: @line.PalletCode</h7>
+											</div>
+											<div class="col-6">
+												<h7>Bin Code: @line.BinCode</h7>
+											</div>
+											<div class="col-6">
+												<h6>Planned No. Of Boxes</h6>
+											</div>
+											<div class="col-6">
+												<h6>Actual No. Of Boxes</h6>
+											</div>
+											<div class="col-6">
+												<div class="mb-3"><input readonly type="number" min="0" class="form-control" placeholder="Planned No. Of Boxes" aria-label="Bin" aria-describedby="btn-scan-plannedqty" @bind="line.PlannedBoxQty"></div>
+											</div>
+											<div class="col-6">
+												<div class="mb-3"><input type="number" class="form-control" onkeydown="NoNegativeNumber(event)" placeholder="Actual No. Of Boxes" aria-label="Bin" aria-describedby="btn-scan-actualqty" min="0" max="@_actualQty" value="@line.ActualBoxQty" @onchange="(args) => ValidateBoxNo(args, line)"></div>
+											</div>
+										</div>
+									}
+								</div>
+							</div>
+						</div>
+					}
+					else
+					{
+						<div>
+							<button class="btn btn-primary" @onclick="() => LineSelected = null">Return</button>
+						</div>
+					}
+
+				</div> <!-- End of Row inside Body-->
+			</div> <!-- End of Body-->
+
+			<BSCol Column="12" Class="mt-2">
+				<BSRow>
+					<BSCol>
+						<BSButton Class="w-100" Size=Size.Large Color=BSColor.Secondary OnClick=Clear>Clear</BSButton>
+					</BSCol>
+					<BSCol>
+						<BSButton Class="w-100" Size=Size.Large Color=BSColor.Primary OnClick="Post"
+								  IsDisabled="@(_isDisabled)">
+							@if (_model.IsPosting)
+							{
+								<span class="spinner-border me-1" role="status" aria-hidden="true"></span>
+
+								<span>Saving...</span>
+							}
+							else
+							{
+								<span>Save</span>
+							}
+						</BSButton>
+					</BSCol>
+				</BSRow>
+			</BSCol>
+		</div>
+	</div>
+</div>

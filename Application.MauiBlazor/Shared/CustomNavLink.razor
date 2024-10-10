@@ -1,0 +1,37 @@
+﻿@inject IJSRuntime JS
+<li class="@this.ListItemCssClass @GetActive(AdditionalAttributes.GetValueOrDefault("href")?.ToString() ?? "", NavLinkMatch.All)" @onclick=HideNav>
+    <NavLink @attributes="@this.AdditionalAttributes" Match="@this.Match" ActiveClass="@this.ActiveClass" Class="menu-link"></NavLink>
+</li>
+
+@code {
+    [Parameter] public string ListItemCssClass { get; set; }
+
+    [Parameter] public NavLinkMatch Match { get; set; }
+
+    [Parameter] public string ActiveClass { get; set; }
+
+    [Parameter(CaptureUnmatchedValues = true)] public IReadOnlyDictionary<string, object> AdditionalAttributes { get; set; }
+
+    [Inject]
+    NavigationManager NavigationManager { get; set; }
+
+    private string href = String.Empty;
+    protected override void OnInitialized()
+    {
+        NavigationManager.LocationChanged += (s, e) => StateHasChanged();
+    }
+
+    bool IsActive(string href, NavLinkMatch navLinkMatch = NavLinkMatch.Prefix)
+    {
+        var relativePath = NavigationManager.ToBaseRelativePath(NavigationManager.Uri).ToLower();
+        return navLinkMatch == NavLinkMatch.All ? relativePath == href.ToLower() : relativePath.StartsWith(href.ToLower());
+    }
+
+    string GetActive(string href, NavLinkMatch navLinkMatch = NavLinkMatch.Prefix) => IsActive(href, navLinkMatch) ? "active" : "";
+
+
+    private void HideNav()
+    {
+        JS.InvokeVoidAsync("eval", "document.querySelector('.layout-overlay.layout-menu-toggle').click()");
+    }
+}

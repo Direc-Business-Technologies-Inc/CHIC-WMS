@@ -1,0 +1,250 @@
+﻿@{
+	var menu = new Dictionary<string, Dictionary<string, string>>()
+{
+					{
+						"Home", new Dictionary<string, string>() {
+							{ "active", "" },
+							{ "Index", "" },
+							{ "Dashboard", "" },
+							{ "NotificationDashboard", "" }
+						}
+					}, {
+						"Maintenance", new Dictionary<string, string>() {
+							{ "active", "" },
+							{ "EmailMaintenance", "" }
+						}
+					}, {
+						"User", new Dictionary<string, string>() {
+							{ "active", ""},
+							{ "Index", "" },
+							{ "UserManagement", ""},
+							{ "UserGroup", ""},
+							{ "UserAuthorization", ""}
+						}
+					}, {
+						"Modules", new Dictionary<string, string>() {
+							{ "active", ""},
+                            //{ "Schedules", "" },
+                            //{ "Irradiation", "" },
+                            { "QCMaintenance", "" }
+						}
+					}, {
+						"Bins", new Dictionary<string, string>() {
+							{ "active", ""},
+							{ "BinMapping", ""},
+							{ "BinAssignment", ""}
+						}
+					}, {
+						"QCMaintenance", new Dictionary<string, string>() {
+							{ "active", ""},
+							{ "QCMaintenance", ""}
+						}
+					}, {
+						"Inventory", new Dictionary<string, string>() {
+							{ "active", ""},
+							{ "InventoryTransfer", ""}
+						}
+					},{
+						"QCOrder", new Dictionary<string, string>() {
+							{ "active", ""},
+							{ "ReceivingInspection", ""},
+							{ "Dosimetry", "" }
+						}
+					}, {
+						"SalesOrder", new Dictionary<string, string>() {
+							{ "active", ""},
+							{ "BatchStatusUpdate", ""}
+						}
+					}, {
+						"Schedules", new Dictionary<string, string>() {
+							{ "active", ""},
+							{ "PickUpSchedule", ""},
+							{ "DeliverySchedule", ""},
+							{ "IrradiationSchedule", ""}
+						}
+					}, {
+						"FormsandReports", new Dictionary<string, string>() {
+							{ "active", ""},
+							{ "PalletLabelPrinting", "" },
+							{ "FormsandReports", "" }
+						}
+					},{
+						"Transactional", new Dictionary<string, string>() {
+							{ "active", ""},
+							{ "Receiving", "" },
+							{ "Releasing", "" }
+						}
+					},{
+						"Irradiation", new Dictionary<string, string>() {
+							{ "active", ""},
+							{ "Irradiation", "" }
+						}
+					}
+				};
+
+
+	//var controllerName = ViewContext.RouteData.Values["Controller"].ToString();
+	//var actionName = ViewContext.RouteData.Values["Action"].ToString();
+
+	//var x = menu["Home"]["Index"];
+
+	//menu[controllerName]["active"] = "active open";
+	//menu[controllerName][actionName] = "active open";
+
+}
+
+<aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
+	<div class="app-brand demo">
+		<a href="#" class="app-brand-link">
+			<span class="app-brand-logo demo">
+				<img src="img/branding/TIMS.png" class="h-auto" width="150" alt="logo">
+			</span>
+			@*<span class="app-brand-text demo menu-text fw-bolder ms-2">TIMS</span>*@
+		</a>
+
+@*		<a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto">
+			<i class="bx bx-chevron-left bx-sm align-middle"></i>
+		</a>*@
+	</div>
+
+	<div class="menu-inner-shadow"></div>
+
+	<ul class="menu-inner">
+		<!-- Dashboards -->
+		<!-- User Management -->
+		@*            <li class="menu-item active">
+		<a href="javascript:void(0)" class="menu-link menu-toggle">
+		<i class="menu-icon tf-icons bx bx-home-circle"></i>
+		<div data-i18n="Administration">Administration</div>
+		</a>
+		<ul class="menu-sub">
+		<li class="menu-item">
+		<a href="javascript:void(0);" class="menu-link menu-toggle">
+		<i class="menu-icon tf-icons fa-solid fa-users"></i>
+		<div data-i18n="Users">Users</div>
+		<a href="UserDetails" class="menu-link">
+		<i class="menu-icon tf-icons fa-solid fa-user-pen"></i>
+		<div data-i18n="User Details">User Details</div>
+		</a>
+		<ul class="menu-sub">
+		<li class="menu-item">
+		<a href="/UserManagement" class="menu-link">
+		<i class="menu-icon tf-icons fa-solid fa-user-pen"></i>
+		<div data-i18n="User Management">User Management</div>
+		</a>
+		</li>
+		<li class="menu-item">
+		<a href="/UserGroup" class="menu-link">
+		<i class="menu-icon tf-icons fa-solid fa-users-rectangle"></i>
+		<div data-i18n="User Group">User Group</div>
+		</a>
+		</li>
+		<li class="menu-item">
+		<a href="/UserAuthorization" class="menu-link">
+		<i class="menu-icon tf-icons fa-solid fa-user-lock"></i>
+		<div data-i18n="General Authorization">General Authorization</div>
+		</a>
+		</li>
+		</ul>
+		</li>
+		</ul>
+		</li>*@
+
+		<!-- Configuration -->
+		<li class="auth-sales menu-header small text-uppercase"><span class="menu-header-text">User Management</span></li>
+		<li class="menu-item">
+			<a href="/UserManagement" class="menu-link">
+				<i class="menu-icon tf-icons fa-solid fa-user-pen"></i>
+				<div data-i18n="User Management">User Management</div>
+			</a>
+		</li>
+		<li class="menu-item">
+			<a href="/UserGroup" class="menu-link">
+				<i class="menu-icon tf-icons fa-solid fa-users-rectangle"></i>
+				<div data-i18n="User Group">User Group</div>
+			</a>
+		</li>
+		<li class="menu-item">
+			<a href="UserAuthorization" class="menu-link">
+				<i class="menu-icon tf-icons fa-solid fa-user-lock"></i>
+				<div data-i18n="General Authorization">General Authorization</div>
+			</a>
+		</li>
+		<li class="auth-sales menu-header small text-uppercase"><span class="menu-header-text">Dashboard</span></li>
+		<li class="menu-item">
+			<a href="/BinDashboard" class="menu-link">
+				<i class="menu-icon tf-icons bx bx-map-alt"></i>
+				<div data-i18n="Bin Dashboard">Bin Dashboard</div>
+			</a>
+		</li>
+		<li class="auth-sales menu-header small text-uppercase"><span class="menu-header-text">QC Maintenance</span></li>
+		<li class="menu-item">
+			<a href="/QCMaintenance" class="menu-link">
+				<i class="menu-icon tf-icons bx bx-search-alt"></i>
+				<div data-i18n="QC Maintenance">QC Maintenance</div>
+			</a>
+		</li>
+		<li class="auth-sales menu-header small text-uppercase"><span class="menu-header-text">Bins</span></li>
+		<li class="menu-item">
+			<a href="/BinMapping" class="menu-link">
+				<i class="menu-icon tf-icons bx bx-map-alt"></i>
+				<div data-i18n="Bin Mapping">Bin Mapping</div>
+			</a>
+		</li>
+		<li class="auth-sales menu-header small text-uppercase"><span class="menu-header-text">Schedules</span></li>
+		<li class="menu-item">
+			<a href="/ReceivingSchedule" class="menu-link">
+				<i class="menu-icon tf-icons bx bxs-truck"></i>
+				<div data-i18n="Receiving Schedule">Receiving Schedule</div>
+			</a>
+			<a href="/DispatchSchedule" class="menu-link">
+				<i class="menu-icon tf-icons bx bx-package"></i>
+				<div data-i18n="Dispatch Schedule">Dispatch Schedule</div>
+			</a>
+			<a href="/IrradiationSchedule" class="menu-link">
+				<i class="menu-icon tf-icons bx bx-shield"></i>
+				<div data-i18n="Irradiation Schedule">Irradiation Schedule</div>
+			</a>
+		</li>
+		<li class="auth-sales menu-header small text-uppercase"><span class="menu-header-text">QC Order</span></li>
+		<li class="menu-item">
+			<a href="/QCOrder" class="menu-link">
+				<i class="menu-icon tf-icons bx bx-user-check"></i>
+				<div data-i18n="QC Order">QC Order</div>
+			</a>
+		</li>
+		<li class="auth-sales menu-header small text-uppercase"><span class="menu-header-text">Forms and Reports</span></li>
+		<li class="menu-item">
+			<a href="/BinLabelPrinting" class="menu-link">
+				<i class="menu-icon tf-icons bx bx-file"></i>
+				<div data-i18n="Bin Label Printing">Bin Label Printing</div>
+			</a>
+		</li>
+		<li class="menu-item">
+			<a href="/IrradiationLabelPrinting" class="menu-link">
+				<i class="menu-icon tf-icons bx bx-file"></i>
+				<div data-i18n="Irradiation Label Printing">Irradiation Label Printing</div>
+			</a>
+		</li>
+		<li class="menu-item">
+			<a href="/PalletLabelPrinting" class="menu-link">
+				<i class="menu-icon tf-icons bx bx-file"></i>
+				<div data-i18n="Pallet Label Printing">Pallet Label Printing</div>
+			</a>
+		</li>
+		<li class="auth-sales menu-header small text-uppercase"><span class="menu-header-text">Receiving</span></li>
+		<li class="menu-item">
+			<a href="/Receiving" class="menu-link">
+				<i class="menu-icon tf-icons bx bx-user-check"></i>
+				<div data-i18n="Receiving">Receiving</div>
+			</a>
+		</li>
+		<li class="auth-sales menu-header small text-uppercase"><span class="menu-header-text">Inventory Transfer</span></li>
+		<li class="menu-item">
+			<a href="/InventoryTransfer" class="menu-link">
+				<i class="menu-icon tf-icons bx bx-user-check"></i>
+				<div data-i18n="Inventory Transfer">Inventory Transfer</div>
+			</a>
+		</li>
+	</ul>
+</aside>

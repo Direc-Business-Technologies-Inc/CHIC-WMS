@@ -1,0 +1,35 @@
+﻿@page "/SOValidation"
+@using BlazorStrap.V5
+@using BlazorStrap;
+@using ZXingBlazor.Components
+
+@if (_IsBusy)
+{
+    <LoadingScreen></LoadingScreen>
+}
+
+<h3>
+    <span>SO Validation</span>
+</h3>
+
+<BSToaster WrapperClass="m-3" Position="Position.Fixed" ZIndex="2000" />
+
+@if (isGranted && _layout.showBarcode)
+{
+    <div>
+        <BarcodeReader UseBuiltinDiv="true" ScanResult=ScanResult CloseBtnTitle="Close" ResetBtnTitle="Reset" SelectDeviceBtnTitle="Select Camera" ScanBtnTitle="Scan" Close="() => _layout.ToggleBarcode()" />
+    </div>
+}
+
+<BSRow>
+    <RadzenFormField Text="Scan Pallet" Style="flex: 1;">
+        <ChildContent>
+        <BSInput InputType="InputType.Text" UpdateOnInput=true @bind-Value="_scanPalletInput" @onkeydown=OnScanInputEnter />
+        </ChildContent>
+        <End>
+            <RadzenButton Icon="qr_code_scanner" Click='() => {_layout.ToggleBarcode();}'></RadzenButton>
+        </End>
+    </RadzenFormField>
+</BSRow>
+
+

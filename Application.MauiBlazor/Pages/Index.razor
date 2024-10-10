@@ -1,0 +1,53 @@
+﻿@using Application.Models.ViewModels
+@using ZXingBlazor.Components
+@using Radzen
+@using Radzen.Blazor
+@using static Application.Models.ViewModels.DashboardNotificationViewModel
+@page "/"
+@*@page "/"*@
+
+<h3>Dashboard</h3>
+
+<div class="container">
+    <div class="row">
+        <div class="col-sm-12">
+
+@*             <h4>This is a sample data only!</h4>
+            <RadzenChart style="height: 400px">
+                <RadzenStackedBarSeries Data="@records" CategoryProperty="Module" Title="" LineType="LineType.Dashed" ValueProperty="Count">
+                    <RadzenSeriesDataLabels Visible=true/>
+                    <RadzenLegend Visible=false/>
+                </RadzenStackedBarSeries>                
+                <RadzenValueAxis>
+                    <RadzenGridLines Visible="true" />
+                    <RadzenAxisTitle Text="Current Records" />
+                </RadzenValueAxis>
+                <RadzenBarOptions Radius="5" />
+            </RadzenChart> *@
+
+            <RadzenDataGrid AllowFiltering="false" AllowColumnResize="false" FilterPopupRenderMode="PopupRenderMode.OnDemand"
+                            AllowAlternatingRows="false" FilterMode="FilterMode.Advanced"
+                            AllowSorting="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+                            @ref="grid" RowRender="RowRender" ExpandMode="DataGridExpandMode.Single" RowExpand="RowExpand"
+                            Data=_itemList TItem="DashboardNotificationViewModel" ColumnWidth="300px" LogicalFilterOperator="LogicalFilterOperator.Or"
+                            SelectionMode="DataGridSelectionMode.Single" @bind-Value=@selectedSalesOrder RowSelect="(args) => grid.ExpandRow(args)">
+                <Template Context="pallet">
+                    <RadzenDataGrid AllowFiltering="true" AllowPaging="false" AllowSorting="true" Data="pallet.Lines" TItem="DashboardNotificationLineViewModel"
+                                    AllowVirtualization="true" Style="max-height:400px">
+                        <Columns>
+                            <RadzenDataGridColumn TItem="DashboardNotificationLineViewModel" Property="@nameof(DashboardNotificationLineViewModel.PalletNo)" Title="Pallet No" />
+                            <RadzenDataGridColumn TItem="DashboardNotificationLineViewModel" Property="@nameof(DashboardNotificationLineViewModel.BinCode)" Title="Bin Code" />
+                        </Columns>
+                    </RadzenDataGrid>
+                </Template>
+
+                <Columns>
+                    <RadzenDataGridColumn TItem="DashboardNotificationViewModel" Property="@nameof(DashboardNotificationViewModel.DocNum)" Title="SO No" Width="160px" />
+                    <RadzenDataGridColumn TItem="DashboardNotificationViewModel" Property="@nameof(DashboardNotificationViewModel.Status)" Title="Status" Width="160px" />
+                </Columns>
+            </RadzenDataGrid>
+
+        </div>
+    </div>
+</div>
+

@@ -1,0 +1,277 @@
+﻿@page "/InventoryTransfer/Create"
+@using Application.Models.ViewModels;
+@using DataManager.Models.Enums;
+@using ZXingBlazor.Components
+
+@if (_model.IsBusy)
+{
+    <LoadingScreen></LoadingScreen>
+}
+<h3>
+    <span @onclick=ToggleBatchSrcList class="@(showBatchSrcList ? "text-muted" : "")">Inventory Transfer</span>
+    @if (showBatchSrcList)
+    {
+        <span> / Batch List</span>
+    }
+</h3>
+
+@if (isGranted && _layout.showBarcode)
+{
+    <div>
+        <BarcodeReader UseBuiltinDiv="true" ScanResult=ScanResult CloseBtnTitle="Close" ResetBtnTitle="Reset" SelectDeviceBtnTitle="Select Camera" ScanBtnTitle="Scan" Close="() => _layout.ToggleBarcode()" />
+    </div>
+}
+
+<BSToaster WrapperClass="m-3" Position="Position.Fixed" ZIndex="2000" />
+
+
+@if (showBatchSrcList)
+{
+    <BSTHead>Allocate from Whse (Source) </BSTHead>
+    <BSRow>
+        <RadzenDataGrid @ref="grid" Data="@filteredSrcList" AllowColumnResize="true" EditMode="DataGridEditMode.Single"
+                        AllowSorting="true" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                        AllowRowSelectOnRowClick="false" SelectionMode="DataGridSelectionMode.Multiple" @bind-Value=@_batchSelectedSrc>
+            <Columns>
+
+                <RadzenDataGridColumn TItem="BatchSerialViewModel.BatchSerial" Width="40px" Sortable="false" Filterable="false">
+                    <HeaderTemplate>
+                        <RadzenCheckBox TriState="true" TValue="bool?"
+                                        Value="@(filteredSrcList.Any(i => _batchSelectedSrc != null && _batchSelectedSrc.Contains(i)))"
+                                        Change="@(args => _batchSelectedSrc = args == true ? filteredSrcList.ToList() : null)" />
+                    </HeaderTemplate>
+                    <Template Context="batch">
+                        <RadzenCheckBox TriState="true"
+                                        Value="@(_batchSelectedSrc != null && _batchSelectedSrc.Contains(batch))" TValue="bool"
+                                        Change=@(args => { grid.SelectRow(batch); }) />
+                    </Template>
+                </RadzenDataGridColumn>
+                <!-- BatchNumber -->
+                <RadzenDataGridColumn TItem="BatchSerialViewModel.BatchSerial" Property="DistNumber" Title="Batch#" Filterable="false">
+                    <EditTemplate Context="batch">
+                        <RadzenTextBox @bind-Value="batch.DistNumber" Style="width:100%; display: block" Name="DistNumber" />
+                        <RadzenRequiredValidator Text="Batch Number is required" Component="DistNumber" Popup="true" />
+                    </EditTemplate>
+                </RadzenDataGridColumn>
+                <!-- Quantity -->
+                <RadzenDataGridColumn TItem="BatchSerialViewModel.BatchSerial" Property="Quantity" Title="Qty" Filterable="false">
+                    <EditTemplate Context="batch">
+                        <RadzenNumeric @bind-Value="batch.Quantity" Style="width:50%; display: block" Name="Quantity" />
+                        <RadzenRequiredValidator Text="Quantity is required" Component="Quantity" Popup="true" />
+                    </EditTemplate>
+                </RadzenDataGridColumn>
+                <!-- BinCode -->
+                <RadzenDataGridColumn TItem="BatchSerialViewModel.BatchSerial" Property="BinCode" Title="Bin">
+                    <EditTemplate Context="batch">
+                        <RadzenNumeric @bind-Value="batch.BinCode" Style="width:100%; display: block" Name="BinCode" />
+                    </EditTemplate>
+                </RadzenDataGridColumn>
+            </Columns>
+        </RadzenDataGrid>
+    </BSRow>
+    <BSRow>
+        <BSCol>
+            <BSButton Class="w-100" Size=Size.Medium Color=BSColor.Success OnClick=ToggleBatchSrcList>Next</BSButton>
+        </BSCol>
+    </BSRow>
+}
+else if (showBatchDesList)
+{
+    <BSTHead>Allocate from Whse (Source) </BSTHead>
+    <BSRow>
+        <RadzenDataGrid @ref="grid" Data="@filteredDesList" AllowColumnResize="true" EditMode="DataGridEditMode.Single"
+                        AllowSorting="true" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                        AllowRowSelectOnRowClick="false" SelectionMode="DataGridSelectionMode.Multiple" @bind-Value=@_batchSelectedDes>
+            <Columns>
+
+                <RadzenDataGridColumn TItem="BatchSerialViewModel.BatchSerial" Width="35px" Sortable="false" Filterable="false">
+                    <HeaderTemplate>
+                        <RadzenCheckBox TriState="true" TValue="bool?"
+                                        Value="@(filteredDesList.Any(i => _batchSelectedDes != null && _batchSelectedDes.Contains(i)))"
+                                        Change="@(args => _batchSelectedDes = args == true ? filteredDesList.ToList() : null)" />
+                    </HeaderTemplate>
+                    <Template Context="batch">
+                        <RadzenCheckBox TriState="true"
+                                        Value="@(_batchSelectedDes != null && _batchSelectedDes.Contains(batch))" TValue="bool"
+                                        Change=@(args => { grid.SelectRow(batch); }) />
+                    </Template>
+                </RadzenDataGridColumn>
+                <!-- BatchNumber -->
+                <RadzenDataGridColumn TItem="BatchSerialViewModel.BatchSerial" Property="DistNumber" Title="Batch#">
+                    <EditTemplate Context="batch">
+                        <RadzenTextBox @bind-Value="batch.DistNumber" Style="width:100%; display: block" Name="DistNumber" />
+                        <RadzenRequiredValidator Text="Batch Number is required" Component="DistNumber" Popup="true" />
+                    </EditTemplate>
+                </RadzenDataGridColumn>
+                <!-- Quantity -->
+                <RadzenDataGridColumn TItem="BatchSerialViewModel.BatchSerial" Property="Quantity" Title="Qty" Filterable="false">
+                    <EditTemplate Context="batch">
+                        <RadzenNumeric @bind-Value="batch.Quantity" Style="width:100%; display: block" Name="Quantity" />
+                        <RadzenRequiredValidator Text="Quantity is required" Component="Quantity" Popup="true" />
+                    </EditTemplate>
+                </RadzenDataGridColumn>
+                <!-- BinCode -->
+                <RadzenDataGridColumn TItem="BatchSerialViewModel.BatchSerial" Property="BinCode" Title="Bin" Filterable="false">
+                    <EditTemplate Context="batch">
+                        <RadzenNumeric @bind-Value="batch.BinCode" Style="width:100%; display: block" Name="BinCode" />
+                    </EditTemplate>
+                </RadzenDataGridColumn>
+            </Columns>
+        </RadzenDataGrid>
+    </BSRow>
+    <BSRow>
+        <BSCol>
+            <BSButton Class="w-100" Size=Size.Medium Color=BSColor.Success OnClick=ToggleBatchSrcList>Next</BSButton>
+        </BSCol>
+    </BSRow>
+}
+else
+{
+    <div class="row">
+        <div class="col">
+            <div class="card">
+                <div class="card-body" style="padding:0.5rem">
+                    @* <div class="border rounded p-3 mb-3"> *@
+                        <RadzenRow>
+                            <RadzenColumn Size="12" SizeSM="12">
+                                <RadzenStack Gap="0.5rem">                                    
+                                    <RadzenFormField Text="Scan Pallet" Variant="@variant" Style="flex: 1;">
+                                            <ChildContent>
+                                                <RadzenTextBox @ref=_radzPalletcode @bind-Value=_model.PalletBarcode @onkeyup=OnPalletBarcodeEnter Style="width: 100%; display: block;" />
+                                            </ChildContent>
+                                            <End>
+                                            <RadzenButton Icon="qr_code_scanner" Click='() => {_scanType = "Pallet"; _layout.ToggleBarcode();}'></RadzenButton>
+                                            </End>
+                                    </RadzenFormField>
+                                    <RadzenFormField Text="Scan Bin" Variant="@variant" Style="flex: 1;">
+                                        <ChildContent>
+                                            <RadzenTextBox Disabled=_isNoBin @ref="_radzBincode" @bind-Value="_model.BinBarcode" @onkeyup=CheckIsExistBincode Style="width: 100%; display: block;" />
+                                        </ChildContent>
+                                        <End>
+                                            <RadzenButton Icon="qr_code_scanner" Click='() => {_scanType = "Bin"; _layout.ToggleBarcode();}'></RadzenButton>
+                                        </End>
+                                    </RadzenFormField>
+                                    <RadzenFormField Text="Transfer Date" Variant="@variant" Style="flex: 1;">
+                                        <RadzenDatePicker @bind-Value=@_model.inventoryTransfer.DocDate Style="width: 100%; display: block;" />
+                                    </RadzenFormField>
+                                    <RadzenFormField Text="Transfer Type" Variant="@variant" Style="flex: 1;">
+                                        <RadzenDropDown Disabled="@_fldDisabled" Data=@_UTransferType @bind-Value="@_model.inventoryTransfer.UTransferType" TextProperty="Value" ValueProperty="Key" 
+                                                        AllowFiltering="false" AllowClear="true" @bind-SearchText=SearchText FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" FilterOperator="StringFilterOperator.StartsWith"/>
+                                    </RadzenFormField>
+                                    <RadzenFormField Text="Source Location" Variant="@variant" Style="flex: 1;">
+                                        <RadzenDropDown Disabled="@_fldDisabled" Data=@_model.locations @bind-Value="@_model.inventoryTransfer.LocationCode" TextProperty="Value" ValueProperty="Key"
+                                                        AllowFiltering="false" AllowClear="true" @bind-SearchText=SearchText FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" FilterOperator="StringFilterOperator.StartsWith"/>
+                                    </RadzenFormField>
+                                    <RadzenFormField Text="Destination Location" Variant="@variant" Style="flex: 1;">
+                                        <RadzenDropDown Disabled="@_fldDisabled" Data=@_model.locations @bind-Value="@_model.inventoryTransfer.DestLocation" TextProperty="Value" ValueProperty="Key"
+                                                        AllowFiltering="false" AllowClear="true" @bind-SearchText=SearchText FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" FilterOperator="StringFilterOperator.StartsWith"/>
+                                    </RadzenFormField>
+                                </RadzenStack>
+                            </RadzenColumn>
+                        </RadzenRow>                  
+                    @* </div> *@
+
+                    @if (LineSelected is null)
+                    {
+                        <div class="border rounded p-3 mb-3">
+                            @* <div class="row"> *@
+                                <h5>Item Details</h5>
+                                @* <div class="col-6">
+                                    <h6>Planned No. Of Boxes</h6>
+                                </div>
+                                <div class="col-6">
+                                    <h6>Actual No. Of Boxes</h6>
+                                </div> *@
+
+                                @foreach (var line in _model.inventoryTransfer.InventoryTransferLines)
+                                {
+                                    <div class="row my-3">
+                                        <div class="col-12">
+                                            <h7>@line.ItemName</h7>
+                                        </div>
+                                        <div class="col-12">
+                                            <h7>S.O #: @line.SalesOrderNum </h7>
+                                        </div>
+                                        <div class="col-12 d-none">
+                                            <h7>FromWhse: @line.FromWarehousecode </h7>
+                                        </div>
+                                        <div class="col-12 d-none">
+                                            <h7>WhseCode: @line.Warehousecode </h7>
+                                        </div>
+                                        <div class="col-6">
+                                            <h7>Pallet Code: @line.PalletCode</h7>
+                                        </div>
+                                        <div class="col-6">
+                                            <h7>Bin Code: @line.BinCode</h7>
+                                        </div>
+
+                                        <div class="col-6">
+                                        <RadzenFormField Text="Planned No. Of Boxes" Variant="@variant" Style="flex: 1;">
+                                                <ChildContent>
+                                                    <RadzenNumeric Disabled="true" @bind-Value=line.PlannedBoxQty Style="width: 100%; display: block;" />
+                                                </ChildContent>
+                                            </RadzenFormField>
+                                            @* <div class="mb-3"><input readonly type="text" class="form-control" placeholder="Planned No. Of Boxes" aria-label="Bin" aria-describedby="btn-scan-plannedqty" @bind="line.PlannedBoxQty"></div> *@
+                                        </div>
+                                        <div class="col-6">
+                                            <RadzenFormField Text="Actual No. Of Boxes" Variant="@variant" Style="flex: 1;">
+                                                <ChildContent>
+                                                <RadzenNumeric Min="0" Max="@_actualQty" ReadOnly="true" @bind-Value=line.ActualBoxQty Style="width: 100%; display: block;" />
+                                                </ChildContent>
+                                                <End>
+                                                    <RadzenButton Icon="cases" Size="ButtonSize.Small" Click="()=> FetchBatchData(line.LineNum)"></RadzenButton>
+                                                </End>
+                                            </RadzenFormField>
+                                            @* <div class="input-group">
+                                                <label class="matter-textfield-outlined outlined-label">                                                
+                                                        <input type="text" readonly class="form-control" placeholder="" aria-label="Bin" aria-describedby="btn-scan-actualqty" @bind="line.ActualBoxQty">
+                                                        <span>Actual No. Of Boxes</span>
+                                                </label>
+                                                <button @ref=_lrefBtnBatch class="btn btn-outline-info" type="button" id="btn-scan-bin" @onclick="()=> FetchBatchData(line.LineNum)"><i class='bx bxs-collection me-1'></i></button>                                                
+                                            </div> *@
+                                        </div>
+                                    </div>
+                                }
+                            @* </div> *@
+                        </div>                        
+                    }
+                    else
+                    {
+                        <div>
+                            <button class="btn btn-primary" @onclick="() => LineSelected = null">Return</button>
+                        </div>
+                    }
+
+                    <!--</div> End of Row inside Body-->
+
+                    <BSCol Column="12">
+                        <BSRow>
+                            <BSCol>
+                                <BSButton Class="w-100" Size=Size.Large Color=BSColor.Secondary OnClick=Clear>Clear</BSButton>
+                            </BSCol>
+                            <BSCol>
+                                <BSButton Class="w-100" Size=Size.Large Color=BSColor.Primary OnClick="Post"
+                                          IsDisabled="@(_isDisabled)">
+                                    @if (_model.IsPosting)
+                                    {
+                                        <span class="spinner-border me-1" role="status" aria-hidden="true"></span>
+
+                                        <span>Saving...</span>
+                                    }
+                                    else
+                                    {
+                                        <span>Save</span>
+                                    }
+                                </BSButton>
+                            </BSCol>
+                        </BSRow>
+                    </BSCol>
+                </div> <!-- End of Body-->
+
+            </div>
+        </div>
+    </div>
+}
+@* @code {
+    Variant variant = Variant.Outlined;
+} *@

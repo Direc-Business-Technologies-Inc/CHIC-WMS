@@ -1,0 +1,23 @@
+﻿<div class="nav-align-top">
+	<ul class="nav nav-tabs" role="tablist">
+		@for (int i = 0; i < TabsParameter.RenderFragments.Length; i++)
+		{
+			<li class="nav-item">
+				<button type="button" class="nav-link @(i == activeTabIndex ? "active" : "")" role="tab" data-bs-toggle="tab"
+						data-bs-target="#navs-top-@(TabsParameter.TabLabels[i].Replace(" ","-").ToLower())" aria-controls="navs-top-@(TabsParameter.TabLabels[i].Replace(" ","-").ToLower())"
+						aria-selected="true">
+					@TabsParameter.TabLabels[i]
+				</button>
+			</li>
+		}
+	</ul>
+	<div class="tab-content p-0">
+		@for (int i = 0; i < TabsParameter.RenderFragments.Length; i++)
+		{
+			<div class="tab-pane fade @(i == activeTabIndex ? "show active" : "")" id="navs-top-@(TabsParameter.TabLabels[i].Replace(" ","-").ToLower())" role="tabpanel">
+				@*Render element here*@
+				@TabsParameter.RenderFragments[i]
+			</div>
+		}
+	</div>
+</div>

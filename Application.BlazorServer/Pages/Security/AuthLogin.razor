@@ -1,0 +1,262 @@
+﻿@page "/"
+@page "/LoginAccount"
+
+<PageTitle>Login</PageTitle>
+
+<!-- Content -->
+
+<div class="authentication-wrapper authentication-cover">
+	<div class="authentication-inner row m-0">
+		<!-- /Left Text -->
+		<div class="d-none d-lg-flex col-lg-7 col-xl-8 align-items-center p-5" style="background-image: url('img/branding/Background.jpg'); background-size: cover;">
+			<div class="w-100 d-flex justify-content-center">
+				@*                <img src="img/branding/TIMS_2.png"
+				class="img-fluid"
+				alt="Login image"
+				width="625" />*@
+			</div>
+		</div>
+		<!-- /Left Text -->
+		<!-- Login -->
+		<div class="d-flex col-12 col-lg-5 col-xl-4 align-items-center authentication-bg p-sm-5 p-4">
+			<div class="w-px-400 mx-auto">
+				<!-- Logo -->
+				<div class="app-brand mb-5">
+					<a href="#" class="app-brand-link d-grid">
+						<span class="app-brand-logo demo">
+							<img src="img/branding/TIMS.png"
+								 class="img-fluid"
+								 alt="Login image" />
+						</span>
+					</a>
+				</div>
+				<!-- /Logo -->
+				@*                <h4 class="app-brand mb-2">
+				Welcome to <span class="app-brand-logo demo" style="margin-left:2%">
+				<img src="img/branding/TIMS_Text.png"
+				class="img-fluid"
+				alt="Login image"
+				width="100" />
+				</span>! 🤝
+				</h4>*@
+				<h4 class="app-brand mb-2">
+					Welcome
+				</h4>
+				<p class="mb-4">Please sign-in to your account and start the adventure</p>
+				<form id="formAuthentication" class="mb-3" onSubmit="return false">
+					<div class="mb-3">
+						<label for="username" class="form-label">Username</label>
+						<InputText @bind-Value="_loginViewModel.Username"
+								   type="text"
+								   class="form-control"
+								   id="username"
+								   name="email-username"
+								   placeholder="Enter your email or username"
+								   autofocus />
+					</div>
+					<div class="mb-3 form-password-toggle">
+						<div class="d-flex justify-content-between">
+							<label class="form-label" for="password">Password</label>
+						</div>
+						<div class="input-group input-group-merge">
+							<InputText @bind-Value="_loginViewModel.Password"
+									   type="password"
+									   id="password"
+									   class="form-control"
+									   name="password"
+									   placeholder="******"
+									   aria-describedby="password" />
+							<span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
+						</div>
+						@*                        <div class="d-flex justify-content-between">
+						<label class="form-label"></label>
+						<a href="#" class="btn" data-bs-toggle="modal" data-bs-target="#onboardingSlideModal">
+						<small>I forgot my username or password</small>
+						</a>
+						</div>*@
+					</div>
+					@*                    <div class="mb-3">
+					<div class="form-check">
+					<input class="form-check-input" type="checkbox" id="remember-me" />
+					<label class="form-check-label" for="remember-me"> Remember Me </label>
+					</div>
+					</div>*@
+					@*<button class="btn btn-primary d-grid w-100" @onclick=@(() => SuccessLogin())>Sign in</button>*@
+					@*<button id="loginBtnBackend" class="btn btn-primary d-grid w-100 disabled d-none" @onclick=@(() => Login(_loginViewModel))>Sign in</button>*@
+					@if (_Unsuccessful)
+					{
+						<div class="alert alert-danger" role="alert">The username or password you entered is incorrect.</div>
+					}
+					<button type="submit" id="loginBtn" class="btn btn-primary d-grid w-100">Sign in</button>
+				</form>
+				<h4 style="text-align:center;">
+					<span class="app-brand-logo demo" style="display: inline-block;">
+						<img src="img/branding/DBTI.png" class="" alt="Login image" width="100" />
+					</span>
+					<span class="app-brand-logo demo mx-2" style="display: inline-block;">
+						<img src="img/branding/Heart-hand-shake.png" class="" alt="Login image" width="35" />
+					</span>
+					<span class="app-brand-logo demo" style="display: inline-block;">
+						<img src="img/branding/isi.png" class="" alt="Login image" width="135" />
+					</span>
+				</h4>
+
+			</div>
+		</div>
+		<!-- /Login -->
+	</div>
+</div>
+
+<!-- / Content -->
+<!-- slider modal -->
+<div class="modal-onboarding modal fade animate__animated"
+	 id="onboardingSlideModal"
+	 data-bs-backdrop="static"
+	 tabindex="-1"
+	 aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content text-center">
+			<div class="modal-header border-0">
+				<button type="button"
+						class="btn-close"
+						data-bs-dismiss="modal"
+						aria-label="Close"></button>
+			</div>
+			<div id="modalCarouselControls" class="carousel slide pb-4 mb-2" data-bs-interval="false">
+				<ol class="carousel-indicators">
+					<li data-bs-target="#modalCarouselControls" data-bs-slide-to="0" class="active disable-click"></li>
+					<li data-bs-target="#modalCarouselControls" data-bs-slide-to="1" class="disable-click"></li>
+					<li data-bs-target="#modalCarouselControls" data-bs-slide-to="2" class="disable-click"></li>
+					<li data-bs-target="#modalCarouselControls" data-bs-slide-to="3" class="disable-click"></li>
+				</ol>
+				<div class="carousel-inner">
+					<div class="carousel-item active">
+						<OnBoardingMediaComponent PictureName="girl-with-laptop">
+						</OnBoardingMediaComponent>
+						<div class="onboarding-content">
+							<h4 class="onboarding-title text-body">Recover my account</h4>
+							<div class="onboarding-info">
+								Recover your account by using your account details.
+							</div>
+							<form>
+								<div class="row">
+									<div class="d-grid gap-2 col-lg-12 mx-auto">
+										<a class="btn btn-primary btn-lg" href="#modalCarouselControls"
+										   role="button"
+										   data-bs-slide="next">I forgot my username</a>
+										<a class="btn btn-primary btn-lg" href="#modalCarouselControls"
+										   role="button"
+										   data-bs-slide="next">I forgot my password</a>
+										<a class="btn btn-primary btn-lg" href="#modalCarouselControls"
+										   role="button"
+										   data-bs-slide="next">I forgot both my username & password</a>
+									</div>
+								</div>
+							</form>
+						</div>
+					</div>
+					<div class="carousel-item">
+						<OnBoardingMediaComponent PictureName="boy-with-laptop">
+						</OnBoardingMediaComponent>
+						<div class="onboarding-content">
+							<h4 class="onboarding-title text-body">Registered Email</h4>
+							<div class="onboarding-info">
+								Enter your email and we'll send you instructions to reset your
+							</div>
+							<form id="formEmailValidation" class="mb-3">
+								<div class="mb-3">
+									<label for="email" class="form-label">Email Address</label>
+									<input type="text"
+										   class="form-control"
+										   id="email"
+										   name="email"
+										   placeholder="Enter your email address"
+										   @bind-value="_resetEmail"
+										   autofocus />
+								</div>
+								<a class="btn btn-primary d-grid w-100" href="#modalCarouselControls"
+								   role="button"
+								   data-bs-slide="next">Submit</a>
+							</form>
+							<div class="text-center">
+								<a href="#modalCarouselControls"
+								   role="button"
+								   data-bs-slide="prev"
+								   class="d-flex align-items-center justify-content-center">
+									<i class="bx bx-chevron-left scaleX-n1-rtl bx-sm"></i>
+									Back to recover my account types
+								</a>
+							</div>
+						</div>
+					</div>
+					<div class="carousel-item">
+						<OnBoardingMediaComponent PictureName="girl-verify-password">
+						</OnBoardingMediaComponent>
+						<div class="onboarding-content">
+							<h4 class="onboarding-title text-body">We Sent You An E-Mail!</h4>
+							<div class="onboarding-info">
+								We sent you a code to your registered e-mail address.
+								Once received, input the code below.
+							</div>
+							<p class="mb-0 fw-semibold">The code is valid for 5 minutes only</p>
+							<form id="twoStepsForm">
+								<div class="mb-3">
+									<div class="auth-input-wrapper d-flex align-items-center justify-content-sm-between numeral-mask-wrapper">
+										<input type="text"
+											   class="form-control auth-input h-px-50 text-center numeral-mask text-center h-px-50 mx-1 my-2"
+											   maxlength="1"
+											   autofocus />
+										<input type="text"
+											   class="form-control auth-input h-px-50 text-center numeral-mask text-center h-px-50 mx-1 my-2"
+											   maxlength="1" />
+										<input type="text"
+											   class="form-control auth-input h-px-50 text-center numeral-mask text-center h-px-50 mx-1 my-2"
+											   maxlength="1" />
+										<input type="text"
+											   class="form-control auth-input h-px-50 text-center numeral-mask text-center h-px-50 mx-1 my-2"
+											   maxlength="1" />
+										<input type="text"
+											   class="form-control auth-input h-px-50 text-center numeral-mask text-center h-px-50 mx-1 my-2"
+											   maxlength="1" />
+										<input type="text"
+											   class="form-control auth-input h-px-50 text-center numeral-mask text-center h-px-50 mx-1 my-2"
+											   maxlength="1" />
+									</div>
+									<!-- Create a hidden field which is combined by 3 fields above -->
+									<input type="hidden" name="otp" />
+								</div>
+								<a class="btn btn-primary d-grid w-100" href="#modalCarouselControls"
+								   role="button"
+								   data-bs-slide="next">Verify my account</a>
+							</form>
+							<div class="text-center">
+								Try different
+								<a href="#modalCarouselControls" role="button"
+								   data-bs-slide="prev"> Email Account </a>
+							</div>
+						</div>
+					</div>
+					<div class="carousel-item">
+						<OnBoardingMediaComponent PictureName="boy-verify-email">
+						</OnBoardingMediaComponent>
+						<div class="onboarding-content">
+							<h4 class="onboarding-title text-body">Verify your email ✉️</h4>
+							<div class="text-start">
+								Account activation link sent to your email address: @_resetEmail Please follow the link inside to
+								continue.
+							</div>
+							<br />
+							<button class="btn btn-primary d-grid w-100" @onclick="@(() => ShowResult("Success","SADASD"))">Skip for now</button>
+							<br />
+							<div class="text-center">
+								Didn't get the mail?
+								<a href="#" class="ms-2"> Resend </a>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!--/ slider modal -->

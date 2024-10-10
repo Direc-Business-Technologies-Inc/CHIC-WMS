@@ -1,0 +1,136 @@
+﻿@layout MainLayout
+
+@page "/BinLabelPrinting"
+
+<PageTitle>Bin Label Printing</PageTitle>
+
+<MacroBreadcrumbs Breadcrumbs=Breadcrumbs></MacroBreadcrumbs>
+
+<MacroBody>
+	<MacroContainer>
+		<div class="container">
+			<div class="row justify-content-between">
+				<div class="col-3">
+					<MacroInput Required=true InputName="Warehouse Code" IsReadOnly=true DefaultValue="@warehouseCode" IsSelectable=true></MacroInput>
+				</div>
+
+			</div>
+		</div>
+
+		<div class="container">
+			<div class="row align-items-start">
+				<div class="col">
+					<h5 class="">
+						Bin Label Printing
+					</h5>
+				</div>
+			</div>
+
+		</div>
+
+
+		@*<RadzenDataGrid Data="@binList" TItem="BinLabel" SelectionMode="DataGridSelectionMode.Multiple" *@
+		<RadzenDataGrid @ref="grid" Data="@binList" TItem="BinLabel" SelectionMode="DataGridSelectionMode.Multiple"
+						ColumnWidth="200px" @bind-Value="@selectedBinLabels" AllowFiltering="true" AllowSorting="true"
+						FilterPopupRenderMode="PopupRenderMode.OnDemand" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+						AllowPaging="true" ShowPagingSummary="true"
+						PagingSummaryFormat="Displaying page {0} of {1} <b>(total {2} records)</b>">
+			@*PageSizeOptions="new int[] {5, 10, 20, 30, 40, 50, 100}">*@
+
+			<Columns>
+				<RadzenDataGridColumn Sortable="false" Filterable="false" TItem="BinLabel" Width="50px">
+					<HeaderTemplate>
+						<RadzenCheckBox TriState="true" TValue="bool?" InputAttributes="@(new Dictionary<string,object>(){ { "aria-label", "Select all items" }})"
+										Value="@(selectedBinLabels == null || selectedBinLabels?.Any() != true ? false : !binList.All(i => selectedBinLabels.Contains(i)) ? null : binList.Any(i => selectedBinLabels.Contains(i)))"
+										Change="@(args => selectedBinLabels = (args == true || args == null) ? binList.ToList() : new List<BinLabel>())" />
+					</HeaderTemplate>
+					<Template Context="data">
+						<RadzenCheckBox TriState="false" TValue="bool" Value="@(selectedBinLabels != null && selectedBinLabels.Contains(data))" />
+					</Template>
+				</RadzenDataGridColumn>
+
+				<RadzenDataGridColumn TItem="BinLabel"
+									  Property="WarehouseCode"
+									  Title="Warehouse Code"
+									  Width="160px" />
+
+				<RadzenDataGridColumn TItem="BinLabel"
+									  Property="Shelf"
+									  Title="Shelf"
+									  Width="160px" />
+
+				<RadzenDataGridColumn TItem="BinLabel"
+									  Property="Row"
+									  Title="Row"
+									  Width="160px" />
+
+				<RadzenDataGridColumn TItem="BinLabel"
+									  Property="Level"
+									  Title="Level"
+									  Width="160px" />
+			</Columns>
+		</RadzenDataGrid>
+	</MacroContainer>
+	<div class="card-body pt-0 pb-2">
+		<div class="row">
+			<div class="mb-3 float-end">
+				@*				<div class="row justify-content-end">
+				<div class="col-3">
+				<MacroInput InputName="Printer" IsReadOnly=true DefaultValue="@selectedPrinter" IsSelectable=true></MacroInput>
+				</div>
+				</div>*@
+				<div class="row justify-content-end">
+					@*<div class="col-4 float-end">*@
+					<div class="float-end">
+						@*<div class="input-group">*@
+						@*							<select class="form-select"
+						id="inputGroupSelect04"
+						aria-label="Example select with button addon"
+						@bind="@selectedPrinter">
+						@foreach(var printer in printerlist)
+						{
+						<option >@printer.printerName</option>
+						}
+
+						</select>*@
+						<button type="button" @onclick="@PrintBinLabels" id="btnBinLabelsPrinting" class="btn btn-outline-primary float-end">
+							<i class="fa fa-print"></i>
+							Print
+						</button>
+						@*</div>*@
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</MacroBody>
+
+@* MACRO *@
+<MacroSelectModal InputName="Warehouse Code">
+	<RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="5" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+					Data=whsCodes TItem="WarehouseCode" LogicalFilterOperator="LogicalFilterOperator.Or">
+		<Columns>
+			<RadzenDataGridColumn TItem="WarehouseCode" Property="whsCode" Title="Warehouse Code" />
+			<RadzenDataGridColumn TItem="WarehouseCode" Property="whsName" Title="Warehouse Name" />
+			<RadzenDataGridColumn TItem="WarehouseCode" Title="Action" Sortable="false" Filterable="false" Width="15%" TextAlign="TextAlign.Center">
+				<Template Context="data">
+					<RadzenButton Click="@((args) => SelectInput("Warehouse Code", data.whsCode))" class="btn btn-rimary-logo"><i class="fa fa-hand-point-left"></i></RadzenButton>
+				</Template>
+			</RadzenDataGridColumn>
+		</Columns>
+	</RadzenDataGrid>
+</MacroSelectModal>
+
+<MacroSelectModal InputName="Printer">
+	<RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="5" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+					Data=printerlist TItem="PrinterNames" LogicalFilterOperator="LogicalFilterOperator.Or">
+		<Columns>
+			<RadzenDataGridColumn TItem="PrinterNames" Property="printerName" Title="Printer Name" />
+			<RadzenDataGridColumn TItem="PrinterNames" Title="Select" Sortable="false" Filterable="false" Width="15%" TextAlign="TextAlign.Center">
+				<Template Context="data">
+					<RadzenButton Click="@((args) => SelectInput("Printer", data.printerName))" class="btn btn-rimary-logo"><i class="fa fa-hand-point-left"></i></RadzenButton>
+				</Template>
+			</RadzenDataGridColumn>
+		</Columns>
+	</RadzenDataGrid>
+</MacroSelectModal>

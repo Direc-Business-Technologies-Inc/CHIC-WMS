@@ -1,0 +1,47 @@
+﻿@typeparam TItem
+
+<div class="col">
+    <table id='dt-@SelectTableParameter.TableId' class='datatables-basic table border rounded table-striped'>
+        <!-- table data here -->
+        <thead>
+            <tr>
+                @foreach (var item in SelectTableParameter.ParamTableColumns)
+                {
+                    <th>@item.Value</th>
+                }
+                <th style="text-align:center">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in ParamTable)
+            {
+                <tr>
+                    @foreach (var column in SelectTableParameter.ParamTableColumns)
+                    {
+                        <td>@(item?.GetType()?.GetProperty(column.Key)?.GetValue(item, null) ?? "")</td>
+                    }
+                    <td style="text-align:center">
+                        <button class="btn btn-primary btn-sm" id="btn-select-plan" title="Select" onclick="SelectInput('@SelectTableParameter.Id','@(item?.GetType()?.GetProperty(SelectTableParameter.ParamTableColumns[0].Key)?.GetValue(item, null) ?? "")')"><i class="fa fa-hand-point-left"></i></button>
+                        @*<button class="btn btn-primary btn-sm" id="btn-select-plan" title="Select" data-code="@(item.GetType().GetProperty(SelectTableParameter.ParamTableColumns[0]).GetValue(item, null))"><i class="fa fa-hand-point-left"></i></button>*@
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@code {
+    [Parameter]
+    public SelectTableParameterModel SelectTableParameter { get; set; } = new SelectTableParameterModel();
+    [Parameter]
+    public IEnumerable<TItem> ParamTable { get; set; } = default!;
+
+    [Inject] protected IJSRuntime JSRuntime { get; set; } = default!;
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JSRuntime.InvokeVoidAsync("InitializeDatatable", $@"dt-{SelectTableParameter.TableId}");
+        }
+    }
+}

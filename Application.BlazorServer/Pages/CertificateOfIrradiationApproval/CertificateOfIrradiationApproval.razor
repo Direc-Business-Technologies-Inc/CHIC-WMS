@@ -1,0 +1,132 @@
+﻿@layout MainLayout
+
+@page "/CertificateOfIrradiationApproval"
+
+<MacroBreadcrumbs Breadcrumbs=Breadcrumbs></MacroBreadcrumbs>
+
+<MacroBody>
+	<MacroContainer Columns="2">
+		<div class="col-6">
+			<label for="txt-del-date" class="form-label">Irradiation Date</label>
+			<div class="input-group mb-3">
+				@*<input readonly type="text" class="form-control" name="txt-code" id="txt-plan-code" placeholder="Inspection Plan Code">*@
+				<input type="text" id="txt-irrad-date" class="form-control" name="daterange" value="@startDate.ToString("MM-dd-yyyy") - @endDate.ToString("MM-dd-yyyy")" />
+			</div>
+		</div>
+	</MacroContainer>
+	<MacroContainer>
+		<div class="nav-align-top">
+			<ul class="nav nav-tabs" role="tablist">
+				<li class="nav-item">
+					<button type="button" class="nav-link active" role="tab" data-bs-toggle="tab"
+							data-bs-target="#navs-top-for-approval" aria-controls="navs-top-for-approval"
+							aria-selected="true" @onclick='() => {_tabName = "For Approval";}'>
+						For Approval
+					</button>
+				</li>
+				<li class="nav-item">
+					<button type="button" class="nav-link" role="tab" data-bs-toggle="tab"
+							data-bs-target="#navs-top-approved" aria-controls="navs-top-approved"
+							aria-selected="true" @onclick='() => {_tabName = "Approved";}'>
+						Approved
+					</button>
+				</li>
+				<li class="nav-item">
+					<button type="button" class="nav-link" role="tab" data-bs-toggle="tab"
+							data-bs-target="#navs-top-rejected" aria-controls="navs-top-rejected"
+							aria-selected="true" @onclick='() => {_tabName = "Rejected";}'>
+						Rejected
+					</button>
+				</li>
+			</ul>
+			<div class="tab-content p-0">
+				<div class="row row-cols-2 gx-0">
+					<div class="row d-flex align-items-end">
+						<h5>@_tabName COI</h5>
+					</div>
+					<div class="row mb-3 gx-0" style="justify-content:end">
+						<label for="html5-search-input" style="display:flex; align-items:center;" class="col-md-1 col-form-label">Search:</label>
+						<div class="col-md-6 ms-2">
+							<input class="form-control" type="text" placeholder="Search ..." id="html5-search-input" @bind="@searchValue" @oninput="(EventArgs) => {SearchIrradiation(EventArgs.Value.ToString());}" />
+						</div>
+					</div>
+				</div>
+				<div class="tab-pane fade show active" id="navs-top-for-approval" role="tabpanel">
+					<MacroContainer>
+						@*Data=model.IrradiationLabelList TItem="IrradiationLabelPrintingViewModel.IrradiationLabel" ColumnWidth="300px" LogicalFilterOperator="LogicalFilterOperator.Or">*@
+						<RadzenDataGrid AllowFiltering="false" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="5" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+										Data='tableData.Where(x => x.Status == "For Approval")' TItem="CertificateOfIrradiationViewModel.COISalesOrderDetails" ColumnWidth="300px" LogicalFilterOperator="LogicalFilterOperator.Or">
+							<EmptyTemplate>
+								<p style="color: lightgrey; font-size: 24px; text-align: center; margin: 2rem;">No records to display.</p>
+							</EmptyTemplate>
+							<Columns>
+								<RadzenDataGridColumn TItem="CertificateOfIrradiationViewModel.COISalesOrderDetails" Property="DocNo" Title="So No." Width="80px" />
+								<RadzenDataGridColumn TItem="CertificateOfIrradiationViewModel.COISalesOrderDetails" Property="CustomerName" Title="Customer Name" Width="160px" />
+								<RadzenDataGridColumn TItem="CertificateOfIrradiationViewModel.COISalesOrderDetails" Property="ItemName" Title="Item Name" Width="160px" />
+								<RadzenDataGridColumn TItem="CertificateOfIrradiationViewModel.COISalesOrderDetails" Property="IrradiationDate" Title="Irradiation Date" Width="200px" FormatString='{0:MM-dd-yyyy}' />
+								<RadzenDataGridColumn TItem="CertificateOfIrradiationViewModel.COISalesOrderDetails" Title="Action" Sortable="false" Filterable="false" Width="80px" TextAlign="TextAlign.Center">
+									<Template Context="data">
+										<RadzenButton Click="@((args) => SelectSchedule(data.QCOrderNo))" ButtonStyle="ButtonStyle.Primary"><i class="fa fa-eye"></i></RadzenButton>
+									</Template>
+								</RadzenDataGridColumn>
+							</Columns>
+						</RadzenDataGrid>
+					</MacroContainer>
+				</div>
+				<div class="tab-pane fade show" id="navs-top-approved" role="tabpanel">
+					<MacroContainer>
+						@*Data=model.IrradiationLabelList TItem="IrradiationLabelPrintingViewModel.IrradiationLabel" ColumnWidth="300px" LogicalFilterOperator="LogicalFilterOperator.Or">*@
+						<RadzenDataGrid AllowFiltering="false" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="5" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+										Data='model.COISalesOrderList.Where(x => x.Status == "Approved").OrderByDescending(x => x.DocNo)' TItem="CertificateOfIrradiationViewModel.COISalesOrderDetails" ColumnWidth="300px" LogicalFilterOperator="LogicalFilterOperator.Or">
+										@* Data='tableData.Where(x => x.Status == "Approved")' TItem="CertificateOfIrradiationViewModel.COISalesOrderDetails" ColumnWidth="300px" LogicalFilterOperator="LogicalFilterOperator.Or"> *@
+							<EmptyTemplate>
+								<p style="color: lightgrey; font-size: 24px; text-align: center; margin: 2rem;">No records to display.</p>
+							</EmptyTemplate>
+							<Columns>
+								<RadzenDataGridColumn TItem="CertificateOfIrradiationViewModel.COISalesOrderDetails" Property="DocNo" Title="So No." Width="80px" />
+								<RadzenDataGridColumn TItem="CertificateOfIrradiationViewModel.COISalesOrderDetails" Property="CustomerName" Title="Customer Name" Width="160px" />
+								<RadzenDataGridColumn TItem="CertificateOfIrradiationViewModel.COISalesOrderDetails" Property="ItemName" Title="Item Name" Width="160px" />
+								<RadzenDataGridColumn TItem="CertificateOfIrradiationViewModel.COISalesOrderDetails" Property="IrradiationDate" Title="Irradiation Date" Width="200px" FormatString='{0:MM-dd-yyyy}' />
+								<RadzenDataGridColumn TItem="CertificateOfIrradiationViewModel.COISalesOrderDetails" Title="Action" Sortable="false" Filterable="false" Width="80px" TextAlign="TextAlign.Center">
+									<Template Context="data">
+										<RadzenButton Click="@((args) => SelectSchedule(data.QCOrderNo))" ButtonStyle="ButtonStyle.Primary"><i class="fa fa-eye"></i></RadzenButton>
+									</Template>
+								</RadzenDataGridColumn>
+							</Columns>
+						</RadzenDataGrid>
+					</MacroContainer>
+				</div>
+				<div class="tab-pane fade show" id="navs-top-rejected" role="tabpanel">
+					<MacroContainer>
+						@*Data=model.IrradiationLabelList TItem="IrradiationLabelPrintingViewModel.IrradiationLabel" ColumnWidth="300px" LogicalFilterOperator="LogicalFilterOperator.Or">*@
+						<RadzenDataGrid AllowFiltering="false" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="5" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+										Data='model.COISalesOrderList.Where(x => x.Status == "Rejected").OrderByDescending(x => x.DocNo)' TItem="CertificateOfIrradiationViewModel.COISalesOrderDetails" ColumnWidth="300px" LogicalFilterOperator="LogicalFilterOperator.Or">
+										@* Data='tableData.Where(x => x.Status == "Rejected")' TItem="CertificateOfIrradiationViewModel.COISalesOrderDetails" ColumnWidth="300px" LogicalFilterOperator="LogicalFilterOperator.Or"> *@
+							<EmptyTemplate>
+								<p style="color: lightgrey; font-size: 24px; text-align: center; margin: 2rem;">No records to display.</p>
+							</EmptyTemplate>
+							<Columns>
+								<RadzenDataGridColumn TItem="CertificateOfIrradiationViewModel.COISalesOrderDetails" Property="DocNo" Title="So No." Width="80px" />
+								<RadzenDataGridColumn TItem="CertificateOfIrradiationViewModel.COISalesOrderDetails" Property="CustomerName" Title="Customer Name" Width="160px" />
+								<RadzenDataGridColumn TItem="CertificateOfIrradiationViewModel.COISalesOrderDetails" Property="ItemName" Title="Item Name" Width="160px" />
+								<RadzenDataGridColumn TItem="CertificateOfIrradiationViewModel.COISalesOrderDetails" Property="IrradiationDate" Title="Irradiation Date" Width="200px" FormatString='{0:MM-dd-yyyy}' />
+								<RadzenDataGridColumn TItem="CertificateOfIrradiationViewModel.COISalesOrderDetails" Title="Action" Sortable="false" Filterable="false" Width="80px" TextAlign="TextAlign.Center">
+									<Template Context="data">
+										<RadzenButton Click="@((args) => SelectSchedule(data.QCOrderNo))" ButtonStyle="ButtonStyle.Primary"><i class="fa fa-eye"></i></RadzenButton>
+									</Template>
+								</RadzenDataGridColumn>
+							</Columns>
+						</RadzenDataGrid>
+					</MacroContainer>
+				</div>
+			</div>
+		</div>
+	</MacroContainer>
+
+	<div class="card-body pt-0 pb-2 d-none">
+		<div class="mb-3">
+			<a type="button" id="btn-save" href="/IrradiationSchedule" class="btn btn-danger float-end m-1">Cancel</a>
+			@*<a type="button" id="btn-save" href="/Home" class="btn btn-danger float-end m-1">Cancel</a>*@
+		</div>
+	</div>
+</MacroBody>

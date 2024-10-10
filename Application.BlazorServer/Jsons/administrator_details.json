@@ -1,0 +1,41 @@
+{
+  "admin_details": {
+    "User": {
+      "UserName": "admin",
+      "Password": "admin",
+      "SuperUser": true,
+      "IsActive": true,
+      "IsLocked": false,
+      "IsLockoutEnabled": true,
+      "IsTwoFactorEnabled": true,
+      "FailedAttemptCount": 0,
+      "CreatedByUserId": 1
+    },
+    "UserDetail": {
+      "LastName": "admin",
+      "FirstName": "admin",
+      "MiddleName": "admin",
+      "Department": "admin",
+      "CreatedByUserId": 1,
+      "Company": "dbti",
+      "PhoneNo": "0",
+      "Email": "dbti@gmail.com",
+      "IsEmailConfirmed": true,
+      "IsPhoneConfirmed": true
+    },
+    "UserGroup": {
+      "Code": "UG-001",
+      "Name": "Administrator",
+      "CreatedByUserId": 1
+    },
+    "UserAuthorization": {
+      "CreatedByUserId": 1
+    },
+    "UserAuthAccess": {
+      "CreatedByUserId": 1,
+      "IsCanCreate": true,
+      "IsCanUpdate": true,
+      "IsReadOnly": true
+    }
+  }
+}

@@ -1,0 +1,273 @@
+﻿@layout MainLayout
+
+@page "/BinMapping"
+
+
+<MacroBreadcrumbs Breadcrumbs=Breadcrumbs></MacroBreadcrumbs>
+
+@*<MacroBody>*@
+@*<MacroContainer>*@
+<!-- Mapping Wizard -->
+<div id="wizard-mapping" class="bs-stepper wizard-icons mt-2">
+	<div id="wizard-steppers" class="bs-stepper-header m-auto border-0">
+		<div class="step" data-target="#select-warehouse">
+			<button disabled type="button" class="step-trigger input-group">
+				<span class="bs-stepper-icon">
+					<svg viewBox="0 0 58 54">
+						<use xlink:href="assets/svg/icons/wizard-warehouse.svg#wizardWarehouse"></use>
+					</svg>
+				</span>
+				<span class="bs-stepper-label">Select Warehouse</span>
+			</button>
+		</div>
+		<div class="line">
+			<i class="bx bx- bx-lg bx-chevron-right"></i>
+		</div>
+		<div class="step" data-target="#mapping-warehouse">
+			<button disabled type="button" class="step-trigger input-group">
+				<span class="bs-stepper-icon">
+					<svg viewBox="0 0 58 54">
+						<use xlink:href="assets/svg/icons/wizard-mapping.svg#wizardMapping"></use>
+					</svg>
+				</span>
+				<span class="bs-stepper-label">Mapping</span>
+			</button>
+		</div>
+	</div>
+	<div class="bs-stepper-content border-top">
+		<form id="wizard-mapping-form" onSubmit="return false">
+			<!-- Select Warehouse -->
+			<div id="select-warehouse" class="content">
+				<div class="row">
+					<div class="col-xl-12 mb-6 mb-xl-0">
+						<div class="row">
+							<div class="col-3">&nbsp;</div>
+							<div class="col-6">
+								<MacroInput Required=true DefaultValue="@model.BinMappingHeader.WarehouseCode" InputName="Warehouse Code" IsReadOnly=true IsSelectable=true ValueChanged="SelectInput"></MacroInput>
+							</div>
+							<div class="col-3">&nbsp;</div>
+						</div>
+						<div class="row">
+							<div class="col-3">&nbsp;</div>
+							<div class="col-6">
+								<MacroInput Required=true DefaultValue="@model.BinMappingHeader.WarehouseName" InputName="Warehouse Name" IsReadOnly=true ValueChanged="SelectInput"></MacroInput>
+							</div>
+							<div class="col-3">&nbsp;</div>
+						</div>
+						<div class="row">
+							<div class="col-3">&nbsp;</div>
+							<div class="col-6">
+								<MacroInput Required=true DefaultValue="@model.BinMappingHeader.Shelf" InputName="Shelf" IsReadOnly=true IsSelectable=true ValueChanged="SelectInput"></MacroInput>
+							</div>
+							<div class="col-3">&nbsp;</div>
+						</div>
+						<div class="row">
+							<div class="col-3">&nbsp;</div>
+							<div class="col-6">
+								<div class="">
+									<label for="file-whs-map" class="form-label">Map</label>
+								</div>
+								<div class="input-group mb-3">
+									@*<InputFile readonly OnChange="ChangeMap" class="form-control" accept="image/*" name="file-whs-map" id="file-whs-map" placeholder="Warehouse Map"></InputFile>*@
+									<input readonly type="file" class="form-control" accept="image/*" name="file-whs-map" id="file-whs-map" placeholder="Warehouse Map">
+								</div>
+								<div style="margin: auto; width: 100%; max-width: 100%;" id="divImg">
+									<img id="img-select-map" style="width: 100%; max-width: 100%;" src="@model.BinMappingHeader.ImageUrl" />
+								</div>
+							</div>
+							<div class="col-3">&nbsp;</div>
+						</div>
+						<button class="btn btn-primary btn-next float-end m-1">Next</button>
+						<a type="button" id="btn-save" href="/IrradiationSchedule" class="btn btn-danger float-end m-1">Cancel</a>
+						@*<a type="button" id="btn-save" href="/Home" class="btn btn-danger float-end m-1">Cancel</a>*@
+					</div>
+				</div>
+			</div>
+			<!-- Mapping Warehouse -->
+			<div id="mapping-warehouse" class="content">
+				<div class="row" id="mapping-content" style="height:auto;">
+					<!-- Mapping left -->
+					<div class="col-xl-4" id="div-mapping-left">
+						@*						<div class="col">
+						<div class="input-group mb-1">
+						<button class="btn btn-primary btn-prev">Print Bin Labels</button>
+						</div>
+						</div>
+						<div class="divider m-0">
+						<div class="divider-text"></div>
+						</div>*@
+						<div class="border rounded p-3 mb-3">
+							<h6>Pin Settings</h6>
+							<div class="col">
+								<label for="txt-pin-radius" class="form-label">Pin Radius:</label>
+								<div class="input-group mb-3">
+									<input class="form-control" type="number" min="5" max="30" value="15" step="1" id="txt-pin-radius" />
+								</div>
+							</div>
+							<div class="col">
+								<div class="noUi-primary" id="rangePin"></div>
+							</div>
+							<div class="row mt-5">
+								<div class="col-6 text-center" style="text-align: center;">
+									<div class="row">
+										<div class="col-4">&nbsp;</div>
+										<div class="col-8">
+											<span class="bg-primary dot">01</span>
+										</div>
+									</div>
+								</div>
+								<div class="col-6 text-center" style="text-align: center;">
+									<div class="row">
+										<div class="col-4">&nbsp;</div>
+										<div class="col-8">
+											<span class="bg-primary dot">12</span>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="col">
+								<label for="txt-facilityloc" class="form-label">Location</label>
+								<div class="input-group mb-3">
+									<input type="text"
+										@bind=model.BinMappingHeader.FacilityCode
+										   class="form-control" name="txt-aisle" id="txt-aisle" placeholder="Location"
+										   readonly="true">
+									<button class="btn btn-outline-primary" type="button" id="btn-select-location" data-bs-toggle="modal" data-bs-target="#modal-location" title="">
+										<i class="bx bx-menu"></i>
+									</button>
+								</div>
+
+							</div>
+							<div class="col mt-2">
+								@*<MacroInput DefaultValue="@model.BinMappingHeader.Aisle" InputName="Aisle" IsReadOnly=true IsSelectable=true ValueChanged="SelectInput"></MacroInput>*@
+								<div class="col">
+									<label for="txt-aisle" class="form-label">I/O</label>
+
+									<div class="input-group mb-3">
+										<input type="text"
+										class="form-control" name="txt-aisle" id="txt-aisle" @bind="@model.BinMappingHeader.Aisle" placeholder="Input I/O"
+										readonly="true">
+										<button class="btn btn-outline-primary" type="button" id="btn-select-aisle" data-bs-toggle="modal" data-bs-target="#modal-aisle" title="">
+											<i class="bx bx-menu"></i>
+										</button>
+									</div>
+								</div>
+
+							</div>
+							<div class="col mt-2">
+								<MacroInput DefaultValue="@model.BinMappingHeader.Level" InputName="Level" IsReadOnly=true IsSelectable=true ValueChanged="SelectInput"></MacroInput>
+							</div>
+							<div class="col mt-2 d-none" id="dvTable">
+								<table id='dt-pins' style="width:100%" class='border rounded table-bordered'>
+									<!-- table data here -->
+									<thead>
+										<tr>
+											<th style="text-align: center; width: 16.6%; padding: 0.5rem;"></th>
+											<th style="text-align: center; width: 16.6%; padding: 0.5rem;">Level</th>
+											<th style="text-align: center; width: 16.6%; padding: 0.5rem;">Row</th>
+											<th style="text-align: center; width: 16.6%; padding: 0.5rem;">Aisle</th>
+											<th style="text-align: center; width: 16.6%; padding: 0.5rem;">Select</th>
+											<th style="text-align: center; width: 16.6%; padding: 0.5rem;"></th>
+										</tr>
+									</thead>
+									<tbody>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+					<!-- Mapping right -->
+					<div class="col-xl-8 mb-3 mb-xl-0" id="mapWrapper">
+						<div class="insideWrapper" id="insideWrapper" data-sticky data-top-spacing="75" style="min-height:500px;">
+							<img id="imgBg" class="coveredImage" src="@model.BinMappingHeader.ImageUrl"/>
+							<canvas class="coveringCanvas" id="imgPin"></canvas>
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-xl-12 mt-3">
+						<button class="btn btn-primary btn-prev">Previous</button>
+						<button class="btn btn-primary btn-next float-end">Submit</button>
+					</div>
+				</div>
+			</div>
+		</form>
+	</div>
+</div>
+@*</MacroContainer>*@
+@*</MacroBody>*@
+
+@*MODALS*@
+<MacroSelectModal InputName="Warehouse Code">
+	<RadzenDataGrid AllowFiltering="false" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="5" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+					Data=model.WarehouseList TItem="Warehouses" LogicalFilterOperator="LogicalFilterOperator.Or">
+		<Columns>
+			<RadzenDataGridColumn TItem="Warehouses" Property="WarehouseCode" Title="Warehouse Code" />
+			<RadzenDataGridColumn TItem="Warehouses" Property="WarehouseName" Title="Warehouse Name" />
+			<RadzenDataGridColumn TItem="Warehouses" Title="Action" Sortable="false" Filterable="false" Width="15%" TextAlign="TextAlign.Center">
+				<Template Context="data">
+					<RadzenButton Click="@((args) => SelectInput("WarehouseCode", data.WarehouseCode))" class="btn btn-rimary-logo"><i class="fa fa-hand-point-left"></i></RadzenButton>
+				</Template>
+			</RadzenDataGridColumn>
+		</Columns>
+	</RadzenDataGrid>
+</MacroSelectModal>
+
+<MacroSelectModal InputName="Shelf" Title="List of Shelves">
+	<RadzenDataGrid AllowFiltering="false" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="5" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+					Data=model.ShelfList TItem="Shelves" LogicalFilterOperator="LogicalFilterOperator.Or">
+		<Columns>
+			<RadzenDataGridColumn TItem="Shelves" Property="Shelf" Title="Shelf" />
+			<RadzenDataGridColumn TItem="Shelves" Title="Action" Sortable="false" Filterable="false" Width="15%" TextAlign="TextAlign.Center">
+				<Template Context="data">
+					<RadzenButton Click="@((args) => SelectInput("Shelf", data.Shelf))" class="btn btn-rimary-logo"><i class="fa fa-hand-point-left"></i></RadzenButton>
+				</Template>
+			</RadzenDataGridColumn>
+		</Columns>
+	</RadzenDataGrid>
+</MacroSelectModal>
+
+<MacroSelectModal InputName="Level">
+	@*<RadzenDataGrid AllowFiltering="false" AllowColumnResize="true" AllowAlternatingRows="false" AllowSorting="true" PageSize="5" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+	@ref="gridLevel" Data=model.LevelList TItem="Levels" IsLoading=@isLevelLoading Count="@LevelCount" LoadData="@LoadLevelData">*@
+	<RadzenDataGrid AllowFiltering="false" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="5" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+					Data=model.LevelList TItem="Levels" LogicalFilterOperator="LogicalFilterOperator.Or">
+		<Columns>
+			<RadzenDataGridColumn TItem="Levels" Property="Level" Title="Level" Filterable="false" />
+			<RadzenDataGridColumn TItem="Levels" Title="Action" Sortable="false" Filterable="false" Width="15%" TextAlign="TextAlign.Center">
+				<Template Context="data">
+					<RadzenButton Click="@((args) => SelectInput("Level", data.Level))" class="btn btn-rimary-logo"><i class="fa fa-hand-point-left"></i></RadzenButton>
+				</Template>
+			</RadzenDataGridColumn>
+		</Columns>
+	</RadzenDataGrid>
+</MacroSelectModal>
+
+<MacroSelectModal InputName="Aisle" Title="Inner or Outer">
+	<RadzenDataGrid AllowFiltering="false" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="5" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+					Data=model.AisleList TItem="Aisles" LogicalFilterOperator="LogicalFilterOperator.Or">
+		<Columns>
+			<RadzenDataGridColumn TItem="Aisles" Property="Aisle" Title="I/O" />
+			<RadzenDataGridColumn TItem="Aisles" Title="Action" Sortable="false" Filterable="false" Width="15%" TextAlign="TextAlign.Center">
+				<Template Context="data">
+					<RadzenButton Click="@((args) => SelectInput("Aisle", data.Aisle))" class="btn btn-rimary-logo"><i class="fa fa-hand-point-left"></i></RadzenButton>
+				</Template>
+			</RadzenDataGridColumn>
+		</Columns>
+	</RadzenDataGrid>
+</MacroSelectModal>
+
+<MacroSelectModal InputName="Location" Title="Facility Locations">
+	<RadzenDataGrid AllowFiltering="false" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="5" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+					Data=_facilities TItem="FacilityLocationViewModel" LogicalFilterOperator="LogicalFilterOperator.Or">
+		<Columns>
+			<RadzenDataGridColumn TItem="FacilityLocationViewModel" Property="Code" Title="Code" />
+			<RadzenDataGridColumn TItem="FacilityLocationViewModel" Property="Name" Title="Facility Name" />
+			<RadzenDataGridColumn TItem="FacilityLocationViewModel" Title="Action" Sortable="false" Filterable="false" Width="15%" TextAlign="TextAlign.Center">
+				<Template Context="data">
+					<RadzenButton Click="@((args) => SelectFacility(data))" class="btn btn-rimary-logo"><i class="fa fa-hand-point-left"></i></RadzenButton>
+				</Template>
+			</RadzenDataGridColumn>
+		</Columns>
+	</RadzenDataGrid>
+</MacroSelectModal>

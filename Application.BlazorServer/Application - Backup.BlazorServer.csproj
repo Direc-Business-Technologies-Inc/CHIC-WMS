@@ -1,0 +1,38 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <Platforms>AnyCPU;x86</Platforms>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Application.Libraries\Application.Libraries.csproj" />
+    <ProjectReference Include="..\Application.Models\Application.Models.csproj" />
+    <ProjectReference Include="..\Application.Services\Application.Services.csproj" />
+    <ProjectReference Include="..\DataManager.Libraries\DataManager.Libraries.csproj" />
+    <ProjectReference Include="..\DataManager.Models\DataManager.Models.csproj" />
+    <ProjectReference Include="..\DataManager.Services\DataManager.Services.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Radzen.Blazor" Version="4.15.0" />
+    <PackageReference Include="System.Drawing.Common" Version="7.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\FILE_UPLOAD\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="DataCipher">
+      <HintPath>..\..\..\..\Project Helpers\DirecLayerLibrary\DataCipher.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Windows.Forms">
+      <HintPath>..\..\..\..\Project Helpers\DirecLayerLibrary\System\System.Windows.Forms.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>

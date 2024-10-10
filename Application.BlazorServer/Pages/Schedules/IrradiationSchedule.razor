@@ -1,0 +1,299 @@
+﻿@layout MainLayout
+
+@page "/IrradiationSchedule"
+
+<MacroBreadcrumbs Breadcrumbs=Breadcrumbs></MacroBreadcrumbs>
+
+<MacroBody>
+	<MacroContainer Columns="2">
+		<div class="col-3">
+			<label for="txt-del-date" class="form-label">Irradiation Date</label>
+			<div class="input-group mb-3">
+				@* <input type="text" id="txt-del-date" class="form-control" name="daterange" @bind="@IrradiationDate" /> *@
+				<input type="text" id="txt-del-date" class="form-control" name="daterange" value="@startDate.ToString("MM-dd-yyyy") - @endDate.ToString("MM-dd-yyyy")" />
+			</div>
+		</div>
+		<div class="col-9 mb-3 d-flex align-items-end justify-content-end">
+			<button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal-schedules">See Schedules</button>
+		</div>
+	</MacroContainer>
+
+	<MacroContainer>
+		<div class="row row-cols-2 gx-0">
+			<div class="row d-flex align-items-center">
+				<h5>Sales Order Irradiation Table</h5>
+			</div>
+			<div class="row mb-3 gx-0" style="justify-content:end">
+				<label for="html5-search-input" style="display:flex; align-items:center;" class="col-md-1 col-form-label">Search:</label>
+				<div class="col-md-6 ms-1">
+					<input class="form-control" type="text" placeholder="Search ..." id="html5-search-input" @bind="@searchValue" @oninput="(EventArgs) => {SearchIrradScheds(EventArgs.Value.ToString());}" />
+				</div>
+			</div>
+		</div>
+		<RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="5" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+						Data=tableData TItem="ScheduleViewModel.Schedules" ColumnWidth="300px" LogicalFilterOperator="LogicalFilterOperator.Or">
+			<EmptyTemplate>
+				<p style="color: lightgrey; font-size: 24px; text-align: center; margin: 2rem;">No records to display.</p>
+			</EmptyTemplate>
+			<Columns>
+				<RadzenDataGridColumn TItem="ScheduleViewModel.Schedules" Property="DeliveryDate" Title="Irradiation Date" Width="200px" FormatString='{0:MM-dd-yyyy}' />
+				<RadzenDataGridColumn TItem="ScheduleViewModel.Schedules" Property="DocEntry" Title="So No." Width="80px" />
+				<RadzenDataGridColumn TItem="ScheduleViewModel.Schedules" Property="CardName" Title="Customer Name" Width="160px" />
+				<RadzenDataGridColumn TItem="ScheduleViewModel.Schedules" Property="ItemName" Title="Item Name" Width="160px" />
+				<RadzenDataGridColumn TItem="ScheduleViewModel.Schedules" Property="FacilityLocationCode" Title="Location" Width="80px" />
+				<RadzenDataGridColumn TItem="ScheduleViewModel.Schedules" Title="Action" Sortable="false" Filterable="false" Width="80px" TextAlign="TextAlign.Center">
+					<Template Context="data">
+						<RadzenButton Click="@((args) => SelectSchedule(data.DocEntry.ToString(), data.ItemCode))" ButtonStyle="ButtonStyle.Primary"><i class="fa fa-eye"></i></RadzenButton>
+					</Template>
+				</RadzenDataGridColumn>
+			</Columns>
+		</RadzenDataGrid>
+	</MacroContainer>
+
+	<div class="card-body pt-0 pb-2 d-none">
+		<div class="mb-3">
+			<button type="button" id="btn-clear" @onclick="Clear" class="btn btn-primary float-end m-1">Clear</button>
+			@*<a type="button" id="btn-save" href="/Home" class="btn btn-danger float-end m-1">Cancel</a>*@
+		</div>
+	</div>
+</MacroBody>
+
+<!-- Modal -->
+<div class="modal fade" id="modal-schedules" data-bs-backdrop="static" tabindex="-1">
+	<div class="modal-dialog modal-xl">
+		<div id="" class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="modal-linkbox-api-path-addTitle"></h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<label class="form-label">Facility Location</label>
+				<select class="form-select mb-3" aria-label="Default select example" @bind="selectedFacility">
+					@* <option selected>Nothing Selected</option> *@
+					@foreach (var loc in facilityLocations)
+					{
+						<option value="@loc.Code">@loc.Name</option>
+					}
+				</select>
+				<div class="card app-calendar-wrapper shadow-none border-1">
+					<div class="row g-0">
+						<!-- Calendar Sidebar -->
+						<div class="col app-calendar-sidebar" id="app-calendar-sidebar">
+							<div class="border-bottom p-4 my-sm-0 mb-3 d-none">
+								<div class="d-grid">
+									<button class="btn btn-primary btn-toggle-sidebar"
+											data-bs-toggle="offcanvas"
+											data-bs-target="#addEventSidebar"
+											aria-controls="addEventSidebar">
+										<i class="bx bx-plus"></i>
+										<span class="align-middle">Add Event</span>
+									</button>
+								</div>
+							</div>
+							<div class="p-4">
+								<!-- inline calendar (flatpicker) -->
+								<div class="ms-n2">
+									<div class="inline-calendar"></div>
+								</div>
+
+								<hr class="container-m-nx my-4" />
+
+								<!-- Filter -->
+								<div class="mb-4">
+									<small class="text-small text-muted text-uppercase align-middle">Filter</small>
+								</div>
+
+								<div class="form-check mb-2">
+									<input class="form-check-input select-all"
+										   type="checkbox"
+										   id="selectAll"
+										   data-value="all"
+										   checked />
+									<label class="form-check-label" for="selectAll">View All</label>
+								</div>
+
+								<div class="app-calendar-events-filter">
+									<div class="form-check form-check-success mb-2">
+										<input class="form-check-input input-filter"
+											   type="checkbox"
+											   id="select-scheduled"
+											   data-value="scheduled"
+											   checked />
+										<label class="form-check-label" for="select-scheduled">Scheduled</label>
+									</div>
+									<div class="form-check form-check-danger mb-2">
+										<input class="form-check-input input-filter"
+											   type="checkbox"
+											   id="select-tentative"
+											   data-value="tentative"
+											   checked />
+										<label class="form-check-label" for="select-tentative">Tentative</label>
+									</div>
+									<div class="form-check form-check-blue mb-2">
+										<input class="form-check-input input-filter"
+											   type="checkbox"
+											   id="select-received"
+											   data-value="received"
+											   checked />
+										<label class="form-check-label" for="select-received">Received</label>
+									</div>
+								</div>
+							</div>
+						</div>
+						<!-- /Calendar Sidebar -->
+						<!-- Calendar & Modal -->
+						<div class="col app-calendar-content">
+							<div class="card shadow-none border-0">
+								<div class="card-body pb-0">
+									<div class="col-6" id="div-search">
+										<label for="txt-del-date" class="form-label">Search:</label>
+										<div class="input-group mb-3">
+											<input type="text" id="search-input" class="form-control" />
+										</div>
+									</div>
+									<!-- FullCalendar -->
+									<div id="calendar"></div>
+								</div>
+							</div>
+							<div class="app-overlay"></div>
+						</div>
+						<!-- /Calendar & Modal -->
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				@* <button type="button" id="approve-scheds-btn" class="btn btn-label-success" @onclick=@ApproveAll>Approve</button> *@ <!--HIDE APPROVE BUTTON 08/07/2024-->
+				<button type="button" class="btn btn-label-secondary" data-bs-dismiss="modal">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- FullCalendar Offcanvas -->
+<div class="offcanvas offcanvas-end event-sidebar"
+	 tabindex="-1"
+	 id="addEventSidebar"
+	 aria-labelledby="addEventSidebarLabel">
+	<div class="offcanvas-header border-bottom">
+		<h5 class="offcanvas-title mb-2" id="addEventSidebarLabel">Add Event</h5>
+		<button type="button"
+				class="btn-close text-reset"
+				data-bs-dismiss="offcanvas"
+				aria-label="Close"></button>
+	</div>
+	<div class="offcanvas-body">
+		<form class="event-form pt-0" id="eventForm" onsubmit="return false">
+			<div class="mb-3">
+				<label class="form-label" for="eventSO">SO No.</label>
+				<input type="text"
+					   class="form-control"
+					   id="eventSO"
+					   name="eventSO"
+					   placeholder="SO No."
+					   readonly />
+			</div>
+			<div class="mb-3">
+				<label class="form-label" for="eventCustomer">Customer</label>
+				<input type="text"
+					   class="form-control"
+					   id="eventCustomer"
+					   name="eventCustomer"
+					   placeholder="Customer"
+					   readonly />
+			</div>
+			<div class="mb-3 select2-primary">
+				<label class="form-label" for="eventGuests">Item Name</label>
+				<input type="text" class="form-control"
+					   id="eventItemName"
+					   name="eventItemName"
+					   placeholder="Item Name"
+					   readonly />
+			</div>
+			<div class="mb-3">
+				<label class="form-label" for="eventStatus">Status</label>
+				<select class="select2 select-event-label form-select" id="eventStatus" name="eventStatus" disabled>
+					<option data-label="primary" value="Received" selected>Received</option>
+					<option data-label="success" value="Scheduled">Scheduled</option>
+					<option data-label="danger" value="Tentative">Tentative</option>
+				</select>
+			</div>
+			<div class="mb-3">
+				<label class="form-label" for="eventNoOfDosimeters">No of Dosimeters</label>
+				<input type="number"
+					   class="form-control"
+					   id="eventNoOfDosimeters"
+					   name="eventNoOfDosimeters"
+					   placeholder="No of Dosimeters"
+					   readonly />
+			</div>
+			<div class="mb-3">
+				<label class="form-label" for="eventDeliveryDate">Start Irradiation Date</label>
+				<input type="text"
+					   class="form-control"
+					   id="eventDeliveryDate"
+					   name="eventDeliveryDate"
+					   placeholder="Delivery Date" />
+			</div>
+			<div class="mb-3">
+				<label class="form-label" for="eventDuration">Duration</label>
+				<input type="text"
+					   class="form-control"
+					   id="eventDuration"
+					   name="eventDuration"
+					   placeholder="Duration" />
+			</div>
+			<div class="mb-3">
+				<label class="form-label" for="eventEndDate">End Irradiation Date</label>
+				<input type="text"
+					   class="form-control"
+					   id="eventPickupDate"
+					   name="eventPickupDate"
+					   placeholder="Pickup Date" disabled />
+			</div>
+			@*<div class="mb-3">
+			<label class="form-label" for="eventIrradiation">Irradiation Date</label>
+			<input type="text"
+			class="form-control"
+			id="eventIrradiation"
+			name="eventIrradiation"
+			placeholder="Irradiation Date" />
+			</div>*@
+			@*<div class="mb-3">
+			<label class="switch">l
+			<input type="checkbox" class="switch-input allDay-switch" />
+			<span class="switch-toggle-slider">
+			<span class="switch-on"></span>
+			<span class="switch-off"></span>
+			</span>
+			<span class="switch-label">All Day</span>
+			</label>
+			</div>*@
+			@*<div class="mb-3">
+			<label class="form-label" for="eventBatchNo">Batch No.</label>
+			<input type="text"
+			class="form-control"
+			id="eventBatchNo"
+			name="eventBatchNo"
+			placeholder="Enter Batch No." />
+			</div>*@
+			<div class="mb-3">
+				<label class="form-label" for="eventRemarks">Remarks</label>
+				<textarea class="form-control" name="eventRemarks" id="eventRemarks"></textarea>
+			</div>
+			<div class="mb-3 d-flex justify-content-sm-between justify-content-start my-4">
+				<div>
+					<button type="submit" class="btn btn-primary btn-add-event me-sm-3 me-1">Add</button>
+					<button type="submit" class="btn btn-primary btn-update-event d-none me-sm-3 me-1">
+						Update
+					</button>
+					<button type="reset"
+							class="btn btn-label-secondary btn-cancel me-sm-0 me-1"
+							data-bs-dismiss="offcanvas">
+						Cancel
+					</button>
+				</div>
+				<div><button class="btn btn-label-danger btn-delete-event d-none">Delete</button></div>
+			</div>
+		</form>
+	</div>
+</div>

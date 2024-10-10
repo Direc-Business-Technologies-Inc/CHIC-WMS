@@ -1,0 +1,56 @@
+﻿@layout MainLayout
+
+@page "/DispatchSchedule"
+
+<MacroBreadcrumbs Breadcrumbs=Breadcrumbs></MacroBreadcrumbs>
+
+<MacroBody>
+	<MacroContainer Columns="2">
+		<div class="col-3">
+			<label for="txt-del-date" class="form-label">Dispatch Date</label>
+			<div class="input-group mb-3">
+				@*<input readonly type="text" class="form-control" name="txt-code" id="txt-plan-code" placeholder="Inspection Plan Code">*@
+				<input type="text" id="txt-del-date" class="form-control" name="daterange" value="@startDate.ToString("MM-dd-yyyy") - @endDate.ToString("MM-dd-yyyy")" />
+			</div>
+		</div>
+	</MacroContainer>
+
+	<MacroContainer>
+		<div class="row row-cols-2 gx-0">
+			<div class="row d-flex align-items-center">
+				<h5>Sales Order Dispatch Table</h5>
+			</div>
+			<div class="row mb-3 gx-0" style="justify-content:end">
+				<label for="html5-search-input" style="display:flex; align-items:center;" class="col-md-1 col-form-label">Search:</label>
+				<div class="col-md-6 ms-1">
+					<input class="form-control" type="text" placeholder="Search ..." id="html5-search-input" @bind="@searchValue" @oninput="(EventArgs) => {SearchDispatchScheds(EventArgs.Value.ToString());}" />
+				</div>
+			</div>
+		</div>
+		<RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="5" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+						Data=tableData TItem="ScheduleViewModel.Schedules" ColumnWidth="300px" LogicalFilterOperator="LogicalFilterOperator.Or">
+			<EmptyTemplate>
+				<p style="color: lightgrey; font-size: 24px; text-align: center; margin: 2rem;">No records to display.</p>
+			</EmptyTemplate>
+			<Columns>
+				<RadzenDataGridColumn TItem="ScheduleViewModel.Schedules" Property="DeliveryDate" Title="Dispatch Date" Width="200px" FormatString='{0:MM-dd-yyyy}' />
+				<RadzenDataGridColumn TItem="ScheduleViewModel.Schedules" Property="DocEntry" Title="So No." Width="80px" />
+				<RadzenDataGridColumn TItem="ScheduleViewModel.Schedules" Property="CardName" Title="Customer Name" Width="160px" />
+				<RadzenDataGridColumn TItem="ScheduleViewModel.Schedules" Property="ItemName" Title="Item Name" Width="160px" />
+				<RadzenDataGridColumn TItem="ScheduleViewModel.Schedules" Property="FacilityLocationCode" Title="Location" Width="80px" />
+				<RadzenDataGridColumn TItem="ScheduleViewModel.Schedules" Title="Action" Sortable="false" Filterable="false" Width="80px" TextAlign="TextAlign.Center">
+					<Template Context="data">
+						<RadzenButton Click="@((args) => SelectSchedule(data.DocEntry.ToString(), data.ItemCode))" ButtonStyle="ButtonStyle.Primary"><i class="fa fa-eye"></i></RadzenButton>
+					</Template>
+				</RadzenDataGridColumn>
+			</Columns>
+		</RadzenDataGrid>
+	</MacroContainer>
+
+	<div class="card-body pt-0 pb-2 d-none">
+		<div class="mb-3">
+			<a type="button" id="btn-save" href="/IrradiationSchedule" class="btn btn-danger float-end m-1">Cancel</a>
+			@*<a type="button" id="btn-save" href="/Home" class="btn btn-danger float-end m-1">Cancel</a>*@
+		</div>
+	</div>
+</MacroBody>

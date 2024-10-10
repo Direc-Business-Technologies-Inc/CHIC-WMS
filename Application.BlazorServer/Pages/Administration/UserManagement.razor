@@ -1,0 +1,360 @@
+﻿@using Application.BlazorServer.Controls.UI_Macros
+@layout MainLayout
+@page "/UserManagement"
+
+<PageTitle>User Management</PageTitle>
+
+<MacroBreadcrumbs Breadcrumbs="Breadcrumbs"></MacroBreadcrumbs>
+
+<div class="row">
+	<div class="col-12">
+		<div class="card">
+			<div class="card-header">
+				<button type="button" class="btn btn-success float-end" data-bs-toggle="modal" data-bs-target="#modal-lg-createuser" @onclick="(args) => SelectUser(string.Empty)" id="createuser"><i class="fas fa-user"></i>  Add</button>
+			</div>
+			<!-- ./card-header -->
+			<div class="card-body table-responsive">
+				<div class="mb-3 row" style="justify-content:end">
+					<label for="html5-search-input" style="display:flex; align-items:center; flex-direction:row-reverse" class="col-md-1 col-form-label">Search:</label>
+					<div class="col-md-3">
+						<input class="form-control" type="text" placeholder="Search ..." id="html5-search-input" @bind="@searchValue" @oninput="(EventArgs) => {SearchUser(EventArgs.Value.ToString());}" />
+					</div>
+				</div>
+				<RadzenDataGrid AllowFiltering="false" AllowColumnResize="false" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="5" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+								Data=userTable TItem="UserViewModel.UsersTableViewModel" ColumnWidth="300px" LogicalFilterOperator="LogicalFilterOperator.Or">
+					<EmptyTemplate>
+						<p style="color: lightgrey; font-size: 24px; text-align: center; margin: 2rem;">No records to display.</p>
+					</EmptyTemplate>
+					<Columns>
+						<RadzenDataGridColumn TItem="UserViewModel.UsersTableViewModel" Property="UserName" Title="User Name" Width="160px" />
+						<RadzenDataGridColumn TItem="UserViewModel.UsersTableViewModel" Property="FullName" Title="Full Name" Width="200px" />
+						<RadzenDataGridColumn TItem="UserViewModel.UsersTableViewModel" Property="Email" Title="Email" Width="160px" />
+						<RadzenDataGridColumn TItem="UserViewModel.UsersTableViewModel" Title="Super User" Width="100px" TextAlign="TextAlign.Center">
+							<Template Context="data">
+								<input disabled type="checkbox" class="form-check-input" @bind=data.SuperUser>
+							</Template>
+						</RadzenDataGridColumn>
+						<RadzenDataGridColumn TItem="UserViewModel.UsersTableViewModel" Title="Is Active" Width="80px" TextAlign="TextAlign.Center">
+							<Template Context="data">
+								<input disabled type="checkbox" class="form-check-input" @bind=data.IsActive>
+							</Template>
+						</RadzenDataGridColumn>
+						<RadzenDataGridColumn TItem="UserViewModel.UsersTableViewModel" Title="Is Locked" Width="80px" TextAlign="TextAlign.Center">
+							<Template Context="data">
+								<input disabled type="checkbox" class="form-check-input" @bind=data.IsLocked>
+							</Template>
+						</RadzenDataGridColumn>
+						<RadzenDataGridColumn TItem="UserViewModel.UsersTableViewModel" Title="Action" Sortable="false" Filterable="false" Width="80px" TextAlign="TextAlign.Center">
+							<Template Context="data">
+								<RadzenButton Click="@((args) => SelectUser(data.UserId))" ButtonStyle="ButtonStyle.Primary"><i class="fa fa-user-edit"></i></RadzenButton>
+							</Template>
+						</RadzenDataGridColumn>
+					</Columns>
+				</RadzenDataGrid>
+			</div>
+			<!-- /.card-body -->
+			<div class="card-footer">
+			</div>
+		</div>
+		<!-- /.card -->
+	</div>
+</div>
+
+<!--- MODAL CONTENT CREATE USER-->
+<div class="modal fade" id="modal-lg-createuser">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<form id="user-info" onSubmit="return false">
+				<div class="modal-header">
+					@if (usersvm.UsersTableDetails.UserId == null || usersvm.UsersTableDetails.UserId == "")
+					{
+						<h4 class="modal-title">Create User</h4>
+					}
+					else
+					{
+						<h4 class="modal-title">Update User</h4>
+					}
+
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+
+					<div class="row">
+						<div class="col-md-12">
+							<h5>Information</h5>
+							<hr class="mt-2 mb-3" />
+						</div>
+
+						<div class="col-md-6">
+							<label>First Name</label>
+							<div class="input-group">
+								<input class="form-control" type="text" name="first-name" placeholder="First Name" id="first-name" @bind="usersvm.UsersTableDetails.FirstName">
+							</div>
+
+							<div class="form-group">
+								<label>Middle Name</label>
+								<input class="form-control" type="text" name="middleName" placeholder="Middle Name" id="middle-name" @bind="usersvm.UsersTableDetails.MiddleName">
+							</div>
+
+							<div class="form-group">
+								<label>Phone No.</label>
+								<input class="form-control" type="tel" name="phoneno" placeholder="Phone No." id="phone-no" @bind="usersvm.UsersTableDetails.PhoneNo">
+							</div>
+
+							<label>Department</label>
+							<div class="input-group">
+								<input class="form-control" type="text" name="dept" placeholder="Department" id="department" @bind="usersvm.UsersTableDetails.Department">
+							</div>
+						</div>
+
+						<div class="col-md-6">
+							<label>Last Name</label>
+							<div class="input-group">
+								<input class="form-control" type="text" name="lastName" placeholder="Last Name" id="last-name" @bind="usersvm.UsersTableDetails.LastName">
+							</div>
+
+							<label for="email">Email</label>
+							<div class="input-group">
+								<input class="form-control" type="email" name="email" placeholder="Email" id="email" @bind="usersvm.UsersTableDetails.Email">
+							</div>
+
+							<div class="form-group">
+								<label>Company</label>
+								<input class="form-control" type="text" name="company" placeholder="Company" id="company" @bind="usersvm.UsersTableDetails.Company">
+							</div>
+
+							<div class="form-group">
+								<div class="form-group">
+									<label>Groups</label>
+									@*<select class="form-control select2bs4" id="groups-selection" style="width: 100%;" disabled>*@
+									<select name="group" class="select2 form-select form-select" id="groups-selection" style="width: 100%;" @onchange="(args) => ChangeUserGroup(args)" value="@usersvm.UsersTableDetails.UserGrpId">
+										@foreach (var group in usersvm.UserGroupList)
+										{
+											<option value="@group.UserGrpId" id="@group.Name">@group.Name</option>
+										}
+									</select>
+								</div>
+							</div>
+
+						</div>
+
+						<div class="col-md-12 mt-3">
+							<h5>Account Settings</h5>
+							<hr class="mt-2 mb-3" />
+						</div>
+						<div class="col-md-12">
+							<div class="row">
+								<div class="col-sm-4">
+									<div class="form-group clearfix">
+										<div class="icheck-success d-inline col-sm-4">
+											<input class="form-check-input" type="checkbox" id="checkboxActive" @bind="usersvm.UsersTableDetails.IsActive">
+											<label for="checkboxActive">Active</label>
+										</div>
+									</div>
+								</div>
+
+								<div class="col-sm-4">
+									<div class="form-group clearfix">
+										<div class="icheck-success d-inline">
+											<input class="form-check-input" type="checkbox" id="checkboxSuperuser" @bind="usersvm.UsersTableDetails.SuperUser">
+											<label for="checkboxSuperuser">Superuser</label>
+										</div>
+									</div>
+								</div>
+
+								<div class="col-sm-4">
+									<div class="form-group clearfix">
+										<div class="icheck-success d-inline col-sm-4">
+											<input class="form-check-input" type="checkbox" id="checkboxLocked" @bind="usersvm.UsersTableDetails.IsLocked">
+											<label for="checkboxLocked">Locked</label>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="accordion mt-3" id="accordionWithIcon">
+								<div class="card accordion-item active">
+									<h2 class="accordion-header d-flex align-items-center">
+										<button type="button" class="accordion-button" data-bs-toggle="collapse" data-bs-target="#accordionWithIcon-1" aria-expanded="true">
+											<i class="menu-icon fa-solid fa-user-shield"></i>Addon Credential
+										</button>
+									</h2>
+
+									<div id="accordionWithIcon-1" class="accordion-collapse collapse">
+										<div class="accordion-body">
+											<div class="row row-cols-1">
+												<div class="col">
+													<label for="username">Username</label>
+													<div class="input-group">
+														<input type="text" name="userName" class="form-control" id="username" placeholder="Username" @bind="usersvm.UsersTableDetails.UserName">
+													</div>
+												</div>
+												<div class="col">
+													<div class="form-password-toggle">
+														<label for="user-password">Password</label>
+														<div class="input-group input-group-merge">
+															<input type="password" name="password" class="form-control" id="user-password" placeholder="Password" @bind="usersvm.UsersTableDetails.Password">
+															<span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+
+				</div>
+				<div class="modal-footer justify-content-between">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+					<button type="submit" class="btn btn-primary">Save</button>
+					@*<button type="submit" class="btn btn-primary" @onclick="(args) => SaveUser()">Save</button>*@
+				</div>
+			</form>
+		</div>
+		<!-- /.modal-content -->
+	</div>
+	<!-- /.modal-dialog -->
+</div>
+
+<!--- MODAL CONTENT UPDATE USER-->
+@*<div class="modal fade" id="modal-lg-updateuser">
+	<div class="modal-dialog modal-lg">
+		<form id="user-info1" onsubmit="return false;">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h4 class="modal-title">Update User</h4>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+
+					<div class="row">
+						<div class="col-md-12">
+							<h5>Information</h5>
+							<hr class="mt-2 mb-3" />
+						</div>
+
+						<div class="col-md-6">
+							<div class="form-group">
+								<label>First Name</label>
+								<input class="form-control" type="text" placeholder="First Name" name="firstname" id="update-first-name" required @bind="usersvm.UsersTableDetails.FirstName">
+							</div>
+
+							<div class="form-group">
+								<label>Middle Name</label>
+								<input class="form-control" type="text" placeholder="Middle Name" name="middleName" id="update-middle-name" required @bind="usersvm.UsersTableDetails.MiddleName">
+							</div>
+
+							<div class="form-group">
+								<label>Phone No.</label>
+								<input class="form-control" type="text" placeholder="Phone No." name="phoneno" id="update-phone-no" required @bind="usersvm.UsersTableDetails.PhoneNo">
+							</div>
+
+							<div class="form-group">
+								<label>Department</label>
+								<input class="form-control" type="text" placeholder="Department" name="dept" id="update-department" required @bind="usersvm.UsersTableDetails.Department">
+							</div>
+						</div>
+
+						<div class="col-md-6">
+							<div class="form-group">
+								<label>Last Name</label>
+								<input class="form-control" type="text" placeholder="Last Name" name="lastName" id="update-last-name" required @bind="usersvm.UsersTableDetails.LastName">
+							</div>
+
+							<div class="form-group">
+								<label for="update-email">Email</label>
+								<input class="form-control" type="email" name="email" placeholder="Email" id="update-email" required  @bind="usersvm.UsersTableDetails.Email">
+							</div>
+
+							<div class="form-group">
+								<label>Company</label>
+								<input class="form-control" type="text" placeholder="Company" name="company" id="update-company" required  @bind="usersvm.UsersTableDetails.Company">
+							</div>
+
+							<div class="form-group">
+								<div class="form-group">
+									<label>Groups</label>
+									<select class="form-control select2bs4" id="update-groups-selection" style="width: 100%;" @bind="usersvm.UsersTableDetails.UserGrpId">
+										<option value="0" id="no-update-group">No Group</option>
+										@foreach (var group in usersvm.UserGroupList)
+										{
+											<option value="@group.UserGrpId" id="@group.Code">@group.Name</option>
+										}
+									</select>
+								</div>
+							</div>
+
+						</div>
+
+						<div class="col-md-12 mt-3">
+							<h5>Account Settings</h5>
+							<hr class="mt-2 mb-3" />
+						</div>
+
+						<div class="col-md-12">
+							<div class="row">
+								<div class="col-sm-4">
+									<div class="form-group clearfix">
+										<div class="icheck-success d-inline col-sm-4">
+											<input class="form-check-input" type="checkbox" id="update-checkboxActive" @bind="usersvm.UsersTableDetails.IsActive">
+											<label for="update-checkboxActive">Active</label>
+										</div>
+									</div>
+								</div>
+
+								<div class="col-sm-4">
+									<div class="form-group clearfix">
+										<div class="icheck-success d-inline">
+											<input class="form-check-input" type="checkbox" id="update-checkboxSuperuser" @bind="usersvm.UsersTableDetails.SuperUser">
+											<label for="update-checkboxSuperuser">Superuser</label>
+										</div>
+									</div>
+								</div>
+
+								<div class="col-sm-4">
+									<div class="form-group clearfix">
+										<div class="icheck-success d-inline col-sm-4">
+											<input class="form-check-input" type="checkbox" id="update-checkboxLocked" @bind="usersvm.UsersTableDetails.IsLocked">
+											<label for="update-checkboxLocked">Locked</label>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="accordion mt-3" id="accordionWithIcon">
+								<div class="card accordion-item active">
+									<h2 class="accordion-header d-flex align-items-center">
+										<button type="button" class="accordion-button" data-bs-toggle="collapse" data-bs-target="#updateaccordionWithIcon-1" aria-expanded="true">
+											<i class="menu-icon fa-solid fa-user-shield"></i>Addon Credential
+										</button>
+									</h2>
+
+									<div id="updateaccordionWithIcon-1" class="accordion-collapse collapse">
+										<div class="accordion-body">
+											<div class="form-group">
+												<label for="username">Username</label>
+												<input type="text" class="form-control" id="update-username" placeholder="Username" @bind="usersvm.UsersTableDetails.UserName">
+											</div>
+											<div class="form-group">
+												<label for="user-password">Password</label>
+												<input type="password" class="form-control" id="update-user-password" placeholder="Password" @bind="usersvm.UsersTableDetails.Password">
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+
+				</div>
+				<div class="modal-footer justify-content-between">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+					<button type="submit" class="btn btn-primary" @onclick="(args) => SaveUser()">Save</button>
+				</div>
+			</div>
+			<!-- /.modal-content -->
+		</form>
+	</div>
+	<!-- /.modal-dialog -->
+</div>*@

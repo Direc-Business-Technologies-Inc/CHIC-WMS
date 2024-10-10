@@ -1,0 +1,200 @@
+﻿@* @layout MainLayout *@
+@page "/DashboardNotification"
+
+@implements IAsyncDisposable
+
+
+
+<div class="row row-cols-1 gy-4 m-3" style="height: 93vh">
+	<div class="row row-cols-3" style="height: 5%">
+		<div class="col">
+			<img style="height: 75%; width: auto; max-width: 75%;" src="assets/img/isi_logo.png" />
+
+			@if (isMute)
+			{
+				<i style="margin-left:2%" class="bx bx-volume-mute bx-md" @onclick="() => SoundNotification(isMute)"></i>
+			}
+			else
+			{
+				<i style="margin-left:2%" class="bx bx-volume-full bx-md" @onclick="() => SoundNotification(isMute)"></i>
+			}
+		</div>
+		<div class="col">
+			<h3 class="text-center">@DigitalClock.ToString("h:mm tt")</h3>
+			@* <h3 class="text-center">@DigitalClock.ToString("h:mm:ss tt")</h3> *@
+		</div>
+		<div class="col m-0">
+			<h3 class="text-end">@DigitalClock.ToString("dddd, MMMM/dd/yyyy")</h3>
+		</div>
+	</div>
+	<div class="col" style="height: 95%">
+		@* 		@if (_itemList.Any())
+		{ *@
+		<div class="row row-cols-3" style="height: 100%">
+			<div class="col" style="height: 100%">
+				<div class="card h-100">
+					<div class="card-header p-2" style="height: 10%">
+						<h3 class="card-title m-0 me-2 text-center"><b>DRY STORAGE</b></h3>
+					</div>
+					<div class="card-body" style="height: 90%">
+						<div class="row row-cols-1" style="height: 100%">
+							<div class="col border rounded mb-3" style="height: 50%">
+								<h3 class="text-center m-0 p-1" style="height: 20%">RECEIVING</h3>
+								<div class="d-flex flex-wrap" style="height: 80%">
+									@* @foreach (var e in _itemList.Where(x => x.StorageConditions == "Dry" && x.Status == "Receiving").OrderBy(x => x.DocNum).Take(10)) *@
+									@foreach (var e in _itemList.Where(x => x.StorageConditions == "Dry" && x.Status == "For Receiving - Ready").OrderBy(x => x.DocNum) ) //.Take(10))
+									{
+										<div class="avatar avatar-custom flex-shrink-0 me-2 mb-2">
+											<span class="avatar-initial rounded bg-label-primary">
+												@(e.DocNum)
+											</span>
+										</div>
+									}
+								</div>
+							</div>
+							<div class="col border rounded mb-3" style="height: 50%">
+								<h3 class="text-center m-0 p-1" style="height: 20%">DISPATCHING</h3>
+								<div class="d-flex flex-wrap" style="height: 80%">
+									@* @foreach (var e in _itemList.Where(x => x.StorageConditions == "Dry" && (x.Status == "Dispatch" || x.Status == "For Dispatch")).OrderBy(x => x.DocNum).Take(10)) *@
+									@foreach (var e in _itemList.Where(x => x.StorageConditions == "Dry" && x.Status == "For Dispatch - Ready").OrderBy(x => x.DocNum) ) //.Take(10))
+									{
+										<div class="avatar avatar-custom flex-shrink-0 me-2 mb-2">
+											<span class="avatar-initial rounded bg-label-danger">
+												@(e.DocNum)
+											</span>
+										</div>
+									}
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="col" style="height: 100%">
+				<div class="card h-100">
+					<div class="card-header p-2" style="height: 10%">
+						<h3 class="card-title m-0 me-2 text-center"><b>COLD STORAGE</b></h3>
+					</div>
+					<div class="card-body" style="height: 90%">
+						<div class="row row-cols-1" style="height: 100%">
+							<div class="col border rounded mb-3" style="height: 50%">
+								<h3 class="text-center m-0 p-1" style="height: 20%">RECEIVING</h3>
+								<div class="d-flex flex-wrap" style="height: 80%">
+									@* @foreach (var e in _itemList.Where(x => x.StorageConditions == "Cold" && x.Status == "Receiving").OrderBy(x => x.DocNum).Take(10)) *@
+									@foreach (var e in _itemList.Where(x => x.StorageConditions == "Cold" && x.Status == "For Receiving - Ready").OrderBy(x => x.DocNum) ) //.Take(10))
+									{
+										<div class="avatar avatar-custom flex-shrink-0 me-2 mb-2">
+											<span class="avatar-initial rounded bg-label-primary">
+												@(e.DocNum)
+											</span>
+										</div>
+									}
+								</div>
+							</div>
+							<div class="col border rounded mb-3" style="height: 50%">
+								<h3 class="text-center m-0 p-1" style="height: 20%">DISPATCHING</h3>
+								<div class="d-flex flex-wrap" style="height: 80%">
+									@* @foreach (var e in _itemList.Where(x => x.StorageConditions == "Cold" && x.Status == "Dispatch").OrderBy(x => x.DocNum).Take(10)) *@
+									@foreach (var e in _itemList.Where(x => x.StorageConditions == "Cold" && x.Status == "For Dispatch - Ready").OrderBy(x => x.DocNum) ) //.Take(10))
+									{
+										<div class="avatar avatar-custom flex-shrink-0 me-2 mb-2">
+											<span class="avatar-initial rounded bg-label-danger">
+												@(e.DocNum)
+											</span>
+										</div>
+									}
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="col" style="height: 100%">
+				<div class="card h-100">
+					<div class="card-header p-2" style="height: 10%">
+						<h3 class="card-title m-0 me-2 text-center"><b>IRRADIATION BAY</b></h3>
+					</div>
+					<div class="card-body" style="height: 90%">
+						<div class="col border rounded mb-3" style="height: 23.5%">
+							<h3 class="text-center m-0 p-1" style="height: 20%">FOR LOADING</h3>
+							<div class="d-flex flex-wrap justify-content-center align-items-center" style="height: 80%">
+								@* @foreach (var SO in _itemList.Where(x => x.EBStatus == "For Loading")) *@
+								@foreach (var SO in _itemList.Where(x => x.EBStatus == "For Loading" && Convert.ToDateTime(x.IrradiationDate == "" ? DateTime.MinValue.ToString() : x.IrradiationDate).Date == DateTime.Today).OrderBy(x => Convert.ToDateTime(x.IrradiationDate == "" ? DateTime.MinValue.ToString() : x.IrradiationDate).TimeOfDay) ) //.Take(1))
+								{
+									<div class="avatar avatar-xl text-center">
+										<span class="avatar-initial rounded bg-label-primary">
+											@(SO.DocNum)
+										</span>
+									</div>
+								}
+							</div>
+						</div>
+						<div class="col border rounded mb-3" style="height: 23.5%">
+							<h3 class="text-center m-0 p-1" style="height: 20%">GOOD TO LOAD</h3>
+							<div class="d-flex flex-wrap justify-content-center align-items-center" style="height: 80%">
+								@* @foreach (var SO in _itemList.Where(x => x.EBStatus == "For Loading Validation")) *@
+								@foreach (var SO in _itemList.Where(x => x.EBStatus == "Good To Load" 
+								|| x.EBStatus == "At Irradiation"
+								&& x.Lines.Where(x => string.IsNullOrEmpty(x.OngoingStatus)).Any()
+								&& Convert.ToDateTime(x.IrradiationDate == "" ? DateTime.MinValue.ToString() : x.IrradiationDate).Date == DateTime.Today).OrderBy(x => Convert.ToDateTime(x.IrradiationDate == "" ? DateTime.MinValue.ToString() : x.IrradiationDate).TimeOfDay) ) //.Take(1))
+								{
+									@foreach (var pallets in SO.Lines.Where(x => string.IsNullOrEmpty(x.OngoingStatus)) ) //.Take(1))
+									{
+										<div class="flex-shrink-0 me-2"> 
+											<span class="badge bg-label-primary" style="font-size:1em; cursor: pointer;"><b>@pallets.PalletNo</b></span>
+										</div>
+									}
+									@* <div class="avatar avatar-xl text-center">
+										<span class="avatar-initial rounded bg-label-primary">
+											@(SO.DocNum)
+										</span>
+									</div> *@
+								}
+							</div>
+						</div>
+						<div class="col border rounded mb-3" style="height: 23.5%">
+							<h3 class="text-center m-0 p-1" style="height: 20%">AT IRRADIATION</h3>
+							<div class="d-flex flex-wrap justify-content-center align-items-center" style="height: 80%">
+								@* @foreach (var SO in _itemList.Where(x => x.EBStatus == "Good To Load")) *@
+								@foreach (var SO in _itemList.Where(x => x.EBStatus == "At Irradiation" 
+								&& x.Lines.Where(x => x.OngoingStatus == "At Irradiation").Any()
+								&& Convert.ToDateTime(x.IrradiationDate == "" ? DateTime.MinValue.ToString() : x.IrradiationDate).Date == DateTime.Today).OrderBy(x => Convert.ToDateTime(x.IrradiationDate == "" ? DateTime.MinValue.ToString() : x.IrradiationDate).TimeOfDay) ) //.Take(1))
+								{
+									@foreach (var pallets in SO.Lines.Where(x => x.OngoingStatus == "At Irradiation") )//.Take(1))
+									{
+										<div class="flex-shrink-0 me-2"> 
+											<span class="badge bg-label-primary" style="font-size:1em; cursor: pointer;"><b>@pallets.PalletNo</b></span>
+										</div> 
+									}
+								}
+							</div>
+						</div>
+						<div class="col border rounded mb-3" style="height: 23.5%">
+							<h3 class="text-center m-0 p-1" style="height: 20%">FOR UNLOADING</h3>
+							<div class="d-flex flex-wrap justify-content-center align-items-center" style="height: 80%">
+								@foreach (var SO in _itemList.Where(x => x.EBStatus == "At Irradiation" 
+																&& x.Lines.Where(x => x.OngoingStatus == "For Unloading").Any()
+								&& Convert.ToDateTime(x.IrradiationDate == "" ? DateTime.MinValue.ToString() : x.IrradiationDate).Date == DateTime.Today).OrderBy(x => Convert.ToDateTime(x.IrradiationDate == "" ? DateTime.MinValue.ToString() : x.IrradiationDate).TimeOfDay) ) //.Take(1))
+								{
+									@foreach (var pallets in SO.Lines.Where(x => x.OngoingStatus == "For Unloading") ) //.Take(1))
+									{
+										<div class="flex-shrink-0 me-2">
+											<span class="badge bg-label-primary" style="font-size:1em; cursor: pointer;"><b>@pallets.PalletNo</b></span>
+										</div> 											
+									}
+								}
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		@* 		}
+		else
+		{
+		<text>Empty</text>
+		} *@
+	</div>
+</div>

@@ -1,0 +1,362 @@
+﻿@page "/InventoryTransfer/ManualTransfer"
+@using Application.Models.ViewModels;
+@using ZXingBlazor.Components
+
+@if (_model.IsBusy)
+{
+    <LoadingScreen></LoadingScreen>
+}
+
+<h3>
+    <span @onclick="() => ShowMode(0)" class="@(_showMode > 0 ? "text-muted" : "")">Manual Transfer</span>
+    @switch(_showMode)
+    {
+        case 1 :
+            <span> / Batch List</span>
+                break;
+        case 2 :
+            <span> / Bin List</span>
+            break;
+    }
+</h3>
+
+@if (isGranted && _layout.showBarcode)
+{
+    <div>
+        <BarcodeReader UseBuiltinDiv="true" ScanResult=ScanResult CloseBtnTitle="Close" ResetBtnTitle="Reset" SelectDeviceBtnTitle="Select Camera" ScanBtnTitle="Scan" Close="() => _layout.ToggleBarcode()" />
+    </div>
+}
+
+<BSToaster WrapperClass="m-3" Position="Position.Fixed" ZIndex="2000" />
+
+@switch (_showMode)
+{
+    case 1 :
+        <BSTHead>Allocate Batch</BSTHead>
+        <BSRow>
+            <RadzenDataGrid @ref="gridBatch"
+                            Data="@filteredBatchList"
+                            AllowAlternatingRows="false"
+                            AllowFiltering="true" 
+                            AllowPaging="true" PageSize="20"
+                            AllowSorting="true"
+                            AllowColumnResize="false" 
+                            AllowRowSelectOnRowClick="false"
+                            ColumnWidth="200px"
+                            EditMode="DataGridEditMode.Single"
+                            SelectionMode="DataGridSelectionMode.Multiple">
+                <Columns>
+                    <RadzenDataGridColumn TItem="BatchSerialViewModel.BatchSerial" Width="50px" Sortable="false" Filterable="false">
+                        <HeaderTemplate>
+                            <RadzenCheckBox TriState="false" TValue="bool?" 
+                                            Value="@(filteredBatchList.Any(i => i.CheckState == true))"
+                                            Change="@(args => CheckAllBatch(args.Value))" />
+                        </HeaderTemplate>
+                        <Template Context="batch">
+                            <RadzenCheckBox TriState="false" TValue="bool"                                            
+                                            @bind-Value="@(batch.CheckState)"
+                                            Change=@(args => { CheckBatch(args); batch.CheckState = args; }) />
+                        </Template>
+                    </RadzenDataGridColumn>
+                    <!-- BatchNumber -->
+                    <RadzenDataGridColumn TItem="BatchSerialViewModel.BatchSerial" Width="100px" Property="DistNumber" Title="Batch#" Filterable="false">
+                        <EditTemplate Context="batch">
+                            <RadzenTextBox @bind-Value="batch.DistNumber" Name="DistNumber" />
+                            <RadzenRequiredValidator Text="Batch Number is required" Component="DistNumber" Popup="true" />
+                        </EditTemplate>
+                    </RadzenDataGridColumn>            
+                    <!-- Quantity -->
+                    <RadzenDataGridColumn TItem="BatchSerialViewModel.BatchSerial" Width="65px" Property="Quantity" Title="Qty" Filterable="false">
+                        <EditTemplate Context="batch">
+                            <RadzenNumeric @bind-Value="batch.Quantity" Name="Quantity" />
+                            <RadzenRequiredValidator Text="Quantity is required" Component="Quantity" Popup="true" />
+                        </EditTemplate>
+                    </RadzenDataGridColumn>
+                    <!-- BinCode -->
+                   <RadzenDataGridColumn TItem="BatchSerialViewModel.BatchSerial" Width="140px" Property="BinCode" Title="Bin" Filterable="false"
+                                          Sortable="false" TextAlign="TextAlign.Left">
+                        <EditTemplate Context="batch">
+                            <RadzenNumeric @bind-Value="batch.BinCode" Name="BinCode"/>                        
+                        </EditTemplate>
+                    </RadzenDataGridColumn>
+                    <RadzenDataGridColumn TItem="BatchSerialViewModel.BatchSerial" Width="60px" Title="Edit" Sortable="false" Filterable="false"
+                        TextAlign="TextAlign.Right" Frozen="true" FrozenPosition="FrozenColumnPosition.Right">
+                        <Template Context="batch">
+                            <RadzenButton Icon="shelves" Size="ButtonSize.Small" Click="()=> FetchBinDestList( batch.ItemCode, batch.DistNumber, batch.Location, batch.BaseLineNumber)"></RadzenButton>
+                        </Template>
+                    </RadzenDataGridColumn>
+                </Columns>
+            </RadzenDataGrid>
+        </BSRow>
+        <BSRow>
+            <BSCol>
+                <BSButton Class="w-100" Size=Size.Medium Color=BSColor.Primary OnClick="()=> ShowMode(0)">Back</BSButton>
+            </BSCol>
+            <BSCol>
+                <BSButton Class="w-100" Size=Size.Medium Color=BSColor.Success OnClick=AllocateBatchSrcList>Next</BSButton>            
+            </BSCol>
+        </BSRow>
+        break;
+
+    case 2 :
+        <BSTHead>Allocate <RadzenBadge BadgeStyle="BadgeStyle.Info" Text="Source Bin" /></BSTHead>
+        <BSRow>
+            <RadzenDataGrid @ref="gridBin" Data="@filteredBinList"
+                            AllowRowSelectOnRowClick="false"
+                            AllowColumnResize="true"
+                            AllowPaging="true" PageSize="20"
+                            AllowFiltering="true"
+                            AllowSorting="true"
+                            ColumnWidth="200px"
+                            EditMode="DataGridEditMode.Single"
+                            FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                            SelectionMode="DataGridSelectionMode.Multiple">
+                <Columns>
+
+                    <RadzenDataGridColumn TItem="BinViewModel.BinMappingViewModel.BinAccumulator" Width="45px" Sortable="false" Filterable="false">
+                        <HeaderTemplate>
+                            <RadzenCheckBox TriState="false" TValue="bool?"
+                                            Value="@(filteredBinList.Any(i => i.CheckState == true))"
+                                            Change="@(args => CheckAllBin(args.Value))" />
+                        </HeaderTemplate>
+                        <Template Context="bin">
+                            <RadzenCheckBox TriState="false" TValue="bool"
+                            @bind-Value="@(bin.CheckState)"
+                                            Change=@(args => { CheckBin(args); bin.CheckState = args; }) />
+                            @*gridBin.SelectRow(bin); *@
+                        </Template>
+                    </RadzenDataGridColumn>
+                    <!-- BinAbs -->
+                    <RadzenDataGridColumn TItem="BinViewModel.BinMappingViewModel.BinAccumulator" Width="65px" Property="BinAbs" Title="Bin Entry" Filterable="false">
+                        <EditTemplate Context="bin">
+                            <RadzenNumeric @bind-Value="bin.BinAbs" Style="display: block" Name="BinAbs" />
+                            <RadzenRequiredValidator Text="BinAbs is required" Component="BinAbs" Popup="true" />
+                        </EditTemplate>
+                    </RadzenDataGridColumn>
+                    <!-- BinCode -->
+                    <RadzenDataGridColumn TItem="BinViewModel.BinMappingViewModel.BinAccumulator" Width="100px" Property="BinCode" Title="Bin Code">
+                        <EditTemplate Context="bin">
+                            <RadzenTextBox @bind-Value="bin.BinCode" Style="display: block" Name="BinCode" />
+                            <RadzenRequiredValidator Text="BinCode is required" Component="BinCode" Popup="true" />
+                        </EditTemplate>
+                    </RadzenDataGridColumn>
+                    <!-- Quantity -->
+                    <RadzenDataGridColumn TItem="BinViewModel.BinMappingViewModel.BinAccumulator" Width="65px" Property="OnHandQty" Title="Qty" Filterable="false">
+                        <EditTemplate Context="bin">
+                            <RadzenNumeric @bind-Value="bin.OnHandQty" Style="display: block" Name="OnHandQty" />
+                            <RadzenRequiredValidator Text="OnHandQty is required" Component="OnHandQty" Popup="true" />
+                        </EditTemplate>
+                    </RadzenDataGridColumn>
+
+                </Columns>
+            </RadzenDataGrid>
+        </BSRow>
+        <BSRow>
+            <BSCol>
+                <BSButton Class="w-100" Size=Size.Medium Color=BSColor.Primary OnClick="()=> ShowMode(1)">Back</BSButton>
+            </BSCol>
+            <BSCol>
+                <BSButton Class="w-100" Size=Size.Medium Color=BSColor.Success OnClick=AllocateBinSrcList>Next</BSButton>
+            </BSCol>
+        </BSRow>
+        break;
+
+    case 3:
+        <BSTHead> <RadzenBadge BadgeStyle="BadgeStyle.Info" Text="Allocate Destination Bin"/> </BSTHead>
+        <BSRow>
+            <RadzenDataGrid @ref="gridBinDest" Data="@filteredBinDestList"
+                            AllowRowSelectOnRowClick="false"
+                            AllowColumnResize="true"
+                            AllowPaging="true" PageSize="10"
+                            AllowFiltering="true"
+                            AllowSorting="true"
+                            ColumnWidth="200px"
+                            EditMode="DataGridEditMode.Single"
+                            FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                            SelectionMode="DataGridSelectionMode.Multiple">
+                <Columns>
+
+                    <RadzenDataGridColumn TItem="BinViewModel.BinMappingViewModel.BinAccumulator" Width="50px" Sortable="false" Filterable="false">
+                        <HeaderTemplate>
+                            <RadzenCheckBox TriState="false" TValue="bool?"
+                                            Value="@(filteredBinDestList.Any(i => i.CheckState == true))"
+                                            Change="@(args => CheckAllDestBin(args.Value))" />
+                        </HeaderTemplate>
+                        <Template Context="bin">
+                            <RadzenCheckBox TriState="false" TValue="bool"                                            
+                                            @bind-Value="@(bin.CheckState)"
+                                            Change=@(args => { CheckDestBin(args, bin.BinCode); }) />
+                            @*gridBin.SelectRow(bin); bin.CheckState = args;*@
+                        </Template>
+                        </RadzenDataGridColumn>
+                        <!-- BinAbs -->
+                        <RadzenDataGridColumn TItem="BinViewModel.BinMappingViewModel.BinAccumulator" Width="65px" Property="BinAbs" Title="Bin Entry" Filterable="false">
+                            <EditTemplate Context="bin">
+                                <RadzenNumeric @bind-Value="bin.BinAbs" Style="display: block" Name="BinAbs" />
+                                <RadzenRequiredValidator Text="BinAbs is required" Component="BinAbs" Popup="true" />
+                            </EditTemplate>
+                        </RadzenDataGridColumn>
+                        <!-- BinCode -->
+                        <RadzenDataGridColumn TItem="BinViewModel.BinMappingViewModel.BinAccumulator" Width="100px" Property="BinCode" Title="Bin Code">
+                            <EditTemplate Context="bin">
+                                <RadzenTextBox @bind-Value="bin.BinCode" Style="display: block" Name="BinCode" />
+                                <RadzenRequiredValidator Text="BinCode is required" Component="BinCode" Popup="true" />
+                            </EditTemplate>
+                        </RadzenDataGridColumn>
+                        <!-- Quantity -->
+                        <RadzenDataGridColumn TItem="BinViewModel.BinMappingViewModel.BinAccumulator" Width="60px" Property="OnHandQty" Title="Qty" Filterable="false">
+                            <EditTemplate Context="bin">
+                                <RadzenNumeric @bind-Value="bin.OnHandQty" Style="display: block" Name="OnHandQty" />
+                                <RadzenRequiredValidator Text="OnHandQty is required" Component="OnHandQty" Popup="true" />
+                            </EditTemplate>
+                        </RadzenDataGridColumn>
+
+                </Columns>
+            </RadzenDataGrid>
+        </BSRow>
+        <BSRow>
+            <BSCol>
+                <BSButton Class="w-100" Size=Size.Medium Color=BSColor.Primary OnClick="()=> ShowMode(1)">Back</BSButton>
+            </BSCol>
+            <BSCol>
+                <BSButton Class="w-100" Size=Size.Medium Color=BSColor.Success OnClick=AllocateBinDesList>Next</BSButton>
+            </BSCol>
+        </BSRow>
+        break;
+    default:
+        <div class="row">
+            <div class="col">
+            <div class="card">
+                <div class="card-body" style="padding:0.5rem">
+
+                    @*<div class="border rounded p-3 mb-3"> *@
+                    <RadzenRow Style="m-3">
+                        <RadzenColumn Size="12" SizeSM="12">
+                            <RadzenStack Gap="0.5rem">
+                                <RadzenFormField Text="Scan Pallet" Variant="@variant" Style="flex: 1;">
+                                    <ChildContent>
+                                        <RadzenTextBox @ref=_radzTxtPallet @bind-Value=_model.PalletBarcode @onkeyup=OnPalletBarcodeEnter Style="width: 100%; display: block;" />
+                                    </ChildContent>
+                                    <End>
+                                            <RadzenButton @ref="_radzBtnPallet" Icon="qr_code_scanner" Click='() => {_scanType = "Pallet"; _layout.ToggleBarcode();}'></RadzenButton>
+                                    </End>
+                                </RadzenFormField>
+                                <RadzenFormField Text="Scan Bin" Variant="@variant" Style="flex: 1;">
+                                    <ChildContent>
+                                        <RadzenTextBox Disabled="_isNoBin" @ref="_radzTxtBin" @bind-Value="_model.BinBarcode" @onkeyup=CheckIsExistBincode Style="width: 100%; display: block;" />
+                                    </ChildContent>
+                                    <End>
+                                            <RadzenButton Disabled="_isNoBin" @ref="_radzBtnBin" Icon="qr_code_scanner" Click='() => {_scanType = "Bin"; _layout.ToggleBarcode();}'></RadzenButton>
+                                    </End>
+                                </RadzenFormField>
+                                <RadzenFormField Text="Transfer Date" Variant="@variant" Style="flex: 1;">
+                                    <RadzenDatePicker @bind-Value=@_model.inventoryTransfer.DocDate Style="width: 100%; display: block;" />
+                                </RadzenFormField>
+                                <RadzenFormField Text="Transfer Type" Variant="@variant" Style="flex: 1;">
+                                    <RadzenDropDown Data=@_UTransferType @bind-Value="@_model.inventoryTransfer.UTransferType" TextProperty="Value" ValueProperty="Key"
+                                                    AllowFiltering="false" AllowClear="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" FilterOperator="StringFilterOperator.StartsWith"
+                                                        Change="()=> ChangeTransferType()" />
+                                </RadzenFormField>
+                                <RadzenFormField Text="Source Location" Variant="@variant" Style="flex: 1;">
+                                    <RadzenDropDown Data=@_model.locations @bind-Value="@_model.inventoryTransfer.LocationCode" TextProperty="Value" ValueProperty="Key"
+                                                    AllowFiltering="false" AllowClear="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" FilterOperator="StringFilterOperator.StartsWith"
+                                                    Change="@ChangeWhsCodeSource" />
+                                </RadzenFormField>
+                                <RadzenFormField Text="Destination Location" Variant="@variant" Style="flex: 1;">
+                                    <RadzenDropDown Data=@_model.locations @bind-Value="@_model.inventoryTransfer.DestLocation" TextProperty="Value" ValueProperty="Key"
+                                                    AllowFiltering="false" AllowClear="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" FilterOperator="StringFilterOperator.StartsWith"
+                                                    Change="@ChangeWhsCodeDestination" />
+                                </RadzenFormField>
+                            </RadzenStack>
+                        </RadzenColumn>
+                    </RadzenRow>                
+
+                    @if (LineSelected is null)
+                    {
+                        @*<div class="border rounded p-3 mb-3"> *@
+                            <RadzenRow>
+                                <RadzenColumn Size="12" SizeSM="12">
+                                <RadzenLabel>
+                                    <h5>Item Details</h5>
+                                </RadzenLabel>
+                                @foreach (var line in _model.inventoryTransfer.InventoryTransferLines)
+                                {
+                                    <div class="row border rounded pb-3 mb-3" style="margin:0.5%">
+                                        <div class="col-12">
+                                            <h7>@line.ItemName</h7>
+                                        </div>
+                                        <div class="col-12">
+                                            <h7>S.O #: @line.SalesOrderNum </h7>
+                                        </div>
+                                        <div class="col-12 d-none">
+                                            <h7>FromWhse: @line.FromWarehousecode </h7>
+                                        </div>
+                                        <div class="col-12 d-none">
+                                            <h7>WhseCode: @line.Warehousecode </h7>
+                                        </div>
+                                        <div class="col-12">
+                                            <h7>Pallet Code: @line.PalletCode</h7>
+                                        </div>
+                                        <div class="col-12">
+                                            <h7>Bin Code: @line.BinCode</h7>
+                                        </div>
+
+                                        <div class="col-6">
+                                            <RadzenFormField Text="Planned No. Of Boxes" Variant="@variant" Style="flex: 1;">
+                                                <ChildContent>
+                                                    <RadzenNumeric Disabled="true" @bind-Value=line.PlannedBoxQty Style="width: 100%; display: block;" />
+                                                </ChildContent>
+                                            </RadzenFormField>
+                                        </div>
+                                        <div class="col-6">
+                                            <RadzenFormField Text="Actual No. Of Boxes" Variant=@variant Style="flex: 1;">
+                                                <ChildContent>
+                                                    <RadzenNumeric ReadOnly="true" @bind-Value=line.ActualBoxQty Style="width: 100%; display: block;" />
+                                                </ChildContent>
+                                                <End>
+                                                    <RadzenButton Icon="cases" Size="ButtonSize.Small" Click="()=> FetchBatchData(line.LineNum)"></RadzenButton>
+                                                </End>
+                                            </RadzenFormField>                                               
+                                        </div>
+                                    </div> <!--End of Box border-rounded-->
+                                }
+                                <!-- </div> End of row-->
+                              </RadzenColumn>
+                            </RadzenRow>
+                        <!-- </div> End of Box border-rounded-->
+                    }
+                    else
+                    {
+                        <div>
+                            <button class="btn btn-primary" @onclick="() => LineSelected = null">Return</button>
+                        </div>
+                    }
+ 
+                    <BSCol Column="12">
+                        <BSRow>
+                        <BSCol>
+                            <BSButton Class="w-100" Size=Size.Large Color=BSColor.Secondary OnClick=Clear>Clear</BSButton>
+                        </BSCol>
+                        <BSCol>
+                            <BSButton Class="w-100" Size=Size.Large Color=BSColor.Primary OnClick="Post"
+                                      IsDisabled="@(_isDisabled)">
+                                @if (_model.IsPosting)
+                                {
+                                    <span class="spinner-border me-1" role="status" aria-hidden="true"></span>
+
+                                    <span>Saving...</span>
+                                }
+                                else
+                                {
+                                    <span>Save</span>
+                                }
+                            </BSButton>
+                        </BSCol>
+                    </BSRow>
+                    </BSCol>
+                </div> <!--End of Card-Body-->
+            </div>
+        </div>
+        </div>
+        break;
+}

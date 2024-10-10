@@ -1,0 +1,112 @@
+﻿@using Application.BlazorServer.Controls.UI_Macros
+@using static Application.Models.ViewModels.DashboardViewModel;
+@using Radzen;
+@layout MainLayout
+
+@page "/Dashboard/SalesOrderDetails/{Id}"
+
+<MacroBreadcrumbs Breadcrumbs="Breadcrumbs"></MacroBreadcrumbs>
+
+<div class="row">
+    <div class="col">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Quantites/Specifications</h5>
+                <RadzenDataGrid AllowFiltering="false" AllowColumnResize="false"
+                                AllowAlternatingRows="false" FilterMode="FilterMode.Advanced"
+                                AllowSorting="false" PageSize="5" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+                                Data=model.QuantitySpecificationList TItem="QuantitySpecs" ColumnWidth="300px" LogicalFilterOperator="LogicalFilterOperator.Or">
+                    <Columns>
+                        <RadzenDataGridColumn TItem="QuantitySpecs" Property="@nameof(QuantitySpecs.DocNum)" Title="SO No." Width="160px" />
+                        <RadzenDataGridColumn TItem="QuantitySpecs" Property="@nameof(QuantitySpecs.NoofBoxes)" Title="No of Boxes" Width="140px" />
+                        <RadzenDataGridColumn TItem="QuantitySpecs" Property="@nameof(QuantitySpecs.NonConformity)" Title="Non Conformity Items" Width="200px" />
+                        <RadzenDataGridColumn TItem="QuantitySpecs" Property="@nameof(QuantitySpecs.WeightBox)" Title="Weight/Box" Width="140px" />
+                        <RadzenDataGridColumn TItem="QuantitySpecs" Property="@nameof(QuantitySpecs.TotalWeight)" Title="Total Weight" Width="160px" />
+                        <RadzenDataGridColumn TItem="QuantitySpecs" Property="@nameof(QuantitySpecs.NoBoxesPallet)" Title="Boxes per pallet" Width="160px" />
+                        <RadzenDataGridColumn TItem="QuantitySpecs" Property="@nameof(QuantitySpecs.NoPallet)" Title="No. Of Pallets" Width="160px" />
+                        <RadzenDataGridColumn TItem="QuantitySpecs" Property="@nameof(QuantitySpecs.BoxLength)" Title="Box Length" Width="160px" />
+                        <RadzenDataGridColumn TItem="QuantitySpecs" Property="@nameof(QuantitySpecs.BoxWidth)" Title="Box Width" Width="160px" />
+                        <RadzenDataGridColumn TItem="QuantitySpecs" Property="@nameof(QuantitySpecs.BoxHeight)" Title="Box Height" Width="160px" />
+                        <RadzenDataGridColumn TItem="QuantitySpecs" Property="@nameof(QuantitySpecs.BoxVolume)" Title="Box Volume" Width="160px" />
+                        <RadzenDataGridColumn TItem="QuantitySpecs" Property="@nameof(QuantitySpecs.Density)" Title="Density" Width="160px" />
+                    </Columns>
+                </RadzenDataGrid>
+                <hr />
+                <h5 class="card-title">Schedules</h5>
+                <RadzenDataGrid AllowFiltering="false" AllowColumnResize="false"
+                                AllowAlternatingRows="false" FilterMode="FilterMode.Advanced"
+                                AllowSorting="false" PageSize="5" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+                                Data=model.ScheduleList TItem="Schedule" ColumnWidth="300px" LogicalFilterOperator="LogicalFilterOperator.Or">
+                    <Columns>
+                        <RadzenDataGridColumn TItem="Schedule" Property="@nameof(Schedule.DocNum)" Title="SO No." Width="160px" />
+                        <RadzenDataGridColumn TItem="Schedule" Property="@nameof(Schedule.PickupReleaseDate)" Title="Receiving Date" Width="160px" FormatString='{0:MM-dd-yyyy}' />
+                        <RadzenDataGridColumn TItem="Schedule" Property="@nameof(Schedule.IrradiationDate)" Title="Irradiation Date" Width="160px" FormatString='{0:MM-dd-yyyy}' />
+                        <RadzenDataGridColumn TItem="Schedule" Property="@nameof(Schedule.DeliveryDate)" Title="Dispatch Date" Width="160px" FormatString='{0:MM-dd-yyyy}' />
+                    </Columns>
+                </RadzenDataGrid>
+                <hr />
+                <h5 class="card-title">Irradiation Parameters</h5>
+                <RadzenDataGrid AllowFiltering="false" AllowColumnResize="false"
+                                AllowAlternatingRows="false" FilterMode="FilterMode.Advanced"
+                                AllowSorting="false" PageSize="5" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+                                Data=model.IrradiationParameters TItem="IrradiationParameter" ColumnWidth="300px" LogicalFilterOperator="LogicalFilterOperator.Or">
+                    <Columns>
+                        <RadzenDataGridColumn TItem="IrradiationParameter" Property="@nameof(IrradiationParameter.DocNum)" Title="SO No." Width="160px" />
+                        <RadzenDataGridColumn TItem="IrradiationParameter" Property="@nameof(IrradiationParameter.MinDose)" Title="Minimum Dose" Width="160px" />
+                        <RadzenDataGridColumn TItem="IrradiationParameter" Property="@nameof(IrradiationParameter.MaxDose)" Title="Maximum Dose" Width="160px" />
+                        <RadzenDataGridColumn TItem="IrradiationParameter" Property="@nameof(IrradiationParameter.Energy)" Title="EB Frequency" Width="160px" />
+                        <RadzenDataGridColumn TItem="IrradiationParameter" Property="@nameof(IrradiationParameter.ConveyorSpeed)" Title="Conveyor Speed" Width="160px" />
+                    </Columns>
+                </RadzenDataGrid>
+                <hr />
+                <h5 class="card-title">Sales Order Activity</h5>
+                <RadzenDataGrid AllowFiltering="false" AllowColumnResize="false" FilterPopupRenderMode="PopupRenderMode.OnDemand"
+                                AllowAlternatingRows="false" FilterMode="FilterMode.Advanced"
+                                AllowSorting="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+                                Data=model.SalesOrderActivities TItem="SalesOrderActivity" ColumnWidth="300px" LogicalFilterOperator="LogicalFilterOperator.Or">
+                    <Columns>
+                        <RadzenDataGridColumn TItem="SalesOrderActivity" Property="@nameof(SalesOrderActivity.Activity)" Title="Activity" Width="160px" />
+                        <RadzenDataGridColumn TItem="SalesOrderActivity" Property="@nameof(SalesOrderActivity.Start)" Title="Start" Width="160px" />
+                        <RadzenDataGridColumn TItem="SalesOrderActivity" Property="@nameof(SalesOrderActivity.End)" Title="End" Width="160px" />
+                        <RadzenDataGridColumn TItem="SalesOrderActivity" Property="@nameof(SalesOrderActivity.Duration)" Title="Duration" Width="160px" FormatString='{0:hh\:mm}' />
+                    </Columns>
+                </RadzenDataGrid>
+                <hr /> 
+                <h5 class="card-title">Pallet Details</h5>
+                <RadzenDataGrid AllowFiltering="false" AllowColumnResize="false" FilterPopupRenderMode="PopupRenderMode.OnDemand"
+                                AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" 
+                                AllowSorting="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+                                @ref="grid" RowRender="@RowRender" ExpandMode="DataGridExpandMode.Single" RowExpand="RowExpand"
+                                Data=model.PalletDetailsList TItem="PalletDetails" ColumnWidth="300px" LogicalFilterOperator="LogicalFilterOperator.Or">
+                    <Template Context="batch">
+                        <RadzenDataGrid AllowFiltering="true" AllowPaging="false" AllowSorting="true" Data="batchList" TItem="Batch"
+                                        AllowVirtualization="true" Style="max-height:400px">
+                            <Columns>
+                                <RadzenDataGridColumn TItem="Batch" Property="@nameof(Batch.BatchNo)" Title="Batch No" />
+                            </Columns>
+                        </RadzenDataGrid>
+                    </Template>
+
+                    <Columns>
+                        <RadzenDataGridColumn TItem="PalletDetails" Property="@nameof(PalletDetails.PalletNo)" Title="Pallet No" Width="160px" />
+                        <RadzenDataGridColumn TItem="PalletDetails" Property="@nameof(PalletDetails.Activity)" Title="Activity" Width="160px" />
+                        <RadzenDataGridColumn TItem="PalletDetails" Property="@nameof(PalletDetails.Status)" Title="Status" Width="160px" />
+                    </Columns>
+                </RadzenDataGrid>
+@*                 <h5 class="card-title">Batch Status</h5>
+                <RadzenDataGrid AllowFiltering="false" AllowColumnResize="false" AllowVirtualization="true" FilterPopupRenderMode="PopupRenderMode.OnDemand"
+                                AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" Style="height:400px"
+                                AllowSorting="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+                                Data=model.BatchStatuses TItem="BatchStatus" ColumnWidth="300px" LogicalFilterOperator="LogicalFilterOperator.Or">
+                    <Columns>
+                        <RadzenDataGridColumn TItem="BatchStatus" Property="@nameof(BatchStatus.DistNumber)" Title="Batch" Width="160px" />
+                        <RadzenDataGridColumn TItem="BatchStatus" Property="@nameof(BatchStatus.Activity)" Title="Activity" Width="160px" />
+                        <RadzenDataGridColumn TItem="BatchStatus" Property="@nameof(BatchStatus.Start)" Title="Start" Width="160px" />
+                        <RadzenDataGridColumn TItem="BatchStatus" Property="@nameof(BatchStatus.End)" Title="End" Width="160px" />
+                        <RadzenDataGridColumn TItem="BatchStatus" Property="@nameof(BatchStatus.Duration)" Title="Duration" Width="160px" FormatString='{0:hh\:mm}' />
+                    </Columns>
+                </RadzenDataGrid> *@
+            </div>
+        </div>
+    </div>
+</div>

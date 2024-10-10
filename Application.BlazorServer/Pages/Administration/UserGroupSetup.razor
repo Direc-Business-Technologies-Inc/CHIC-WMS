@@ -1,0 +1,232 @@
+﻿@layout MainLayout
+
+@page "/UserGroupSetup/{UserGrpId}"
+@*@page "/UserGroupSetup"*@
+
+<PageTitle>User Group Setup</PageTitle>
+
+<MacroBreadcrumbs Breadcrumbs="Breadcrumbs"></MacroBreadcrumbs>
+
+<MacroBody>
+	<MacroContainer>
+		<div id="wizard-user" class="bs-stepper wizard-icons wizard-modern wizard-modern-icons-example mt-2">
+			<div class="bs-stepper-header">
+				<div class="step" data-target="#UserGroupDetails">
+					<button type="button" class="step-trigger step-button">
+						<span class="bs-stepper-icon">
+							<i class="fa-solid fa-users-viewfinder"></i>
+						</span>
+						<span class="bs-stepper-label">User Groups Details</span>
+					</button>
+				</div>
+				<div class="line">
+					<i class="bx bx-chevron-right"></i>
+				</div>
+
+				<div class="step" data-target="#UserGroupSetup">
+					<button type="button" class="step-trigger step-button">
+						<span class="bs-stepper-icon">
+							<i class="fa-solid fa-users-rectangle"></i>
+						</span>
+						<span class="bs-stepper-label">User Group Authorization</span>
+					</button>
+				</div>
+			</div>
+			<div class="bs-stepper-content">
+				<form id="wizard-user-form" onSubmit="return false">
+					<div id="UserGroupDetails" class="content">
+						<div class="row g-3">
+							<div class="col-sm-6">
+								<label class="form-label" for="userGrpCode">Group Code</label>
+								<input type="text" id="userGrpCode" class="form-control" value="@usersvm.UserGroup.UserGrpId" disabled />
+							</div>
+							<div class="col-sm-6">
+								<label class="form-label" for="userGrpName">Group Name</label>
+								@if (usersvm.UserGroup.UserGrpId == 1 || usersvm.UserGroup.UserGrpId == 2)
+								{
+									<input type="text" id="userGrpName" class="form-control" @bind="@usersvm.UserGroup.Name" disabled />
+								}
+								else
+								{
+									<input type="text" id="userGrpName" class="form-control" @bind="@usersvm.UserGroup.Name" />
+								}
+							</div>
+							<div class="col-12 mt-2">
+								<div class="form-group clearfix float-end">
+									<div class="icheck-success d-inline col-sm-4">
+										<input class="form-check-input" type="checkbox" id="isActive" @bind="@usersvm.UserGroup.IsActive">
+										<label for="checkboxActive" class="ms-1">Active</label>
+									</div>
+								</div>
+							</div>
+
+							<div class="col">
+								<div class="divider mb-0">
+									<div class="divider-text">USERS</div>
+								</div>
+							</div>
+
+							<div class="col-12 mt-2">
+								<div class="form-group">
+									<div class="row row-cols-2">
+										<div class="col">
+											<h5>Available Users</h5>
+										</div>
+										<div class="col">
+											<h5 style="margin-left:1em">Selected Users</h5>
+										</div>
+									</div>
+									<div>
+										<div class="multiple-selector">
+											<ul class="selectable-ul">
+												@foreach (var item in usersvm.UserTableList.Where(x => !(usersvm.UserSelectedTableList.Where(y => y.UserId == x.UserId).Any())))
+												{
+													<li @onclick="@(() => Select(item))">@item.FullName</li>
+												}
+											</ul>
+											<div class="multiple-selector-buttons">
+												<button type="button" class="btn-selector" @onclick="SelectAll">>></button>
+												<button type="button" class="btn-selector" @onclick="DeselectAll">&lt;&lt;</button>
+											</div>
+											<ul class="selectable-ul">
+												@foreach (var item in usersvm.UserSelectedTableList)
+												{
+													<li @onclick="@(() => Deselect(item))">@item.FullName</li>
+												}
+											</ul>
+										</div>
+									</div>
+								</div>
+
+							</div>
+							<div class="col-12 d-flex justify-content-between">
+								<button class="btn btn-label-secondary btn-prev" @onclick="PreviousPage">
+									<i class="bx bx-chevron-left bx-sm ms-sm-n2"></i>
+									<span class="align-middle d-sm-inline-block d-none">Previous</span>
+								</button>
+								<button class="btn btn-primary btn-next">
+									<span class="align-middle d-sm-inline-block d-none me-sm-1">Next</span>
+									<i class="bx bx-chevron-right bx-sm me-sm-n2"></i>
+								</button>
+							</div>
+						</div>
+					</div>
+
+					<div id="UserGroupSetup" class="content">
+						<div class="col-12 mt-2">
+							<RadzenDataGrid AllowFiltering="false" AllowColumnResize="false" FilterPopupRenderMode="PopupRenderMode.OnDemand" GridLines="DataGridGridLines.Horizontal"
+											AllowAlternatingRows="true" FilterMode="FilterMode.Advanced"
+											AllowSorting="false" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+											@ref="UserGroupGrid" RowRender="@RowRender" ExpandMode="DataGridExpandMode.Single" RowExpand="RowExpand"
+											Data="usersvm.ModuleList.DistinctBy(x => x.GroupName)" TItem="UserViewModel.ModuleViewModel" ColumnWidth="300px" LogicalFilterOperator="LogicalFilterOperator.Or">
+								<Template Context="batch">
+									<RadzenDataGrid AllowFiltering="false" AllowPaging="false" AllowSorting="false" Data="pageList" TItem="UserViewModel.ModuleViewModel" GridLines="DataGridGridLines.Both"
+													AllowVirtualization="true" Style="max-height:400px">
+										<Columns>
+											<RadzenDataGridColumn TItem="UserViewModel.ModuleViewModel" Property="@nameof(UserViewModel.ModuleViewModel.Name)" Title="Page" />
+											<RadzenDataGridColumn TItem="UserViewModel.ModuleViewModel" Title="Permissions">
+												<Template Context="data">
+													@{
+														string dropdownValue = GetAuthorization(data).Result;
+													}
+													<select id="select-4-other-tree float-right" class="form-control w-100 rounded-end form-select" value="@dropdownValue" @onchange="(args) => SelectAuthorization(args.Value.ToString(), data.ModuleId)">
+														<option value="Read">Read-Only</option>
+														<option value="Update">Can-Update</option>
+														<option value="Create">Can-Create</option>
+														<option value="Full">Full Authorization</option>
+														<option value="No">No Authorization</option>
+													</select>
+												</Template>
+											</RadzenDataGridColumn>
+										</Columns>
+									</RadzenDataGrid>
+								</Template>
+								<Columns>
+									<RadzenDataGridColumn TItem="UserViewModel.ModuleViewModel" Property="@nameof(UserViewModel.ModuleViewModel.GroupName)" Title="Group Name" Width="160px" />
+									<RadzenDataGridColumn TItem="UserViewModel.ModuleViewModel" Title="Permissions" Width="160px">
+										<Template Context="data">
+											@{
+												string groupdropdownValue = GetAuthorizationByGroup(data).Result;
+											}
+											<select id="select-4-other-tree float-right" class="form-control w-100 rounded-end form-select" value="@groupdropdownValue" @onchange="(args) => SelectAuthorizationByGroup(args.Value.ToString(), data.GroupName)">
+												<option value="-">-</option>
+												<option value="Read">Read-Only</option>
+												<option value="Update">Can-Update</option>
+												<option value="Create">Can-Create</option>
+												<option value="Full">Full Authorization</option>
+												<option value="No">No Authorization</option>
+											</select>
+										</Template>
+									</RadzenDataGridColumn>
+								</Columns>
+							</RadzenDataGrid>
+							@* @foreach (var moduleGroup in usersvm.ModuleList.DistinctBy(x => x.GroupName))
+							{
+							<div class="row row-cols-2">
+							<div class="col pe-0">
+							<button class="me-1 btn-selector w-100"
+							style="text-align:start;"
+							type="button"
+							data-bs-toggle="collapse"
+							data-bs-target="#@moduleGroup.GroupName.Replace(" ", "_")"
+							aria-expanded="false"
+							aria-controls="collapseExample">
+							<i class="bx bx-chevron-right"></i>
+							@moduleGroup.GroupName
+							</button>
+							</div>
+							<div class="col ps-0">
+							<select id="select-4-other-tree float-right" class="form-control w-100 rounded-end">
+							<option value="Read">Read-Only</option>
+							<option value="Update">Can-Update</option>
+							<option value="Create">Can-Create</option>
+							<option value="Full">Full Authorization</option>
+							<option value="No">No Authorization</option>
+							</select>
+							</div>
+							</div>
+							<div class="collapse" id="@moduleGroup.GroupName.Replace(" ", "_")" style="padding: 0 1% 0 2%;">
+							<div class="p-3 border alt-bg">
+							@foreach (var module in usersvm.ModuleList.Where(x => x.GroupName == moduleGroup.GroupName))
+							{
+							<div class="row row-cols-2">
+							<div class="col pe-0">
+							<button class="me-1 btn-selector w-100"
+							style="text-align:start;"
+							type="button"
+							data-bs-toggle="collapse"
+							data-bs-target="#collapseExample"
+							aria-expanded="false"
+							aria-controls="collapseExample">
+							@module.Name
+							</button>
+							</div>
+							<div class="col ps-0">
+							<select id="select-4-other-tree float-right" class="form-control w-100 rounded-end">
+							<option value="Read">Read-Only</option>
+							<option value="Update">Can-Update</option>
+							<option value="Create">Can-Create</option>
+							<option value="Full">Full Authorization</option>
+							<option value="No">No Authorization</option>
+							</select>
+							</div>
+							</div>
+							}
+							</div>
+							</div>
+							} *@
+						</div>
+						<div class="col-12 d-flex justify-content-between mt-2">
+							<button class="btn btn-primary btn-prev">
+								<i class="bx bx-chevron-left bx-sm ms-sm-n2"></i>
+								<span class="align-middle d-sm-inline-block d-none">Previous</span>
+							</button>
+							<button class="btn btn-success" @onclick=@(() => PostUserGroup())>Save</button>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+		<!-- /Modern Icons Wizard -->
+	</MacroContainer>
+</MacroBody>

@@ -1,0 +1,114 @@
+﻿@namespace Application.BlazorServer.Pages.Dispatch
+@layout MainLayout
+@page "/dispatch"
+@using BlazorStrap.V5
+@using BlazorStrap;
+@using static Application.Models.ViewModels.ReceivingViewModel;
+
+<h1>
+    <span @onclick=ToggleSoList class="@(showSoList ? "text-muted" : "")">Dispatch</span>
+    @if (showSoList)
+    {
+        <span> / Sales Order List</span>
+    }
+</h1>
+@*
+<p role="status">Current count: @currentCount</p>
+
+<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+*@
+
+<BSToaster WrapperClass="m-3" Position="Position.Fixed" ZIndex="2000" />
+
+@if (showSoList)
+{
+    <BSInput Class="mb-3" placeholder="Search" InputType="InputType.Text" @bind-Value=searchQry @oninput=FilterList />
+
+    <ul class="list-unstyled">
+        @foreach (var line in filteredList)
+        {
+            <li class="mb-3" @onclick="() => {SelectSo(line);ToggleSoList();}">
+                <div class="card so-entry">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-10">
+                                <h3>@(line.BpName)</h3>
+                                <h5>@(line.ItemName)</h5>
+                                <h6>@(line.DocDate.ToShortDateString())</h6>
+                            </div>
+                            <div class="col d-flex align-items-center justify-content-center">
+                                <h4>@line.DocNum</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </li>
+        }
+    </ul>
+}
+else
+{
+    <BSRow>
+        <BSCol Column="12" ColumnMedium="6">
+            <BSLabel>Sales Order No.</BSLabel>
+            <BSInputGroup MarginBottom="Margins.Medium">
+                <BSInput IsReadonly=true InputType="InputType.Text" Value="@(_model.selectedSo.DocNum)" />
+                <BSButton IsOutlined="true" Color="BSColor.Primary" OnClick=ToggleSoList><i class='bx bx-menu'></i></BSButton>
+            </BSInputGroup>
+            <BSLabel>Scan Pallet</BSLabel>
+            <BSInput MarginBottom="Margins.Medium" InputType="InputType.Text" UpdateOnInput=true @bind-Value="_model.scanPalletInput" @onkeydown=OnScanInputEnter />
+            <BSLabel>Item Name</BSLabel>
+            <BSInput MarginBottom="Margins.Medium" IsReadonly=true InputType="InputType.Text" Value="@(_model.selectedSo.ItemName)" />
+            <BSLabel>Customer Name</BSLabel>
+            <BSInput MarginBottom="Margins.Medium" IsReadonly=true InputType="InputType.Text" Value="@(_model.selectedSo.BpName)" />
+            <BSRow RowColumns="2">
+                <BSCol>
+                    <BSLabel>Planned No. Of Boxes</BSLabel>
+                    <BSInput MarginBottom="Margins.Medium" IsReadonly=true InputType="InputType.Number" Value="@(_model.selectedSo.PlannedBoxNo)" />
+                </BSCol>
+                <BSCol>
+                    <BSLabel>Actual No. Of Boxes</BSLabel>
+                    <BSInput MarginBottom="Margins.Medium" IsReadonly=true InputType="InputType.Number" Value="@(_model.selectedSo.Pallets.Sum(x=>x.Quantity))" />
+                </BSCol>
+            </BSRow>
+            <BSLabel>Remarks</BSLabel>
+            <BSInput MarginBottom="Margins.Medium" InputType="InputType.TextArea" @bind-Value=_model.selectedSo.Remarks />
+        </BSCol>
+        <BSCol Column="12" ColumnMedium="6">
+            <BSCard CardType="CardType.Card" MarginBottom="Margins.Medium">
+                <BSCard CardType="CardType.Body">
+                    <h4>Pallet Details</h4>
+                    @foreach (var pallet in _model.selectedSo.Pallets)
+                    {
+                        <BSRow MarginBottom="Margins.Medium">
+                            <BSCol Column="4" ColumnMedium="6" Align="Align.Center" Class="text-center">@pallet.Label</BSCol>
+                            <BSCol><BSInput InputType="InputType.Number" min="0" TValue="double" ValueChanged="@((double s) => OnPalletQtyChange(s, pallet))" Value="@pallet.Quantity" /></BSCol>
+                        </BSRow>
+                    }
+                </BSCard>
+            </BSCard>
+        </BSCol>
+        <BSCol Column="12">
+            <BSRow>
+                <BSCol>
+                    <BSButton Class="w-100" Size=Size.Large Color=BSColor.Secondary OnClick=Clear>Clear</BSButton>
+                </BSCol>
+                <BSCol>
+                    <BSButton Class="w-100" Size=Size.Large Color=BSColor.Primary OnClick="Save"
+                              IsDisabled="@(_model.selectedSo.DocEntry<=0 || _model.selectedSo.Pallets.Sum(x=>x.Quantity) <=0 || isPosting)">
+                        @if (isPosting)
+                        {
+                            <span class="spinner-border me-1" role="status" aria-hidden="true"></span>
+
+                            <span>Saving...</span>
+                        }
+                        else
+                        {
+                            <span>Save</span>
+                        }
+                    </BSButton>
+                </BSCol>
+            </BSRow>
+        </BSCol>
+    </BSRow>
+}

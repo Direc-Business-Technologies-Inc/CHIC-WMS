@@ -1,0 +1,42 @@
+﻿@if (!isLoaded)
+{
+	<div class="fullscreen-div d-flex align-items-center justify-content-center">
+		@* <div> *@
+			<img class="loading-icon" src="assets/img/Loading.gif" style="width:25vh;height:25vh;" />
+		@* </div> *@
+ 		@* <div class="loadingio-spinner-double-ring-w1mhw8ozh8">
+			<div class="ldio-w702yapkdbj">
+				<div></div>
+				<div></div>
+				<div><div></div></div>
+				<div>
+					<div>
+					</div>
+				</div>
+			</div>
+		</div>  *@
+	</div>
+}
+
+@ChildContent
+
+@code {
+	bool isLoaded;
+
+	[Parameter]
+	public RenderFragment ChildContent { get; set; }
+
+	protected override async Task OnInitializedAsync()
+	{
+		//await Task.Delay(4000); // TODO actual initialization job
+	}
+
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		if (firstRender)
+		{
+			isLoaded = true;
+			StateHasChanged();
+		}
+	}
+}

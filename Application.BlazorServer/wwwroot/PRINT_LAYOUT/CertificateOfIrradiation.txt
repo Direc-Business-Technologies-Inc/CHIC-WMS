@@ -1,0 +1,2 @@
+"CertificateNo", "DocNo", "CustomerName", "CustomerPONo", "ItemName", "ManufacturingLotNo", "TotalNoBoxes", "FacilityName", "IrradiationDate", "RequiredDose", "ActualDose", "Signature", "Name", "JobTitle", "IssuedDate"
+"24-00001-A", "222", "LEONIE AGRICEUTICAL CORP.", "", "SAMBONG POWDER MESH 10", "", "20", "TANAY1", "07-22-2024", "3 to 10 kGy", "3.5 kGy", "", "", "", ""

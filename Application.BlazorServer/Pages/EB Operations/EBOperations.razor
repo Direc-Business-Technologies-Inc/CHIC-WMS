@@ -1,0 +1,223 @@
+﻿@layout MainLayout
+
+
+@page "/EBOperations"
+<style>
+	.custom-datagrid .rz-datatable {
+		border: 2px solid black !important;
+	}
+</style>
+
+<MacroBreadcrumbs Breadcrumbs=Breadcrumbs>
+	@if (isMute)
+	{
+		<i style="margin-left:2%" class="bx bx-volume-mute bx-md" @onclick="() => SoundNotification(isMute)"></i>
+	}
+	else
+	{
+		<i style="margin-left:2%" class="bx bx-volume-full bx-md" @onclick="() => SoundNotification(isMute)"></i>
+	}
+</MacroBreadcrumbs>
+
+@* Kanban Dashboard *@
+<div class="row row-cols-5" style="max-height: 65vh; height: 65vh;">
+	<div class="col text-center py-3 border rounded-2" style="max-height:inherit;">
+		<h5 class="mb-3">Scheduled Sales Orders</h5>
+		<div style="max-height:90%; overflow-y:auto;">
+			@foreach (var SO in _itemList.Where(x => x.Status == "In Storage - For Irradiation" && string.IsNullOrWhiteSpace(x.EBStatus)).OrderBy(x => Convert.ToDateTime(x.IrradiationDate == "" ? DateTime.MinValue.ToString() : x.IrradiationDate).TimeOfDay))
+			{
+				<div class="d-flex justify-content-center col-12 mb-2" data-bs-toggle="modal" data-bs-target="#modal" @onclick="() => SelectSO(SO)">
+					<div class="avatar avatar-xl text-center">
+						<span class="avatar-initial rounded bg-label-primary">
+							@SO.DocNum
+						</span>
+					</div>
+				</div>
+			}
+		</div>
+	</div>
+	<div class="col text-center py-3 bg-white border rounded-2" style="max-height:inherit;">
+		<div class="bg-white p-0 my-2 no-border" style="height: 49%">
+			<h5 class="mb-3">For Loading</h5>
+			@foreach (var SO in _itemList.Where(x => x.EBStatus == "For Loading").OrderBy(x => Convert.ToDateTime(x.IrradiationDate == "" ? DateTime.MinValue.ToString() : x.IrradiationDate).TimeOfDay))
+			{
+				<div class="d-flex justify-content-center col-12 mb-2" @onclick="() => {SelectSO(SO); ProceedNextStepSO();}">
+					<div class="avatar avatar-xl text-center">
+						<span class="avatar-initial rounded bg-label-primary">
+							@SO.DocNum
+						</span>
+					</div>
+				</div>
+			}
+		</div>
+		<div class="bg-white p-0 my-2 no-border" style="height: 49%">
+			<h5 class="mb-3">For Loading Validation</h5>
+			@foreach (var SO in _itemList.Where(x => x.EBStatus == "For Loading Validation").OrderBy(x => Convert.ToDateTime(x.IrradiationDate == "" ? DateTime.MinValue.ToString() : x.IrradiationDate).TimeOfDay))
+			{
+				<div class="d-flex justify-content-center col-12 mb-2" data-bs-toggle="modal" data-bs-target="#modal" @onclick="() => SelectSO(SO, true)">
+					<div class="avatar avatar-xl text-center">
+						<span class="avatar-initial rounded bg-label-primary">
+							@SO.DocNum
+						</span>
+					</div>
+				</div>
+			}
+		</div>
+	</div>
+	<div class="col text-center py-3 border rounded-2" style="max-height:inherit;">
+		<h5 class="mb-3">Good to Load</h5>
+		<div style="max-height:90%; overflow-y:auto;">
+			@foreach (var SO in _itemList.Where(x => x.EBStatus == "Good To Load" || x.EBStatus == "At Irradiation").OrderBy(x => Convert.ToDateTime(x.IrradiationDate == "" ? DateTime.MinValue.ToString() : x.IrradiationDate).TimeOfDay))
+			{
+				@foreach (var pallets in SO.Lines.Where(x => string.IsNullOrEmpty(x.OngoingStatus)))
+				{
+					<div class="d-flex justify-content-center col-12 mb-2" @onclick="() => {SelectPallet(pallets); ProceedNextStepPallet();}">
+						<span class="badge bg-label-primary" style="font-size:2em; cursor: pointer;"><b>@pallets.PalletNo</b></span>
+					</div>
+				}
+				@* <div class="d-flex justify-content-center col-12 mb-2" @onclick="() => {SelectSO(SO); ProceedNextStepSO();}">
+					<div class="avatar avatar-xl text-center">
+						<span class="avatar-initial rounded bg-label-primary">
+							@SO.DocNum
+						</span>
+					</div>
+				</div> *@
+			}
+			@* OLD SHEESH *@
+			@* @foreach (var SO in _itemList.Where(x => x.EBStatus == "Good To Load").OrderBy(x => Convert.ToDateTime(x.IrradiationDate == "" ? DateTime.MinValue.ToString() : x.IrradiationDate).TimeOfDay))
+			{
+				@foreach (var pallets in SO.Lines.Where(x => x.OngoingStatus == ""))
+				{
+					<div class="d-flex justify-content-center col-12 mb-2" @onclick="() => {SelectPallet(pallets); ProceedNextStepPallet();}">
+						<span class="badge bg-label-primary" style="font-size:2em; cursor: pointer;"><b>@pallets.PalletNo</b></span>
+					</div>
+				}
+			} *@
+		</div>
+	</div>
+	<div class="col text-center py-3 bg-white border rounded-2" style="max-height:inherit;">
+		<h5 class="mb-3">At Irradiation</h5>
+		<div style="max-height:90%; overflow-y:auto;">
+			@foreach (var SO in _itemList.Where(x => x.EBStatus == "At Irradiation").OrderBy(x => Convert.ToDateTime(x.IrradiationDate == "" ? DateTime.MinValue.ToString() : x.IrradiationDate).TimeOfDay))
+			{
+				@foreach (var pallets in SO.Lines.Where(x => x.OngoingStatus == "At Irradiation"))
+				{
+					<div class="d-flex justify-content-center col-12 mb-2" data-bs-toggle="modal" data-bs-target="#modal" @onclick="() => SelectPallet(pallets, true)">
+						<span class="badge bg-label-primary" style="font-size:2em; cursor: pointer;"><b>@pallets.PalletNo</b></span>
+					</div>
+				}
+			}
+		</div>
+	</div>
+	<div class="col text-center py-3 border nrounded-2" style="max-height:inherit;">
+		<h5 class="mb-3">For Unloading</h5>
+		<div style="max-height:90%; overflow-y:auto;">
+			@foreach (var SO in _itemList.Where(x => x.EBStatus == "At Irradiation").OrderBy(x => Convert.ToDateTime(x.IrradiationDate == "" ? DateTime.MinValue.ToString() : x.IrradiationDate).TimeOfDay))
+			{
+				@foreach (var pallets in SO.Lines.Where(x => x.OngoingStatus == "For Unloading"))
+				{
+					<div class="d-flex justify-content-center col-12 mb-2" @onclick="() => {SelectPallet(pallets); ProceedNextStepPallet();}">
+						<span class="badge bg-label-primary" style="font-size:2em; cursor: pointer;"><b>@pallets.PalletNo</b></span>
+					</div>
+				}
+			}
+		</div>
+	</div>
+</div>
+
+@* Modal *@
+<div class="modal fade" id="modal" data-bs-backdrop="static" tabindex="-1">
+	<div class="modal-dialog">
+		<div id="" class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body pt-0">
+				<div class="">
+					<div class="row">
+						<div class="col-4">
+							<h5>SO No. @_item.DocNum</h5>
+						</div>
+						<div class="col-8 text-end">
+							<label><b>Irradiation Date:</b> @_item.IrradiationDate</label>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-4">
+							<label><b>SO Quantity:</b> @_item.SOQUantity</label>
+						</div>
+						<div class="col-8 text-end">
+							<label><b>SO Status:</b> @_item.Status</label>
+						</div>
+					</div>
+				</div>
+				<div class="mt-4">
+					<div class="row d-flex align-items-center">
+						<b>Parameters</b>
+					</div>
+					<RadzenDataGrid AllowFiltering="false" AllowColumnResize="false"
+									AllowAlternatingRows="false" Data="_ebCheckList" GridLines="DataGridGridLines.Both"
+									PageSize="5" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true" TItem="EBOperation"
+									AllowRowSelectOnRowClick="true" SelectionMode="DataGridSelectionMode.Multiple" @ref="EBOperationGrid" @bind-Value=@selectedEB>
+						<EmptyTemplate>
+							<p style="color: lightgrey; font-size: 24px; text-align: center; margin: 2rem;">No records to display.</p>
+						</EmptyTemplate>
+						<Columns>
+							<RadzenDataGridColumn TItem="EBOperation" Property="@nameof(EBOperation.Parameter)" Title="Parameter" Width="160px" />
+							<RadzenDataGridColumn TItem="EBOperation" Property="@nameof(EBOperation.Specification)" Title="Specification" Width="160px" TextAlign="TextAlign.Center" />
+							<RadzenDataGridColumn TItem="EBOperation" Property="@nameof(EBOperation.Passed)" Title="Validate" Width="80px" TextAlign="TextAlign.Center">
+								<HeaderTemplate>
+									<RadzenLabel>Validate</RadzenLabel>
+									<br />
+									<RadzenCheckBox TabIndex="-1" TriState="false" TValue="bool?" InputAttributes="@(new Dictionary<string,object>(){ { "aria-label", "Select all items" }})"
+													Value="@(selectedEB == null || selectedEB?.Any() != true ? false : !selectedEB.All(i => selectedEB.Contains(i)) ? null : _ebCheckList.Any(i => selectedEB.Contains(i)))"
+													Change="@(args => selectedEB = args == true ? _ebCheckList.ToList() : null)" />
+								</HeaderTemplate>
+								<Template Context="data">
+									<RadzenCheckBox TabIndex="-1" TriState="false" Value="@(selectedEB != null && selectedEB.Contains(data))" InputAttributes="@(new Dictionary<string,object>(){ { "aria-label", "Select item" }})"
+													TValue="bool" Change=@(args => { return; }) />
+									@* TValue="bool" Change=@(args => { EBOperationGrid.SelectRow(data); })/> *@
+								</Template>
+							</RadzenDataGridColumn>
+						</Columns>
+					</RadzenDataGrid>
+				</div>
+				<div class="mt-4">
+					<div class="row d-flex align-items-center">
+						<b>List of Pallets</b>
+					</div>
+					<RadzenDataGrid AllowFiltering="false" AllowColumnResize="false"
+									AllowAlternatingRows="false" Data="_item.Lines" GridLines="DataGridGridLines.Both" class="custom-datagrid"
+									PageSize="3" AllowPaging="false" AllowVirtualization="true" Style="max-height:200px" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true" TItem="DashboardNotificationViewModel.DashboardNotificationLineViewModel">
+						<EmptyTemplate>
+							<p style="color: lightgrey; font-size: 24px; text-align: center; margin: 2rem;">No records to display.</p>
+						</EmptyTemplate>
+						<Columns>
+							<RadzenDataGridColumn TItem="DashboardNotificationViewModel.DashboardNotificationLineViewModel" Property="@nameof(DashboardNotificationViewModel.DashboardNotificationLineViewModel.PalletNo)" Title="Pallet No" />
+							@* <RadzenDataGridColumn TItem="DashboardNotificationViewModel.DashboardNotificationLineViewModel" Property="@nameof(DashboardNotificationViewModel.DashboardNotificationLineViewModel.BinCode)" Title="Bin Location" Width="160px" /> *@
+						</Columns>
+					</RadzenDataGrid>
+				</div>
+				<div class="mt-4">
+					@if (_item.EBStatus == "For Loading Validation")
+					{
+						<button type="button" @onclick="() => InvalidSO()" class="btn btn-danger float-start">Invalid SO</button>
+						<button type="button" @onclick="() => ProceedNextStepSO()" class="btn btn-success float-end" disabled="@((selectedEB?.Count ?? 0) != _ebCheckList.Count)">Good to Load</button>
+					}
+					else if (string.IsNullOrWhiteSpace(_item.EBStatus))
+					{
+						<button type="button" @onclick="() => ProceedNextStepSO()" class="btn btn-success float-end" disabled="@((selectedEB?.Count ?? 0) != _ebCheckList.Count)">For Loading</button>
+					}
+					else if (_item.EBStatus == "At Irradiation" && _pallet.OngoingStatus == "At Irradiation")
+					{
+						<button type="button" @onclick="() => ProceedNextStepPallet()" class="btn btn-success float-end" disabled="@((selectedEB?.Count ?? 0) != _ebCheckList.Count)">For Unloading</button>
+					}
+				</div>
+			</div>
+			@* 			<div class="modal-footer">
+			<button type="button" class="btn btn-danger float-start">Invalid SO</button>
+			<button type="button" class="btn btn-success">For Loading</button>
+			</div> *@
+		</div>
+	</div>
+</div>

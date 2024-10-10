@@ -1,0 +1,2 @@
+"Code", "BinLocation", "CustomerName", "ItemName"
+"238-001-20", "C1-S1-01-02-O", "GYLLMARC INGREDIENTS INC.", "GROUND BLACK PEPPER"

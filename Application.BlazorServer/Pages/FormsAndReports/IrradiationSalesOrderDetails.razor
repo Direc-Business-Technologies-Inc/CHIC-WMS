@@ -1,0 +1,98 @@
+﻿@layout MainLayout
+
+@page "/IrradiationSalesOrderDetails/{SONo}"
+
+<PageTitle>Sales Order Details</PageTitle>
+
+<MacroBreadcrumbs Breadcrumbs=Breadcrumbs></MacroBreadcrumbs>
+
+<MacroBody>
+	<div class="card-body">
+		<div class="row row-cols-1">
+			<div class="col-12 col-lg-12">
+				<a type="button" id="btn-back" href="/IrradiationLabelPrinting" class="btn btn-danger m-1">Back</a>
+			</div>
+		</div>
+	</div>
+	<MacroContainer Columns="3">
+		<MacroInput InputName="SO No" IsReadOnly=true DefaultValue="@model.SalesOrderDetail.SONo"></MacroInput>
+		<MacroInput InputName="Min Dose" IsReadOnly=true DefaultValue="@model.SalesOrderDetail.MinDose"></MacroInput>
+		<div class="col">
+			<label for="receivingdate" class="form-label">Receiving Date</label>
+			<div class="input-group mb-3">
+				<input type="text"
+		class="form-control" name="receivingdate" id="receivingdate" @bind="@model.SalesOrderDetail.ReceivingDate" @bind:format="yyyy-MM-dd"
+		readonly="true">
+			</div>
+		</div>
+		<MacroInput InputName="Customer" IsReadOnly=true DefaultValue="@model.SalesOrderDetail.CustomerName"></MacroInput>
+		<MacroInput InputName="Max Dose" IsReadOnly=true DefaultValue="@model.SalesOrderDetail.MaxDose"></MacroInput>
+		<div class="col">
+			<label for="irradiationdate" class="form-label">Irradiation Date</label>
+			<div class="input-group mb-3">
+				<input type="text"
+		class="form-control" name="irradiationdate" id="irradiationdate" @bind="@model.SalesOrderDetail.IrradiationDate" @bind:format="yyyy-MM-dd"
+		readonly="true">
+			</div>
+		</div>
+		<MacroInput InputName="Item Name" IsReadOnly=true DefaultValue="@model.SalesOrderDetail.ItemName"></MacroInput>
+		<MacroInput InputName="Item Group" IsReadOnly=true DefaultValue="@model.SalesOrderDetail.ItemGroup"></MacroInput>
+		<div class="col">
+			<label for="dispatchingdate" class="form-label">Dispatching Date</label>
+			<div class="input-group mb-3">
+				<input type="text"
+		class="form-control" name="dispatchingdate" id="dispatchingdate" @bind="@model.SalesOrderDetail.DispatchingDate" @bind:format="yyyy-MM-dd"
+		readonly="true">
+			</div>
+		</div>
+	</MacroContainer>
+	<MacroContainer>
+
+		<div class="row gx-0">
+			<div class="row d-flex align-items-center">
+				<h5>Irradiation Details Table</h5>
+			</div>
+		</div>
+		<RadzenDataGrid @ref="grid" Data="@model.SalesOrderDetail.IrradiationLotNoList" TItem="IrradiationSalesOrderDetailsViewModel.LotNo" SelectionMode="DataGridSelectionMode.Multiple"
+						ColumnWidth="200px" @bind-Value="@selectedLotNos" AllowFiltering="false" AllowSorting="true"
+						FilterPopupRenderMode="PopupRenderMode.OnDemand" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+						AllowPaging="true" ShowPagingSummary="true"
+						PagingSummaryFormat="Displaying page {0} of {1} <b>(total {2} records)</b>">
+			<EmptyTemplate>
+				<p style="color: lightgrey; font-size: 24px; text-align: center; margin: 2rem;">No records to display.</p>
+			</EmptyTemplate>
+			<Columns>
+				<RadzenDataGridColumn Sortable="false" Filterable="false" TItem="IrradiationSalesOrderDetailsViewModel.LotNo" Width="50px">
+					<HeaderTemplate>
+						<RadzenCheckBox TriState="true" TValue="bool?" InputAttributes="@(new Dictionary<string,object>(){ { "aria-label", "Select all items" }})"
+										Value="@(selectedLotNos == null || selectedLotNos?.Any() != true ? false : !model.SalesOrderDetail.IrradiationLotNoList.All(i => selectedLotNos.Contains(i)) ? null : model.SalesOrderDetail.IrradiationLotNoList.Any(i => selectedLotNos.Contains(i)))"
+										Change="@(args => selectedLotNos = (args == true || args == null) ? model.SalesOrderDetail.IrradiationLotNoList.ToList() : new List<LotNo>())" />
+					</HeaderTemplate>
+					<Template Context="data">
+						<RadzenCheckBox TriState="false" TValue="bool" InputAttributes="@(new Dictionary<string,object>(){ { "aria-label", "Select item" }})"
+							Value="@(selectedLotNos != null && selectedLotNos.Contains(data))" />
+					</Template>
+				</RadzenDataGridColumn>
+
+				<RadzenDataGridColumn TItem="IrradiationSalesOrderDetailsViewModel.LotNo"
+									  Property="IrradiationLotNo"
+									  Title="Irradiation Lot No"
+									  Width="160px" />
+			</Columns>
+		</RadzenDataGrid>
+	</MacroContainer>
+	<div class="card-body pt-0 pb-2">
+		<div class="row">
+			<div class="mb-3 float-end">
+				<div class="row justify-content-end">
+					<div class="float-end">
+						<button type="button" @onclick="@PrintIrradiationLabels" id="btnBinLabelsPrinting" class="btn btn-outline-primary float-end">
+							<i class="fa fa-print"></i>
+							Print
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</MacroBody>

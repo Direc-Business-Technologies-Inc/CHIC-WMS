@@ -1,0 +1,43 @@
+﻿@layout MainLayout
+@page "/connections"
+@using Application.Libraries.DataAccess;
+@using Microsoft.Data.SqlClient;
+@inject IWebHostEnvironment _env
+@inject IConfiguration _config
+
+<h3>Connections</h3>
+
+@if(_env.IsDevelopment() || _env.IsStaging())
+{
+    <ul class="list-group">
+        @foreach(var conn in conns)
+        {
+            <li class="list-group-item">
+                <span class="badge bg-secondary">@conn.Key</span><br />
+                <span>@conn.Value</span>
+            </li>
+        }
+    </ul>
+} else {
+        <text>Nothing to see here...</text>
+}
+
+@code {
+    private Dictionary<string, string> conns;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Func<string, string> GetConn = (name) => _config.GetConnectionString(name);
+
+        var addonConn = new SqlConnectionStringBuilder(GetConn("CommonDb"));
+        var sapConn = new SqlConnectionStringBuilder(GetConn("SAP"));
+        var sl = _config.GetSection("SapServiceLayer").Get<SapServiceLayerLogin>();
+
+        conns = new()
+            {
+                {"Sap Connection" , $"{sapConn.DataSource} | {sapConn.InitialCatalog}"},
+                {"Addon Connection" , $"{ addonConn.DataSource} | { addonConn.InitialCatalog}"},
+                {"Service Layer Connection", $"{ sl.Uri} | { sl.CompanyDB}"}
+            };
+    }
+}

@@ -1,0 +1,156 @@
+﻿@layout MainLayout
+
+@page "/PalletLabelSalesOrderDetails/{SONo}"
+
+<PageTitle>Sales Order Details</PageTitle>
+
+<MacroBreadcrumbs Breadcrumbs=Breadcrumbs></MacroBreadcrumbs>
+
+<MacroBody>
+	<div class="card-body">
+		<div class="row row-cols-1">
+			<div class="col-12 col-lg-12">
+				<a type="button" id="btn-back" href="/PalletLabelPrinting" class="btn btn-danger m-1">Back</a>
+			</div>
+		</div>
+	</div>
+	<MacroContainer Columns="2">
+		<MacroInput IsSelectable=true InputName="SO No" IsReadOnly=true DefaultValue="@model.SalesOrderDetail.SONo"></MacroInput>
+		<MacroInput InputName="Customer" IsReadOnly=true DefaultValue="@model.SalesOrderDetail.CustomerName"></MacroInput>
+		<MacroInput InputName="Item Code" IsReadOnly=true DefaultValue="@model.SalesOrderDetail.ItemCode"></MacroInput>
+		<div class="col">
+			<label for="receivingdate" class="form-label">Receiving Date</label>
+			<div class="input-group mb-3">
+				<input type="text"
+		class="form-control" name="receivingdate" id="receivingdate" @bind="@model.SalesOrderDetail.ReceivingDate" @bind:format="yyyy-MM-dd"
+		readonly="true">
+			</div>
+		</div>
+		<MacroInput InputName="Item Name" IsReadOnly=true DefaultValue="@model.SalesOrderDetail.ItemName"></MacroInput>
+		<div class="col">
+			<label for="dispatchingdate" class="form-label">Dispatching Date</label>
+			<div class="input-group mb-3">
+				<input type="text"
+		class="form-control" name="dispatchingdate" id="dispatchingdate" @bind="@model.SalesOrderDetail.DispatchingDate" @bind:format="yyyy-MM-dd"
+		readonly="true">
+			</div>
+		</div>
+	</MacroContainer>
+	<MacroContainer>
+
+		<div class="row gx-0">
+			<div class="row d-flex align-items-center">
+				<h5>Pallet Details Table</h5>
+			</div>
+		</div>
+		<RadzenDataGrid @ref="grid" Data="@model.SalesOrderDetail.PalletLabelList" TItem="PalletLabelSalesOrderDetailsViewModel.PalletLabelDetails" SelectionMode="DataGridSelectionMode.Multiple"
+						ColumnWidth="200px" @bind-Value="@selectedPallets" AllowFiltering="false" AllowSorting="true"
+						FilterPopupRenderMode="PopupRenderMode.Initial" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+						AllowPaging="true" ShowPagingSummary="true"
+						PagingSummaryFormat="Displaying page {0} of {1} <b>(total {2} records)</b>">
+			<EmptyTemplate>
+				<p style="color: lightgrey; font-size: 24px; text-align: center; margin: 2rem;">No records to display.</p>
+			</EmptyTemplate>
+			<Columns>
+				<RadzenDataGridColumn Sortable="false" Filterable="false" TItem="PalletLabelSalesOrderDetailsViewModel.PalletLabelDetails" Width="50px">
+					<HeaderTemplate>
+						<RadzenCheckBox TriState="true" TValue="bool?" InputAttributes="@(new Dictionary<string,object>(){ { "aria-label", "Select all items" }})"
+										Value="@(selectedPallets == null || selectedPallets?.Any() != true ? false : !model.SalesOrderDetail.PalletLabelList.All(i => selectedPallets.Contains(i)) ? null : model.SalesOrderDetail.PalletLabelList.Any(i => selectedPallets.Contains(i)))"
+										Change="@(args => selectedPallets = (args == true || args == null) ? model.SalesOrderDetail.PalletLabelList.Where(x => x.BinLocation != "").ToList() : new List<PalletLabelSalesOrderDetailsViewModel.PalletLabelDetails>())" />
+					</HeaderTemplate>
+					<Template Context="data">
+						<RadzenCheckBox TriState="false" TValue="bool" Value="@(selectedPallets != null && selectedPallets.Contains(data))" />
+					</Template>
+				</RadzenDataGridColumn>
+
+				<RadzenDataGridColumn TItem="PalletLabelSalesOrderDetailsViewModel.PalletLabelDetails"
+									  Property="PalletNo"
+									  Title="Pallet No"
+									  Width="160px" />
+				<RadzenDataGridColumn TItem="PalletLabelSalesOrderDetailsViewModel.PalletLabelDetails" Width="160px" Title="Bin Location">
+					<Template Context="data">
+						<div class="input-group mb-3">
+							<input type="text" class="form-control" name="binlocation" value="@(data.BinLocation)" placeholder="Bin Location" readonly>
+							@* @if(data.IsReceived) { *@
+								<button class="btn btn-outline-primary" @onclick="@((args) => palletRowData = data)" type="button" id="btn-select-bin-location" data-bs-toggle="modal" data-bs-target="#modal-bin-label" title="Select from existing Bin Label">
+									<i class="bx bx-menu"></i>
+								</button>
+							@* } *@
+
+						</div>
+					</Template>
+				</RadzenDataGridColumn>
+				<RadzenDataGridColumn TItem="PalletLabelSalesOrderDetailsViewModel.PalletLabelDetails" TextAlign="TextAlign.Center" 
+									  Property="NoBoxesPallet"
+									  Title="No of Boxes per Pallet"
+									  Width="160px" />
+			</Columns>
+		</RadzenDataGrid>
+	</MacroContainer>
+	<div class="card-body pt-0 pb-2">
+		<div class="d-flex justify-content-end mb-3 gap-2">
+			<BSButton Color=BSColor.Secondary OnClick=ClearBins>
+				Clear
+			</BSButton>
+			<button type="button" id="btnAssignPalletLabel" @onclick="@AssignBinLabel" class="btn btn-outline-success">
+				<i class="fa fa-edit"></i>
+				Assign Pallet
+			</button>
+			<button type="button" @onclick="@PrintIrradiationLabels" id="btnBinLabelsPrinting" class="btn btn-outline-primary">
+				<i class="fa fa-print"></i>
+				Print
+			</button>
+		</div>
+	</div>
+</MacroBody>
+
+
+<MacroSelectModal Size="xl" InputName="So No" Title="List of Sales Orders">
+	<RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="5" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+					Data=model.SalesOrderList TItem="PalletLabelSalesOrderDetailsViewModel.PalletLabelSalesOrder" ColumnWidth="300px" LogicalFilterOperator="LogicalFilterOperator.Or">
+		<Columns>
+			<RadzenDataGridColumn TItem="PalletLabelSalesOrderDetailsViewModel.PalletLabelSalesOrder" Property="SONo" Title="Sales Order Number" Width="160px" />
+			<RadzenDataGridColumn TItem="PalletLabelSalesOrderDetailsViewModel.PalletLabelSalesOrder" Property="CustomerName" Title="Customer Name" Width="160px" />
+			<RadzenDataGridColumn TItem="PalletLabelSalesOrderDetailsViewModel.PalletLabelSalesOrder" Property="ItemName" Title="Item Name" Width="160px" />
+			<RadzenDataGridColumn TItem="PalletLabelSalesOrderDetailsViewModel.PalletLabelSalesOrder" Title="Action" Sortable="false" Filterable="false" Width="80px" TextAlign="TextAlign.Center">
+				<Template Context="data">
+					<RadzenButton Click="@((args) => SelectSalesOrder(data.SONo))" class="btn btn-rimary-logo"><i class="fa fa-hand-point-left"></i></RadzenButton>
+				</Template>
+			</RadzenDataGridColumn>
+		</Columns>
+	</RadzenDataGrid>
+</MacroSelectModal>
+
+@*Data="@(model.BinLabelList.Where(x => !model.SalesOrderDetail.PalletLabelList.Where(y => y.BinLocation == x.BinCode).Any()))" TItem="PalletLabelSalesOrderDetailsViewModel.BinLabelDetails" ColumnWidth="300px" LogicalFilterOperator="LogicalFilterOperator.Or">*@
+<MacroSelectModal Size="xl" InputName="Bin Label">
+	<RadzenDataGrid AllowFiltering="true" AllowColumnResize="false" AllowAlternatingRows="false" 
+					FilterPopupRenderMode="PopupRenderMode.Initial" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+					FilterMode="FilterMode.Simple" LogicalFilterOperator="LogicalFilterOperator.And"
+					AllowSorting="false" PageSize="5" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+					Data="model.BinLabelList" TItem="PalletLabelSalesOrderDetailsViewModel.BinLabelDetails" ColumnWidth="300px"
+					CellRender="@CellRender">
+		<Columns>
+			<RadzenDataGridColumn TItem="PalletLabelSalesOrderDetailsViewModel.BinLabelDetails" Property="WarehouseCode" Title="Warehouse Code" Width="160px" />
+			<RadzenDataGridColumn TItem="PalletLabelSalesOrderDetailsViewModel.BinLabelDetails" Property="Shelf" Title="Shelf" Width="160px" />
+			<RadzenDataGridColumn TItem="PalletLabelSalesOrderDetailsViewModel.BinLabelDetails" Property="Row" Title="Row" Width="160px" />
+			<RadzenDataGridColumn TItem="PalletLabelSalesOrderDetailsViewModel.BinLabelDetails" Property="Level" Title="Level" Width="160px" />
+			<RadzenDataGridColumn TItem="PalletLabelSalesOrderDetailsViewModel.BinLabelDetails" Property="IO" Title="Inner / Outer" Width="160px" />
+			<RadzenDataGridColumn TItem="PalletLabelSalesOrderDetailsViewModel.BinLabelDetails" Title="Bin Status" Width="160px" TextAlign="TextAlign.Center" Type="typeof(IEnumerable<string>)"
+								  FilterValue="@SelectedBinStatuses" Property="BinStatus" FilterOperator="FilterOperator.Contains" LogicalFilterOperator="LogicalFilterOperator.Or">
+				<FilterTemplate>
+					<RadzenDropDown @bind-Value=@SelectedBinStatuses Style="width:100%;" InputAttributes="@(new Dictionary<string,object>(){ { "aria-label", "filter by Company" }})"
+									Change=@OnSelectedBinStatusChange Data="@(BinStatustList)" AllowClear="true" Multiple="true" />
+				</FilterTemplate>
+				<Template Context="data">
+					<span style='color: white;'>@data.BinStatus</span>
+				</Template>
+			</RadzenDataGridColumn>
+			<RadzenDataGridColumn TItem="PalletLabelSalesOrderDetailsViewModel.BinLabelDetails" Title="Action" Sortable="false" Filterable="false" Width="80px" TextAlign="TextAlign.Center">
+				<Template Context="data">
+					@*<RadzenButton Click="@((args) => SelectBin(data.BinCode))" class="btn btn-rimary-logo"><i class="fa fa-hand-point-left"></i></RadzenButton>*@
+					<RadzenButton Disabled="@(data.BinStatus == "Occupied")" Click="@((args) => SelectBin(data.BinCode))" class="btn btn-rimary-logo"><i class="fa fa-hand-point-left"></i></RadzenButton>
+				</Template>
+			</RadzenDataGridColumn>
+		</Columns>
+	</RadzenDataGrid>
+</MacroSelectModal>

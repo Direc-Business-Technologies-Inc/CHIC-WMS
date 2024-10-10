@@ -1,0 +1,36 @@
+﻿@layout MainLayout
+
+@page "/Configurations"
+
+<MacroBreadcrumbs Breadcrumbs=Breadcrumbs></MacroBreadcrumbs>
+
+<MacroBody>
+	<MacroContainer>
+		<div class="col-xl-12">
+			<div class="nav-align-left mb-4">
+
+				<ul class="card nav nav-pills nav-fill col-2 me-3" role="tablist">
+					@foreach (var config in model.Configurations.OrderBy(x => x.Sequence))
+					{
+						string IsActive = model.Configurations.OrderBy(x => x.Sequence).FirstOrDefault() == config ? "active" : "";
+
+						<li class="nav-item m-3">
+							<button type="button"
+									class="nav-link @IsActive"
+									role="tab"
+									data-bs-toggle="tab"
+									data-bs-target="#navs-pills-@config.Code"
+									aria-controls="navs-pills-@config.Code"
+									aria-selected="true">
+								@config.Name
+							</button>
+						</li>
+					}
+				</ul>
+				<div class="tab-content col-10">
+					<QCMaintenanceConfig/>
+				</div>
+			</div>
+		</div>
+	</MacroContainer>
+</MacroBody>

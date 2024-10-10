@@ -1,0 +1,22 @@
+﻿@*buttonElement: data-bs-target="#modal-dosimetry-type"*@
+@*<MacroSelectModal Size="md" InputName="Dosimetry Type"*@
+@*InputName replace the spaces from the string*@
+
+<div class="modal fade" id="modal-@Id" data-bs-backdrop="static" tabindex="-1">
+	<div class="modal-dialog @(Size != "" ? $@"modal-{Size}" : "")">
+		<div id="" class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="modal-linkbox-api-path-addTitle">@(Title == "" ? $"List of {InputName}s" : Title)</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<div class="row row-cols-1">
+					@ChildContent
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-label-secondary" data-bs-dismiss="modal">Close</button>
+			</div>
+		</div>
+	</div>
+</div>

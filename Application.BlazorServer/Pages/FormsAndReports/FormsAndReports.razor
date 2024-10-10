@@ -1,0 +1,215 @@
+﻿@layout MainLayout
+
+@page "/FormsAndReports"
+@using Radzen.Blazor.Rendering
+
+<style>
+	.rz-dropdown-panel {
+		min-width: 800px !important;
+		max-width: 800px !important;
+	}
+
+
+	.rz-lookup-search-input {
+		min-width: 50% !important;
+		max-width: 50% !important;
+	}
+
+	.form-select {
+		background-image: none;
+	}
+</style>
+
+<MacroBreadcrumbs Breadcrumbs=Breadcrumbs></MacroBreadcrumbs>
+
+<MacroBody>
+	<MacroContainer>
+		<div class="nav-align-top">
+			<ul class="nav nav-tabs" role="tablist">
+				<li class="nav-item">
+					<button type="button" class="nav-link active" role="tab" data-bs-toggle="tab"
+							data-bs-target="#navs-top-schedules" aria-controls="navs-top-schedules"
+							aria-selected="true">
+						Schedules
+					</button>
+				</li>
+				<li class="nav-item">
+					<button type="button" class="nav-link" role="tab" data-bs-toggle="tab"
+							data-bs-target="#navs-top-documents" aria-controls="navs-top-documents"
+							aria-selected="true">
+						Documents
+					</button>
+				</li>
+			</ul>
+			<div class="tab-content p-0">
+				<div class="tab-pane fade show active" id="navs-top-schedules" role="tabpanel">
+					<MacroContainer Columns="4">
+						<div class="col">
+							<label for="txt-del-date" class="form-label">Document Date</label>
+							<div class="input-group mb-3">
+								@*<input readonly type="text" class="form-control" name="txt-code" id="txt-plan-code" placeholder="Inspection Plan Code">*@
+								<input type="date" id="txt-irrad-date" class="form-control" name="daterange" @bind="@_DocDate" />
+							</div>
+						</div>
+					</MacroContainer>
+					<div class="row mb-0 gx-0">
+						<div class="row">
+							<h5 class="m-0">Scheduled Reports Table</h5>
+						</div>
+					</div>
+					<MacroContainer>
+						<RadzenDataGrid AllowFiltering="false" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="5" AllowPaging="false" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+										Data='model.Reports.Where(x => x.Type == "Schedules")' TItem="FormsAndReportsViewModel.Report" ColumnWidth="300px" LogicalFilterOperator="LogicalFilterOperator.Or">
+							<EmptyTemplate>
+								<p style="color: lightgrey; font-size: 24px; text-align: center; margin: 2rem;">No records to display.</p>
+							</EmptyTemplate>
+							<Columns>
+								<RadzenDataGridColumn TItem="FormsAndReportsViewModel.Report" Property="@nameof(FormsAndReportsViewModel.Report.Name)" Title="Customer Name" Width="160px" />
+								<RadzenDataGridColumn TItem="FormsAndReportsViewModel.Report" Title="Action" Sortable="false" Filterable="false" Width="80px" TextAlign="TextAlign.Center">
+									<Template Context="data">
+										<RadzenButton Click="@(() => {ReportName = data.FileName;Type = data.Type; PrintReport();})" ButtonStyle="ButtonStyle.Primary"><i class="fa fa-print"></i></RadzenButton>
+									</Template>
+								</RadzenDataGridColumn>
+							</Columns>
+						</RadzenDataGrid>
+					</MacroContainer>
+				</div>
+				<div class="tab-pane fade show" id="navs-top-documents" role="tabpanel">
+					@* 					<MacroContainer Columns="4">
+					<div class="col">
+					<label>SO No.</label>
+					<div class="input-group mb-3">
+					<input readonly type="text" id="txt-header-doc-no" class="form-control" @bind="_SONo" />
+					<button class="btn btn-outline-primary" type="button" id="btn-select-doc-no" data-bs-toggle="modal" data-bs-target="#modal-document-no" title="Select from existing Sales Order">
+					<i class="bx bx-menu"></i>
+					</button>
+					</div>
+					</div>
+					</MacroContainer> *@
+					<div class="card-body pb-0 mb-0">
+						<div class="row row-cols-1 pb-0 mb-0">
+							<div class="row pb-0 mb-0">
+								<div class="row d-flex align-items-end">
+									<h5 class="mb-0">Document Reports Table</h5>
+								</div>
+							</div>
+						</div>
+					</div>
+					<MacroContainer>
+						<RadzenDataGrid AllowFiltering="false" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="5" AllowPaging="false" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+										Data='model.Reports.Where(x => x.Type == "Documents")' TItem="FormsAndReportsViewModel.Report" ColumnWidth="300px" LogicalFilterOperator="LogicalFilterOperator.Or">
+							<EmptyTemplate>
+								<p style="color: lightgrey; font-size: 24px; text-align: center; margin: 2rem;">No records to display.</p>
+							</EmptyTemplate>
+							<Columns>
+
+								<RadzenDataGridColumn TItem="FormsAndReportsViewModel.Report" Property="@nameof(FormsAndReportsViewModel.Report.Name)" Title="Customer Name" Width="160px" />
+								<RadzenDataGridColumn TItem="FormsAndReportsViewModel.Report" Title="Action" Sortable="false" Filterable="false" Width="80px" TextAlign="TextAlign.Center">
+									<Template Context="data">
+										<RadzenButton Click="@(() => {ReportName = data.FileName; _SONo = ""; Type = data.Type;})" data-bs-toggle="modal" data-bs-target="#modal-print" ButtonStyle="ButtonStyle.Primary"><i class="fa fa-print"></i></RadzenButton>
+										@* <RadzenButton Click="@((args) => PrintReport(data.FileName, data.Type))" ButtonStyle="ButtonStyle.Primary"><i class="fa fa-print"></i></RadzenButton> *@
+									</Template>
+								</RadzenDataGridColumn>
+							</Columns>
+						</RadzenDataGrid>
+					</MacroContainer>
+				</div>
+			</div>
+		</div>
+	</MacroContainer>
+
+</MacroBody>
+
+
+<MacroSelectModal Size="xl" InputName="Document No" Title="List of Sales Orders">
+	<RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="5" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+					Data=model.SalesOrderList TItem="FormsAndReportsViewModel.SalesOrderDetail" ColumnWidth="300px" LogicalFilterOperator="LogicalFilterOperator.Or">
+		<EmptyTemplate>
+			<p style="color: lightgrey; font-size: 24px; text-align: center; margin: 2rem;">No records to display.</p>
+		</EmptyTemplate>
+		<Columns>
+			<RadzenDataGridColumn TItem="FormsAndReportsViewModel.SalesOrderDetail" Property="SONo" Title="SO No." Width="160px" />
+			<RadzenDataGridColumn TItem="FormsAndReportsViewModel.SalesOrderDetail" Property="CustomerName" Title="Customer Name" Width="120px" />
+			<RadzenDataGridColumn TItem="FormsAndReportsViewModel.SalesOrderDetail" Property="ItemName" Title="Item Name" Width="120px" />
+			<RadzenDataGridColumn TItem="FormsAndReportsViewModel.SalesOrderDetail" Property="ReceivingDate" Title="Receiving Date" Width="120px" />
+			<RadzenDataGridColumn TItem="FormsAndReportsViewModel.SalesOrderDetail" Title="Action" Sortable="false" Filterable="false" Width="80px" TextAlign="TextAlign.Center">
+				<Template Context="data">
+					<RadzenButton Click="@((args) => SelectInput(data.SONo.ToString()))" class="btn btn-rimary-logo"><i class="fa fa-hand-point-left"></i></RadzenButton>
+				</Template>
+			</RadzenDataGridColumn>
+		</Columns>
+	</RadzenDataGrid>
+</MacroSelectModal>
+
+<div class="modal fade" id="modal-print" data-bs-focus="false" data-bs-backdrop="static" tabindex="-1">
+	<div class="modal-dialog">
+		<div id="" class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="modal-linkbox-api-path-addTitle">List of Parameters</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<div class="row row-cols-1">
+					<MacroContainer>
+						@if (ReportName == "Product and Process Specs")
+						{
+							<div class="col">
+								<label for="slc-version" class="form-label">Select Item</label>
+								<div class="input-group">
+									<RadzenDropDownDataGrid class="form-select" @bind-Value=@_SONo Data=@model.ItemList TextProperty="ItemCode" ValueProperty="ItemCode" PageSize="5"
+															AllowColumnResize="false" AllowFilteringByAllStringColumns="true" Name="DropDownSalesOrders" AllowFiltering="true"
+															FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" FilterOperator="StringFilterOperator.Contains">
+										<EmptyTemplate>
+											<p style="color: lightgrey; font-size: 24px; text-align: center; margin: 2rem;">No records to display.</p>
+										</EmptyTemplate>
+										<Columns>
+											<RadzenDropDownDataGridColumn Property="ItemCode" Title="Item Code" Width="120px" />
+											<RadzenDropDownDataGridColumn Property="ItemName" Title="Item Name" Width="120px" />
+										</Columns>
+									</RadzenDropDownDataGrid>
+									<button class="btn btn-primary" type="button" title="Print Document" @onclick="() => PrintReport()">
+										Print
+									</button>
+								</div>
+							</div>
+						}
+						else
+						{
+							<div class="col">
+								<label for="slc-version" class="form-label">Select Sales Order</label>
+								<div class="input-group">
+									<RadzenDropDownDataGrid class="form-select" @bind-Value=@_SONo Data=@model.SalesOrderList TextProperty="SONo" ValueProperty="SONo" PageSize="5"
+															AllowColumnResize="false" AllowFilteringByAllStringColumns="true" Name="DropDownSalesOrders" AllowFiltering="true"
+															FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" FilterOperator="StringFilterOperator.Contains">
+										<EmptyTemplate>
+											<p style="color: lightgrey; font-size: 24px; text-align: center; margin: 2rem;">No records to display.</p>
+										</EmptyTemplate>
+										<Columns>
+											<RadzenDropDownDataGridColumn Filterable="true" Property="SONo" Title="SO No." Width="100px" />
+											<RadzenDropDownDataGridColumn Property="CustomerName" Title="Customer Name" Width="120px" />
+											<RadzenDropDownDataGridColumn Property="ItemName" Title="Item Name" Width="120px" />
+											<RadzenDropDownDataGridColumn Filterable="false" Property="ReceivingDate" Title="Receiving Date" Width="120px" />
+										</Columns>
+									</RadzenDropDownDataGrid>
+									<button class="btn btn-primary" type="button" title="Print Document" @onclick="() => PrintReport()">
+										Print
+									</button>
+								</div>
+							</div>
+						}
+						@* 					<div class="col d-flex align-items-end">
+						<div class="input-group">
+						<button class="btn btn-primary" type="button" title="Print Document">
+						Print
+						</button>
+						</div>
+						</div> *@
+					</MacroContainer>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-label-secondary" data-bs-dismiss="modal">Close</button>
+			</div>
+		</div>
+	</div>
+</div>

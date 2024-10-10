@@ -1,0 +1,59 @@
+﻿@typeparam TItem
+
+<div class="row row-cols-1">
+	<div class="col">
+		<h4 class="fw-bold py-3 mb-0">
+			@TableParameter.TableName
+		</h4>
+	</div>
+	<div class="col">
+		<table id='dt-@TableParameter.TableId' class='datatables-basic table border rounded table-striped'>
+			<!-- table data here -->
+			<thead>
+				<tr>
+					@foreach (var item in TableParameter.ParamTableColumns)
+					{
+						<th>@item.Value</th>
+					}
+					<th style="text-align:center">Action</th>
+				</tr>
+			</thead>
+			<tbody>
+				@foreach (var item in ParamTable)
+				{
+					<tr>
+						@foreach (var column in TableParameter.ParamTableColumns)
+						{
+							<td>@(item?.GetType()?.GetProperty(column.Key)?.GetValue(item, null) ?? "")</td>
+						}
+						@if (TableParameter.HasActions)
+						{
+							<td style="text-align:center">
+								@ChildContent
+							</td>
+						}
+					</tr>
+				}
+			</tbody>
+		</table>
+	</div>
+</div>
+
+@code {
+	[Parameter]
+	public TableParameterModel TableParameter { get; set; } = new TableParameterModel();
+	[Parameter]
+	public IEnumerable<TItem> ParamTable { get; set; } = default!;
+
+	[Parameter]
+	public RenderFragment ChildContent { get; set; } = builder => builder.AddContent(0, "");
+
+	[Inject] protected IJSRuntime JSRuntime { get; set; } = default!;
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		if (firstRender)
+		{
+			await JSRuntime.InvokeVoidAsync("InitializeDatatable", $@"dt-{TableParameter.TableId}");
+		}
+	}
+}

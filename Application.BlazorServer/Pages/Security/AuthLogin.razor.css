@@ -1,0 +1,11 @@
+﻿.login-bg {
+    /*background-color: rgba(255, 255, 255, .15);*/
+    background-color: rgba(0,0,0, .15);
+    /*background: linear-gradient(rgba(25,25,25, .15) 71.5%, rgba(100, 100, 100, .15) 28.5%);*/
+    backdrop-filter: blur(40px);
+    color: antiquewhite;
+}
+
+.font-black {
+    color: antiquewhite;
+}

@@ -1,0 +1,34 @@
+{
+  "ModuleTree": [
+    {
+      "icon": "bx bx-home-circle",
+      "title": "Administration",
+      "items": [
+        {
+          "icon": "fa-solid fa-users",
+          "Description": "Users",
+          "items": [
+            {
+              "Code": "UM",
+              "Description": "User Management",
+              "url": "/Administrative/Users",
+              "icon": "fa-solid fa-user-pen"
+            },
+            {
+              "Code": "UG",
+              "Description": "User Group",
+              "url": "/Administrative/UserGroups",
+              "icon": "fa-solid fa-users-rectangle"
+            },
+            {
+              "Code": "GA",
+              "Description": "General Authorization",
+              "url": "/Administrative/Authorization",
+              "icon": "fa-solid fa-user-lock"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,530 @@
+﻿@layout MainLayout
+
+@page "/QCMaintenance"
+
+<MacroBreadcrumbs Breadcrumbs=Breadcrumbs>
+	<div class="pt-0 pb-2">
+		<div class="mb-3">
+			<div class="btn-group float-end">
+				@if (Duplicate)
+				{
+					<button type="button"
+							id="btn-duplicate-plan"
+							class="btn btn-success text-nowrap m-1"
+							@onclick="(args) => DuplicateInspectionPlan()">
+						Duplicate Inspection Plan
+					</button>
+				}
+			</div>
+		</div>
+	</div>
+</MacroBreadcrumbs>
+
+@*HEADER*@
+<div class="row row-cols-12">
+	<div class="col">
+		<div class="card py-1 pb-0">
+			<form id="wizard-validation-form" onSubmit="return false">
+				<div class="card-body">
+					<div class="row row-cols-2">
+						<MacroInput DefaultValue="@model.QcMaintenance.InspectionPlanCode" InputName="Inspection Plan Code" IsReadOnly=true IsSelectable=true ValueChanged="SelectInput"></MacroInput>
+						<MacroInput DefaultValue="@model.QcMaintenance.Date" InputName="Date" IsReadOnly=true ValueChanged="SelectInput"></MacroInput>
+						<MacroInput Required=true DefaultValue="@model.QcMaintenance.InspectionPlanName" InputName="Inspection Plan Name" ValueChanged="SelectInput"></MacroInput>
+						<MacroInput DefaultValue="@model.QcMaintenance.Section" InputName="Section" ValueChanged="SelectInput"></MacroInput>
+						<div class="col">
+							<label for="slc-plan-type" class="form-label">Plan Type</label>
+							<div class="input-group mb-3">
+								<select class="form-control" @onchange="(args) => PlanTypeChange(args)" value="@model.QcMaintenance.PlanType" name="slc-plan-type" id="slc-plan-type">
+									<option>QA/QC Receiving Inspection Plan</option>
+									<option>Dosimetry Quality Control Order</option>
+									<option>Others</option>
+								</select>
+							</div>
+						</div>
+						@*<MacroInput DefaultValue="@model.QcMaintenance.Version" InputName="Version" IsReadOnly=true ValueChanged="SelectInput"></MacroInput>*@
+						<div class="col">
+							<label for="slc-version" class="form-label">Version</label>
+							<div class="input-group mb-3">
+								@*<select class="form-control selectpicker" value="@model.QcMaintenance.Version" @onchange="(args) => ChangeVersion(args.Value.ToString())" name="slc-version" id="slc-version">*@
+								<select class="form-control" value="@model.QcMaintenance.Version" @onchange="(args) => ChangeVersion(args.Value.ToString())" name="slc-version" id="slc-version">
+									@foreach (var version in model.VersionList)
+									{
+										<option>@version.VersionNumber</option>
+									}
+								</select>
+							</div>
+						</div>
+						<MacroInput DefaultValue="@model.QcMaintenance.Approver" InputName="Approver" IsReadOnly=true IsSelectable=true ValueChanged="SelectInput"></MacroInput>
+						<MacroInput Required=true DefaultValue="@model.QcMaintenance.ItemCode" InputName="Item Code" IsReadOnly=true IsSelectable=true ValueChanged="SelectInput"></MacroInput>
+						<MacroInput DefaultValue="@model.QcMaintenance.CustomerCode" InputName="Customer Code" IsReadOnly=true IsSelectable=true ValueChanged="SelectInput"></MacroInput>
+						<MacroInput Required=true DefaultValue="@model.QcMaintenance.ItemName" InputName="Item Name" IsReadOnly=true ValueChanged="SelectInput"></MacroInput>
+						<MacroInput DefaultValue="@model.QcMaintenance.CustomerName" InputName="Customer Name" IsReadOnly=true ValueChanged="SelectInput"></MacroInput>
+					</div>
+				</div>
+				@*TABS*@
+				<div class="card-body">
+					<div class="row row-cols-1">
+						<div class="nav-align-top">
+							<ul class="nav nav-tabs" role="tablist">
+								<li class="nav-item">
+									<button type="button" class="nav-link active" role="tab" data-bs-toggle="tab"
+											data-bs-target="#navs-top-master-data" aria-controls="navs-top-master-data"
+											aria-selected="true">
+										Master Data
+									</button>
+								</li>
+								<li class="nav-item">
+									<button type="button" class="nav-link" role="tab" data-bs-toggle="tab"
+											data-bs-target="#navs-top-parameters" aria-controls="navs-top-parameters"
+											aria-selected="true">
+										Parameters
+									</button>
+								</li>
+							</ul>
+							<div class="tab-content p-0">
+								<div class="tab-pane fade show active" id="navs-top-master-data" role="tabpanel">
+									@*Render element here*@
+									<div class="card-body">
+										<div class="row row-cols-2">
+											@if (model.QcMaintenance.PlanType != "QA/QC Receiving Inspection Plan")
+											{
+												@* <MacroInput Required=true DefaultValue="@model.QcMaintenance.SamplePassTolerancePercentage" Type="number" InputName="Sample Pass Tolerance Percentage" ValueChanged="SelectInput"></MacroInput> *@
+
+												<div class="col">
+													<label class="form-label">
+														Sample Pass Tolerance Percentage
+													</label>
+													<label class="text-danger">&nbsp;*</label>
+
+													<div class="input-group mb-3">
+														<input type="number"
+															   class="form-control" @onchange="(args) => LimitNumberToHundredSample(args.Value.ToString())" value="@model.QcMaintenance.SamplePassTolerancePercentage" placeholder="Sample Pass Tolerance Percentage">
+													</div>
+												</div>
+
+												<div class="col d-none">
+													<label class="form-label">Sample Size</label><label class="text-danger">&nbsp;*</label>
+													<div class="input-group mb-3">
+														<input type="number" class="form-control" name="NoOfSamples" id="txtNoOfSamples" @bind="@model.QcMaintenance.NoOfSamples" placeholder="No Of Samples">
+														<span class="input-group-text"><b style="color:black;">:</b></span>
+														<input type="number" class="form-control" name="TotalNumberOfBoxes" id="txtTotalNumberOfBoxes" @bind="@model.QcMaintenance.TotalNumberOfBoxes" placeholder="Total Number Of Boxes">
+													</div>
+												</div>
+
+											}
+											else
+											{
+												<div class="col">
+													<label class="form-label">
+														Sample Pass Tolerance Percentage
+													</label>
+													<label class="text-danger">&nbsp;*</label>
+
+													<div class="input-group mb-3">
+														<input type="number"
+															   class="form-control" id="sample-tolerance" @onchange="(args) => LimitNumberToHundredSample(args.Value.ToString())" value="@model.QcMaintenance.SamplePassTolerancePercentage" placeholder="Sample Pass Tolerance Percentage">
+													</div>
+												</div>
+
+												@* <MacroInput Required=true DefaultValue="@model.QcMaintenance.SamplePassTolerancePercentage" Type="number" InputName="Sample Pass Tolerance Percentage" ValueChanged="SelectInput"></MacroInput> *@
+
+												@*												<div class="col">
+											<label class="form-label">Sample Size</label><label class="text-danger">&nbsp;*</label>
+											<div class="input-group mb-3">
+											<input type="number" class="form-control" name="NoOfSamples" id="txtNoOfSamples" @bind="@model.QcMaintenance.NoOfSamples" placeholder="No Of Samples">
+											<span class="input-group-text"><b style="color:black;">:</b></span>
+											<input type="number" class="form-control" name="TotalNumberOfBoxes" id="txtTotalNumberOfBoxes" @bind="@model.QcMaintenance.TotalNumberOfBoxes" placeholder="Total Number Of Boxes">
+											</div>
+											</div>*@
+											}
+
+											<div class="col">
+												<label class="form-label">
+													Overall Pass Tolerance Percentage
+												</label>
+												<label class="text-danger">&nbsp;*</label>
+
+												<div class="input-group mb-3">
+													<input type="number"
+														   class="form-control" id="overall-tolerance" @oninput="(args) => LimitNumberToHundredOverall(args.Value.ToString())" value="@model.QcMaintenance.OverallPassTolerancePercentage" placeholder="Overall Pass Tolerance Percentage">
+												</div>
+											</div>
+
+											@* <MacroInput Required=true DefaultValue="@model.QcMaintenance.OverallPassTolerancePercentage" Type="number" InputName="Overall Pass Tolerance Percentage" ValueChanged="SelectInput"></MacroInput> *@
+
+											@if (model.QcMaintenance.PlanType == "Dosimetry Quality Control Order")
+											{
+												<MacroInput Required=true DefaultValue="@model.QcMaintenance.NumberOfDosimeters" InputName="Number Of Dosimeters" Type="number" ValueChanged="SelectInput"></MacroInput>
+											}
+
+
+											@if (model.QcMaintenance.PlanType == "Dosimetry Quality Control Order")
+											{
+												<MacroInput Required=false DefaultValue="@model.QcMaintenance.DosimeterLocation" InputName="Dosimeter Location" IsReadOnly=true IsSelectable=true ValueChanged="SelectInput"></MacroInput>
+											}
+
+										</div>
+									</div>
+								</div>
+								<div class="tab-pane fade show" id="navs-top-parameters" role="tabpanel">
+									@*Render element here*@
+									<div class="card-body">
+										<div class="row row-cols-1">
+											<div class="row row-cols-2 gx-0">
+												<div class="row d-flex align-items-center">
+													<h5>Parameters Table</h5>
+												</div>
+												<div class="row mb-2 d-flex justify-content-end">
+													<div class="col-md-6 d-flex justify-content-end">
+														<input @bind=newRowsCount type="number" class="form-control-custom" style="width:5rem" min="1" id="txt-add-row" placeholder="Row Number" max="50" />
+														<button class="btn bt-sm btn-secondary" type="button" @onclick="() => AddParameterRow()"><span>Add</span></button>
+													</div>
+												</div>
+											</div>
+											@*																						<RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="5" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+											@ref="parameterList" Data="@model.QcMaintenance.ParameterList" TItem="Parameters" LogicalFilterOperator="LogicalFilterOperator.Or"
+											IsLoading=@isLoading @bind-Value=@selectedParameters SelectionMode="DataGridSelectionMode.Multiple"
+											AllowRowSelectOnRowClick="false">*@
+											<RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true"
+															PageSize="5" AllowPaging="false" AllowVirtualization="true" Style="max-height:400px"
+															PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+															@ref="parameterList" Data="@model.QcMaintenance.ParameterList" TItem="Parameters" LogicalFilterOperator="LogicalFilterOperator.Or"
+															IsLoading=@isLoading SelectionMode="DataGridSelectionMode.Multiple"
+															AllowRowSelectOnRowClick="false">
+												<EmptyTemplate>
+													<p style="color: lightgrey; font-size: 24px; text-align: center; margin: 2rem;">No records to display.</p>
+												</EmptyTemplate>
+												<Columns>
+													<RadzenDataGridColumn Sortable="false" Filterable="false" TItem="Parameters" Width="50px">
+														<HeaderTemplate>
+															<RadzenCheckBox TriState="false"
+																			TValue="bool"
+																			Value="@(model.QcMaintenance.ParameterList.Any(x => x.Selected == true))"
+																			Change="@(args => ToggleSelectAllRow(args))" />
+
+														</HeaderTemplate>
+														<Template Context="data">
+															@*<RadzenCheckBox TriState="false" TValue="bool" Value="data.Selected" />*@
+															<RadzenCheckBox Disabled="data.DefaultParameter" TriState="false" TValue="bool" Value="data.Selected"
+																			Change="@(args => ToggleRowSelection(args, data))" />
+														</Template>
+													</RadzenDataGridColumn>
+													<RadzenDataGridColumn TItem="Parameters" Title="Parameter Type" Sortable="true" Filterable="false" Width="220px">
+														<Template Context="data">
+															<select disabled="@data.DefaultParameter" value="@data.ParameterType" @onchange="(args => ChangeParameterType(args, data))" id=" slc-parameter-type" class="form-control row-ptype">
+																<option data="Quantitative">Quantitative</option>
+																<option data="Qualitative">Qualitative</option>
+															</select>
+														</Template>
+													</RadzenDataGridColumn>
+													<RadzenDataGridColumn TItem="Parameters" Title="Parameter" Sortable="true" Filterable="false" Width="220px">
+														<Template Context="data">
+															<textarea readonly="@data.DefaultParameter" style="height:22.950px" class="form-control form-control row-param" name="parameter[]" @bind=data.Parameter></textarea>
+														</Template>
+													</RadzenDataGridColumn>
+													<RadzenDataGridColumn TItem="Parameters" Title="UoM" Sortable="true" Filterable="false" Width="150px">
+														<Template Context="data">
+															<select disabled="@data.DefaultParameter" required class="form-control form-control row-uom" name="select-uom" id="@data.SelectId" @bind=data.UoM>
+																@foreach (var uom in model.UoMList)
+																{
+																	if (@uom.UgpCode == "N/A")
+																	{
+																		<option data=@uom.UgpCode selected>@uom.UgpName</option>
+																	}
+																	else
+																	{
+																		<option data=@uom.UgpCode>@uom.UgpName</option>
+																	}
+																}
+															</select>
+														</Template>
+													</RadzenDataGridColumn>
+													<RadzenDataGridColumn TItem="Parameters" Title="Weight Percentage" Sortable="true" Filterable="false" Width="175px">
+														<Template Context="data">
+															<input required class="form-control form-control row-wght" type="number" min="0" name="Weight" value=@data.Weight @onchange="(args => ChangeWeightValue(args, data))">
+														</Template>
+													</RadzenDataGridColumn>
+													<RadzenDataGridColumn TItem="Parameters" Title="Target Value" Sortable="true" Filterable="false" Width="150px">
+														<Template Context="data">
+															@if (data.ParameterType == "Quantitative")
+															{
+																if (data.Weight > 0)
+																{
+																	<input required class="form-control form-control row-trgt" type="number" name="Target" value=@data.TargetValue @onchange='(args) => CheckValue(args, data, "Target")'>
+																	@* <input required class="form-control form-control row-trgt" type="text" name="Target" value=@data.TargetValue @onchange='(args) => CheckValue(args, data, "Target")'> *@
+																}
+																else
+																{
+																	@* <input readonly required class="form-control form-control row-trgt" type="text" name="Target" @bind=data.TargetValue> *@
+																	<input readonly required class="form-control form-control row-trgt" type="number" name="Target" @bind=data.TargetValue>
+																}
+															}
+															else if (data.ParameterType == "Qualitative")
+															{
+																if (data.MaxValue == "Y")
+																{
+																	if (data.Weight > 0)
+																	{
+																		<select id="slc-target-value" class="form-control row-trgt" @bind=data.TargetValue>
+																			<option selected>Yes</option>
+																			<option>No</option>
+																		</select>
+																	}
+																	else
+																	{
+																		<select disabled id="slc-target-value" class="form-control row-trgt" @bind=data.TargetValue>
+																			<option selected>Yes</option>
+																			<option>No</option>
+																		</select>
+																	}
+																}
+																else if (data.MaxValue == "P")
+																{
+																	if (data.Weight > 0)
+																	{
+																		<select id="slc-target-value" class="form-control row-trgt" @bind=data.TargetValue>
+																			<option selected>Passed</option>
+																			<option>Failed</option>
+																		</select>
+																	}
+																	else
+																	{
+																		<select disabled id="slc-target-value" class="form-control row-trgt" @bind=data.TargetValue>
+																			<option selected>Passed</option>
+																			<option>Failed</option>
+																		</select>
+																	}
+																}
+															}
+														</Template>
+													</RadzenDataGridColumn>
+													<RadzenDataGridColumn TItem="Parameters" Title="Min Value" Sortable="true" Filterable="false" Width="150px">
+														<Template Context="data">
+															@if (data.ParameterType == "Quantitative")
+															{
+																if (data.Weight > 0)
+																{
+																	<input required class="form-control form-control row-min" type="number" name="Min" value="@data.MinValue" @onchange='(args) => CheckValue(args, data, "Min")'>
+																	@* <input required class="form-control form-control row-min" type="text" name="Min" value="@data.MinValue" @onchange='(args) => CheckValue(args, data, "Min")'> *@
+																}
+																else
+																{
+																	<input required readonly class="form-control form-control row-min" type="number" name="Min" @bind=data.MinValue>
+																	@* <input required readonly class="form-control form-control row-min" type="text" name="Min" @bind=data.MinValue> *@
+																}
+															}
+															else if (data.ParameterType == "Qualitative")
+															{
+																string Type = "MinValue";
+																if (data.Weight > 0)
+																{
+																	<select id="slc-min-value" class="form-control row-min" value=@data.MinValue @onchange="(args => ChangeMinMaxValue(args, data, Type))">
+																		<option value="Y" selected>Yes/No</option>
+																		<option value="P">Passed/Failed</option>
+																	</select>
+																}
+																else
+																{
+																	<select disabled id="slc-min-value" class="form-control row-min" value=@data.MinValue @onchange="(args => ChangeMinMaxValue(args, data, Type))">
+																		<option value="Y" selected>Yes/No</option>
+																		<option value="P">Passed/Failed</option>
+																	</select>
+																}
+															}
+														</Template>
+													</RadzenDataGridColumn>
+													<RadzenDataGridColumn TItem="Parameters" Title="Max Value" Sortable="true" Filterable="false" Width="150px">
+														<Template Context="data">
+															@if (data.ParameterType == "Quantitative")
+															{
+																if (data.Weight > 0)
+																{
+																	<input required class="form-control form-control row-min" type="number" name="Max" value=@data.MaxValue @onchange='(args) => CheckValue(args, data, "Max")'>
+																	@* <input required class="form-control form-control row-min" type="text" name="Max" value=@data.MaxValue @onchange='(args) => CheckValue(args, data, "Max")'> *@
+																}
+																else
+																{
+																	<input required readonly class="form-control form-control row-min" type="number" name="Max" @bind=data.MaxValue>
+																	@* <input required readonly class="form-control form-control row-min" type="text" name="Max" @bind=data.MaxValue> *@
+																}
+															}
+															else if (data.ParameterType == "Qualitative")
+															{
+																string Type = "MaxValue";
+																if (data.Weight > 0)
+																{
+																	<select id="slc-max-value" class="form-control row-max" value=@data.MaxValue @onchange="(args => ChangeMinMaxValue(args, data, Type))">
+																		<option value="Y" selected>Yes/No</option>
+																		<option value="P">Passed/Failed</option>
+																	</select>
+																}
+																else
+																{
+																	<select disabled id="slc-max-value" class="form-control row-max" value=@data.MaxValue @onchange="(args => ChangeMinMaxValue(args, data, Type))">
+																		<option value="Y" selected>Yes/No</option>
+																		<option value="P">Passed/Failed</option>
+																	</select>
+																}
+															}
+														</Template>
+													</RadzenDataGridColumn>
+													<RadzenDataGridColumn TItem="Parameters" Title="Specification Type" Sortable="true" Filterable="false" Width="220px">
+														<Template Context="data">
+															<select disabled="@data.DefaultParameter" id="slc-specification-type" class="form-control row-type" @bind=data.SpecificationType>
+																<option data="Item Specifications">Item Specifications</option>
+																<option data="Palletizing">Palletizing</option>
+																<option data="Container Van Stuffing">Container Van Stuffing</option>
+															</select>
+														</Template>
+													</RadzenDataGridColumn>
+													<RadzenDataGridColumn TItem="Parameters" Title="Visible" Sortable="true" TextAlign="TextAlign.Center" Filterable="false" Width="150px">
+														<Template Context="data">
+															<input disabled="@data.DefaultParameter" type="checkbox" class="form-check-input row-vsbl" @bind=data.Visible>
+														</Template>
+													</RadzenDataGridColumn>
+													<RadzenDataGridColumn TItem="Parameters" Title="Active" Sortable="true" TextAlign="TextAlign.Center" Filterable="false" Width="150px">
+														<Template Context="data">
+															<input disabled="@data.DefaultParameter" type="checkbox" class="form-check-input row-actv" checked=@data.Active @onchange="@(args => SetActive(args, data))">
+														</Template>
+													</RadzenDataGridColumn>
+													<RadzenDataGridColumn TItem="Parameters" Title="Action" Sortable="false" Filterable="false" TextAlign="TextAlign.Center" Width="150px">
+														<Template Context="data">
+															<RadzenButton Visible="@(!data.DefaultParameter)" ButtonStyle="ButtonStyle.Danger" Icon="delete" Variant="Variant.Flat" Shade="Shade.Lighter"
+																		  Size="ButtonSize.Large" class="my-1 ms-1 rz-border-radius-10 rz-shadow-8" Click="@(args => DeleteRow(data))">
+															</RadzenButton>
+														</Template>
+													</RadzenDataGridColumn>
+												</Columns>
+											</RadzenDataGrid>
+
+											<div class="col-6 mt-2">
+												<label class="form-label">Total Weight Percentage</label>
+												<div class="input-group mb-3">
+													<input type="text" class="form-control" name="totalweight" id="txtTotalWeight" value="@model.QcMaintenance.TotalWeight" placeholder="Total Weight" readonly>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="card-body pt-0 pb-2">
+					<div class="mb-3">
+						@*<button type="button" id="btn-save" class="btn btn-success float-end">Save</button>*@
+						@*<button type="button" id="btn-print" class="btn btn-primary float-end m-1">Print</button>*@
+						<button type="submit" id="btn-save" class="btn btn-success float-end m-1">Save</button>
+						<button class="btn btn-primary float-end m-1" type="button" id="btn-clear-all">Clear</button>
+						<a type="button" id="btn-cancel" href="/IrradiationSchedule" class="btn btn-danger float-end m-1">Cancel</a>
+						@*<a type="button" id="btn-cancel" href="/Home" class="btn btn-danger float-end m-1">Cancel</a>*@
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+
+
+@*MODALS*@
+<MacroSelectModal Size="xl" InputName="Inspection Plan Code" Title="List of Inspection Plans">
+	<div class="mb-3 row" style="justify-content:end">
+		<label for="html5-search-input" style="display:flex; align-items:center; flex-direction:row-reverse" class="col-md-1 col-form-label">Search:</label>
+		<div class="col-md-4">
+			<input class="form-control" type="text" placeholder="Search ..." id="html5-search-input" @bind="@employeeSearchValue" @oninput="(EventArgs) => {SearchInspectionPlans(EventArgs.Value.ToString());}" />
+		</div>
+	</div>
+	<RadzenDataGrid AllowFiltering="false" AllowColumnResize="false" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="5" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+					Data=filteredInspectionplans TItem="InspectionPlans" ColumnWidth="300px" LogicalFilterOperator="LogicalFilterOperator.Or">
+		<Columns>
+			<RadzenDataGridColumn TItem="InspectionPlans" Property="InspectionPlanCode" Title="Inspection Plan Code" Width="160px" />
+			<RadzenDataGridColumn TItem="InspectionPlans" Property="InspectionPlanName" Title="Inspection Plan Name" Width="160px" />
+			<RadzenDataGridColumn TItem="InspectionPlans" Property="Version" Title="Version" Width="80px" />
+			<RadzenDataGridColumn TItem="InspectionPlans" Property="ItemName" Title="Item Name" Width="200px" />
+			<RadzenDataGridColumn TItem="InspectionPlans" Property="CustomerName" Title="Customer Name" Width="120px" />
+			<RadzenDataGridColumn TItem="InspectionPlans" Title="Action" Sortable="false" Filterable="false" Width="80px" TextAlign="TextAlign.Center">
+				<Template Context="data">
+					<RadzenButton Click="@((args) => SelectInput("Inspection Plan Code", data.InspectionPlanCode))" class="btn btn-rimary-logo"><i class="fa fa-hand-point-left"></i></RadzenButton>
+				</Template>
+			</RadzenDataGridColumn>
+		</Columns>
+	</RadzenDataGrid>
+</MacroSelectModal>
+
+<MacroSelectModal InputName="Approver">
+	<div class="mb-3 row" style="justify-content:end">
+		<label for="html5-search-input" style="display:flex; align-items:center; flex-direction:row-reverse" class="col-md-1 col-form-label">Search:</label>
+		<div class="col-md-6">
+			<input class="form-control" type="text" placeholder="Search ..." id="html5-search-input" @bind="@employeeSearchValue" @oninput="(EventArgs) => {SearchEmployees(EventArgs.Value.ToString());}" />
+		</div>
+	</div>
+	<RadzenDataGrid AllowFiltering="false" AllowColumnResize="false" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="false" PageSize="5" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+					Data=filteredEmployees TItem="Employees" ColumnWidth="300px" LogicalFilterOperator="LogicalFilterOperator.Or">
+		<Columns>
+			<RadzenDataGridColumn TItem="Employees" Property="EmployeeCode" Title="Employee Code" Width="100px" />
+			<RadzenDataGridColumn TItem="Employees" Property="EmployeeName" Title="Employee Name" Width="160px" />
+			<RadzenDataGridColumn TItem="Employees" Title="Action" Sortable="false" Filterable="false" Width="80px" TextAlign="TextAlign.Center">
+				<Template Context="data">
+					<RadzenButton Click="@((args) => SelectInput("Approver", data.EmployeeName))" class="btn btn-rimary-logo"><i class="fa fa-hand-point-left"></i></RadzenButton>
+				</Template>
+			</RadzenDataGridColumn>
+		</Columns>
+	</RadzenDataGrid>
+</MacroSelectModal>
+
+<MacroSelectModal Size="lg" InputName="Item Code" Title="List of Items">
+	<div class="mb-3 row" style="justify-content:end">
+		<label for="html5-search-input" style="display:flex; align-items:center; flex-direction:row-reverse" class="col-md-1 col-form-label">Search:</label>
+		<div class="col-md-6">
+			<input class="form-control" type="text" placeholder="Search ..." id="html5-search-input" @bind="@itemSearchValue" @oninput="(EventArgs) => {SearchItems(EventArgs.Value.ToString());}" />
+		</div>
+	</div>
+	<RadzenDataGrid AllowFiltering="false" AllowColumnResize="false" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="false" PageSize="5" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+					Data=filteredItems TItem="Item" ColumnWidth="300px" LogicalFilterOperator="LogicalFilterOperator.Or">
+		<Columns>
+			<RadzenDataGridColumn TItem="Item" Property="ItemCode" Title="Item Code" Width="160px" />
+			<RadzenDataGridColumn TItem="Item" Property="ItemName" Title="Item Name" Width="160px" />
+			<RadzenDataGridColumn TItem="Item" Title="Action" Sortable="false" Filterable="false" Width="80px" TextAlign="TextAlign.Center">
+				<Template Context="data">
+					<RadzenButton Click="@((args) => SelectInput("Item Code", data.ItemCode))" class="btn btn-rimary-logo"><i class="fa fa-hand-point-left"></i></RadzenButton>
+				</Template>
+			</RadzenDataGridColumn>
+		</Columns>
+	</RadzenDataGrid>
+</MacroSelectModal>
+
+<MacroSelectModal InputName="Customer Code" Title="List of Customers">
+	<div class="mb-3 row" style="justify-content:end">
+		<label for="html5-search-input" style="display:flex; align-items:center; flex-direction:row-reverse" class="col-md-1 col-form-label">Search:</label>
+		<div class="col-md-6">
+			<input class="form-control" type="text" placeholder="Search ..." id="html5-search-input" @bind="@customerSearchValue" @oninput="(EventArgs) => {SearchCustomers(EventArgs.Value.ToString());}" />
+		</div>
+	</div>
+	<RadzenDataGrid AllowFiltering="false" AllowColumnResize="false" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="false" PageSize="5" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+					Data=filteredCustomers TItem="Customers" ColumnWidth="300px" LogicalFilterOperator="LogicalFilterOperator.Or">
+		<Columns>
+			<RadzenDataGridColumn TItem="Customers" Property="CardCode" Title="Customer Code" Width="100px" />
+			<RadzenDataGridColumn TItem="Customers" Property="CardName" Title="Customer Name" Width="160px" />
+			<RadzenDataGridColumn TItem="Customers" Title="Action" Sortable="false" Filterable="false" Width="80px" TextAlign="TextAlign.Center">
+				<Template Context="data">
+					<RadzenButton Click="@((args) => SelectInput("Customer Code", data.CardCode))" class="btn btn-rimary-logo"><i class="fa fa-hand-point-left"></i></RadzenButton>
+				</Template>
+			</RadzenDataGridColumn>
+		</Columns>
+	</RadzenDataGrid>
+</MacroSelectModal>
+
+<MacroSelectModal InputName="Dosimeter Location">
+	<RadzenDataGrid AllowFiltering="false" AllowColumnResize="false" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="false" PageSize="5" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+					Data=model.DosimeterLocationList TItem="DosimeterLocation" ColumnWidth="300px" LogicalFilterOperator="LogicalFilterOperator.Or">
+		<Columns>
+			<RadzenDataGridColumn TItem="DosimeterLocation" Property="LocationName" Title="Location" Width="160px" />
+			<RadzenDataGridColumn TItem="DosimeterLocation" Title="Action" Sortable="false" Filterable="false" Width="80px" TextAlign="TextAlign.Center">
+				<Template Context="data">
+					<RadzenButton Click="@((args) => SelectInput("Dosimeter Location", data.LocationName))" class="btn btn-rimary-logo"><i class="fa fa-hand-point-left"></i></RadzenButton>
+				</Template>
+			</RadzenDataGridColumn>
+		</Columns>
+	</RadzenDataGrid>
+</MacroSelectModal>
