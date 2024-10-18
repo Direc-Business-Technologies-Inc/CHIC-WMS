@@ -1,4 +1,6 @@
-﻿namespace DataManager.Services.Core;
+﻿using Application.Libraries.SAP.SL;
+
+namespace DataManager.Services.Core;
 
 public class AuthDataService : IAuthDataService
 {
@@ -150,11 +152,13 @@ public class AuthDataService : IAuthDataService
 		}
 	}
 
+
+
 	public UserLogins UpdateUser(UserLogins user)
 	{
 		try
 		{
-			var updateUser = _context.UserLogin.Where(x => x.UserId != user.UserId)
+			var updateUser = _context.UserLogin.Where(x => x.UserId == user.UserId)
 				.Include(x => x.UserDetails)
 				.FirstOrDefault();
 			updateUser.Username = user.Username;
@@ -170,10 +174,11 @@ public class AuthDataService : IAuthDataService
 		}
 		catch (Exception)
 		{
-
 			throw;
 		}
 	}
+	
+
 
 	public List<UserLogins> GetUserLogins()
 	{
@@ -223,6 +228,7 @@ public class AuthDataService : IAuthDataService
 			throw;
 		}
 	}
+	
 
 	public UserGroups GetUserGroup(string Id)
 	{
@@ -372,4 +378,65 @@ public class AuthDataService : IAuthDataService
 			throw;
 		}
 	}
+
+	public List<PositionManagement> GetPositionList()
+	{
+		try
+		{
+			List<PositionManagement> positions = _context.PositionManagement.ToList();
+
+			return positions;
+		}
+		catch (Exception)
+		{
+
+			throw;
+		}
+	}
+
+	public PositionManagement PostPosition(PositionManagement position)
+	{
+		try
+		{
+			PositionManagement positionManagement = _context.PositionManagement.Where(x=>x.PosName == position.PosName).FirstOrDefault();
+			if(positionManagement == null)
+			{
+				_context.PositionManagement.Add(position);
+				_context.SaveChanges();
+				return position;
+			}
+			else
+			{
+				return null;
+			}
+		}
+		catch (Exception)
+		{
+
+			throw;
+		}
+	}
+	public PositionManagement UpdatePosition(PositionManagement position)
+	{
+		try
+		{
+			var update_position = _context.PositionManagement.Where(x => x.PosId == position.PosId).FirstOrDefault();
+
+			update_position.PosName = position.PosName;
+			update_position.PosDesc = position.PosDesc;
+			update_position.Classification = position.Classification;
+			update_position.isActive = position.isActive;
+			update_position.UpdatedUserId = position.UpdatedUserId;
+			update_position.UpdatedDate = position.UpdatedDate;
+
+			_context.Entry(update_position).State = EntityState.Modified;
+			_context.SaveChanges();
+			return position;
+		}
+		catch (Exception)
+		{
+			throw;
+		}
+	}
+
 }

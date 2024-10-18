@@ -6,6 +6,7 @@ namespace DataManager.Services.Repositories
     {
         HttpResponseMessage Login(UserLogins login);
         UserLogins PostUser(UserLogins user);
+		PositionManagement PostPosition(PositionManagement position);
 		UserLogins UpdateUser(UserLogins user);
 		List<UserLogins> GetUserLogins();
 		UserLogins GetUserLogin(string UserName);
@@ -17,5 +18,8 @@ namespace DataManager.Services.Repositories
 		bool SetUserGroupModules(List<UserModules> userModules);
 		UserGroups GetUserGroupAuthorizations(string Id);
 		List<Modules> GetModuleList();
+		PositionManagement UpdatePosition(PositionManagement position);
+		List<PositionManagement> GetPositionList();
+
 	}
 }

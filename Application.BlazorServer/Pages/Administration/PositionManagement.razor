@@ -1,0 +1,132 @@
+﻿@using Application.BlazorServer.Controls.UI_Macros
+@layout MainLayout
+@page "/PositionManagement"
+
+<PageTitle>Position Management</PageTitle>
+
+<MacroBreadcrumbs Breadcrumbs="Breadcrumbs"></MacroBreadcrumbs>
+
+<div class="row">
+	<div class="col-12">
+		<div class="card">
+			<div class="card-header">
+				<button type="button" class="btn btn-success float-end" data-bs-toggle="modal" data-bs-target="#modal-createposition" @onclick="(args) => SelectPosition(string.Empty)" id="createuser"><i class="fas fa-user"></i>  Add</button>
+			</div>
+			<!-- ./card-header -->
+			<div class="card-body table-responsive">
+				<div class="mb-3 row" style="justify-content:end">
+					<label for="html5-search-input" style="display:flex; align-items:center; flex-direction:row-reverse" class="col-md-1 col-form-label">Search:</label>
+					<div class="col-md-3">
+						<input class="form-control" type="text" placeholder="Search ..." id="html5-search-input" @bind="@searchValue" @oninput="(EventArgs) => {SearchUser(EventArgs.Value.ToString());}" />
+					</div>
+				</div>
+				<RadzenDataGrid AllowFiltering="false" AllowColumnResize="false" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="5" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+								Data=positionTable TItem="UserViewModel.PositionManagementViewModel" ColumnWidth="300px" LogicalFilterOperator="LogicalFilterOperator.Or">
+					<EmptyTemplate>
+						<p style="color: lightgrey; font-size: 24px; text-align: center; margin: 2rem;">No records to display.</p>
+					</EmptyTemplate>
+					<Columns>
+						<RadzenDataGridColumn TItem="UserViewModel.PositionManagementViewModel" Property="PositionName" Title="Name" Width="160px" />
+						<RadzenDataGridColumn TItem="UserViewModel.PositionManagementViewModel" Property="Description" Title="Description" Width="200px" />
+						<RadzenDataGridColumn TItem="UserViewModel.PositionManagementViewModel" Title="Is Active" Width="80px" TextAlign="TextAlign.Center">
+							<Template Context="data">
+								<input disabled type="checkbox" class="form-check-input" @bind=data.IsActive>
+							</Template>
+						</RadzenDataGridColumn>
+						
+						<RadzenDataGridColumn TItem="UserViewModel.PositionManagementViewModel" Title="Action" Sortable="false" Filterable="false" Width="80px" TextAlign="TextAlign.Center">
+							<Template Context="data">
+								<RadzenButton Click="@((args) => SelectPosition(data.PosManageID))" ButtonStyle="ButtonStyle.Primary"><i class="fa fa-user-edit"></i></RadzenButton>
+							</Template>
+						</RadzenDataGridColumn>
+					</Columns>
+				</RadzenDataGrid>
+			</div>
+			<!-- /.card-body -->
+			<div class="card-footer">
+			</div>
+		</div>
+		<!-- /.card -->
+	</div>
+</div>
+
+
+
+
+<!-- Modal -->
+<div @ref=_modalElement class="modal fade" id="modal-createposition" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<form id="pos-info" onSubmit="return false">
+			<div class="modal-header">
+
+					@if (usersvm.PositionDetails.PosManageID == null || usersvm.PositionDetails.PosManageID == "")
+					{
+						<h4 class="modal-title">Create Position</h4>
+					}
+					else
+					{
+						<h4 class="modal-title">Update Position</h4>
+					}
+
+					<button type="button" class="btn-close" @onclick=CloseModal aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+
+				<div class="row">
+					
+
+					<div class="col-md-6">
+							<label class="form-label">Name</label>
+						<div class="input-group">
+								<input class="form-control" type="text" name="pos-name" placeholder="Name" id="pos-name" @bind="usersvm.PositionDetails.PositionName" @oninput=InvokeHasChangesChanged>
+						</div>
+					</div>
+
+					<div class="col-md-6">
+							<label name="post-desc" class="form-label">Description</label>
+						<div class="input-group">
+							<input class="form-control" type="text" name="post-desc" placeholder="Description" id="pos-desc" @bind="usersvm.PositionDetails.Description">
+						</div>
+					</div>
+
+
+						<div class="row">
+							<div class="col-md-6">
+								<label class="form-label">Classification</label>
+								<div class="input-group">
+									<select name="classification" class="select2 form-select" id="classification" @onchange="ChangeClassification">
+										@foreach (var classification in classifications)
+										{
+											<option value="@classification" selected="@(classification == usersvm.PositionDetails.Classification ? "selected" : null)">
+												@classification
+											</option>
+										}
+									</select>
+								</div>
+							</div>
+						</div>
+
+
+					<div class="row mt-2">
+						<div class="col-md-6">
+							<div class="form-check form-switch">
+								<input class="form-check-input" type="checkbox" id="is_active" style="width:3rem;margin-right:3px;" @bind="usersvm.PositionDetails.IsActive">
+								<label class="form-check-label" for="flexSwitchCheckChecked">is Active</label>
+							</div>
+						</div>
+					</div>
+
+				</div>
+			
+			</div>
+			<div class="modal-footer">
+				<button type="submit" class="btn btn-success">Save</button>
+				<button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+			</div>
+			</form>
+		</div>
+	</div>
+</div>
+
+

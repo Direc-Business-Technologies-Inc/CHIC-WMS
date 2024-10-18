@@ -47,6 +47,23 @@ public class UserViewModel
 		public string Email { get; set; } = "";
 		public string PhoneNo { get; set; } = "";
 	}
+
+
+	public List<PositionManagementViewModel> PositionManagementList { get; set; } = new List<PositionManagementViewModel>();
+	public PositionManagementViewModel PositionDetails { get; set; } = new PositionManagementViewModel();
+	public class PositionManagementViewModel
+	{
+		public string PosManageID { get; set; }
+		public string PositionName { get; set; }
+		public string Description { get; set; }
+		public string Classification { get; set; }
+		public bool IsActive { get; set; }
+		public DateTime CreateDate { get; set; }
+		public string CreatedByUserId { get; set; }
+		public DateTime? UpdateDate { get; set; }
+		public string UpdatedByUserId { get; set; }
+
+	}
 	public List<UsersTableColumnList> UsersColumnList { get; set; } = new List<UsersTableColumnList>
 	{
 		new UsersTableColumnList { Key = "UserName", Value = "User Name"},

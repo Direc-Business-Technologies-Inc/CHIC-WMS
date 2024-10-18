@@ -13,6 +13,7 @@ using DataManager.Models.CertificateOfIrradiation;
 using static Application.Models.ViewModels.CertificateOfIrradiationViewModel;
 using DataManager.Models.Users;
 using DataManager.Models.Configurations;
+using static Application.Models.ViewModels.UserViewModel;
 
 namespace Application.Models.Registers;
 public class AutoMapperRegisters : Profile

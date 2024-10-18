@@ -29,6 +29,7 @@ public class AdministrativeService : IAdministrativeService
 
 			//USER DETAILS
 			user.UserDetails = new UserDetails();
+
 			user.UserDetails.UserId = user.UserId;
 			user.UserDetails.LastName = model.LastName;
 			user.UserDetails.FirstName = model.FirstName;
@@ -75,6 +76,71 @@ public class AdministrativeService : IAdministrativeService
 
 			throw;
 		}
+	}
+
+	public bool SavePosition(PositionManagementViewModel model, string CreateUserId)
+	{
+		try
+		{
+			string posId = Guid.NewGuid().ToString("N");
+
+			PositionManagement pos = new PositionManagement();
+			pos.PosName = model.PositionName;
+			pos.PosDesc = model.Description;
+			pos.isActive = model.IsActive;
+			pos.Classification = model.Classification;
+			if (model.PosManageID == "" || model.PosManageID == null)
+			{
+
+				//SAVE
+				//HEADER
+				pos.PosId = posId;
+				pos.CreatedDate = DateTime.Now;
+				//pos.CreatedUserId = userId; //Get identity claims
+
+				//USER DETAILS
+			
+				pos.CreatedUserId = CreateUserId;
+				_authDataService.PostPosition(pos);
+			}
+			else
+			{
+				//UPDATE
+
+				pos.UpdatedDate = DateTime.Now;
+				pos.UpdatedUserId = CreateUserId; //Get identity claims
+				pos.PosId = model.PosManageID;
+				_authDataService.UpdatePosition(pos);
+			}
+			return true;
+		}
+		catch (Exception)
+		{
+
+			throw;
+		}
+	}
+	public UserViewModel InitializePositionManagement()
+	{
+		UserViewModel model = new UserViewModel();
+
+		List<PositionManagement> positions = _authDataService.GetPositionList();
+		foreach (var pos in positions)
+		{
+			model.PositionManagementList.Add(new PositionManagementViewModel
+			{
+				PosManageID = pos.PosId,
+				PositionName = pos.PosName,
+				Description = pos.PosDesc,
+				IsActive = pos.isActive,
+				Classification = pos.Classification,
+				CreateDate = pos.CreatedDate,
+				CreatedByUserId = pos.CreatedUserId,
+				UpdateDate = pos.UpdatedDate,
+				UpdatedByUserId = pos.UpdatedUserId,
+			});
+		}
+		return model;
 	}
 
 	public UserViewModel InitializeUserManagement()

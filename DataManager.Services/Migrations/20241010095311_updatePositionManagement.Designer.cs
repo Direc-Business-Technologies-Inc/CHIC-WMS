@@ -4,6 +4,7 @@ using DataManager.Services.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataManager.Services.Migrations
 {
     [DbContext(typeof(Context))]
-    partial class ContextModelSnapshot : ModelSnapshot
+    [Migration("20241010095311_updatePositionManagement")]
+    partial class updatePositionManagement
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -398,8 +401,8 @@ namespace DataManager.Services.Migrations
                         {
                             ModuleId = "USRM",
                             Active = true,
-                            CreatedDate = new DateTime(2024, 10, 18, 3, 10, 21, 569, DateTimeKind.Utc).AddTicks(6961),
-                            CreatedUserId = "175cfee3d49645659babbe777e44c672",
+                            CreatedDate = new DateTime(2024, 10, 10, 9, 53, 11, 330, DateTimeKind.Utc).AddTicks(5575),
+                            CreatedUserId = "37bfce64b4524690a83c8780485ec21c",
                             Description = "This is where you can create, update and delete user information.",
                             GroupName = "Administration",
                             Icon = "-",
@@ -414,8 +417,8 @@ namespace DataManager.Services.Migrations
                         {
                             ModuleId = "USRG",
                             Active = true,
-                            CreatedDate = new DateTime(2024, 10, 18, 3, 10, 21, 569, DateTimeKind.Utc).AddTicks(6966),
-                            CreatedUserId = "175cfee3d49645659babbe777e44c672",
+                            CreatedDate = new DateTime(2024, 10, 10, 9, 53, 11, 330, DateTimeKind.Utc).AddTicks(5578),
+                            CreatedUserId = "37bfce64b4524690a83c8780485ec21c",
                             Description = "This is where you can create, update and delete user group.",
                             GroupName = "Administration",
                             Icon = "-",
@@ -430,8 +433,8 @@ namespace DataManager.Services.Migrations
                         {
                             ModuleId = "DSBD",
                             Active = true,
-                            CreatedDate = new DateTime(2024, 10, 18, 3, 10, 21, 569, DateTimeKind.Utc).AddTicks(6971),
-                            CreatedUserId = "175cfee3d49645659babbe777e44c672",
+                            CreatedDate = new DateTime(2024, 10, 10, 9, 53, 11, 330, DateTimeKind.Utc).AddTicks(5580),
+                            CreatedUserId = "37bfce64b4524690a83c8780485ec21c",
                             Description = "This is where you can view the statistics of sales orders.",
                             GroupName = "Dashboard",
                             Icon = "bx bx-home-alt",
@@ -446,8 +449,8 @@ namespace DataManager.Services.Migrations
                         {
                             ModuleId = "DBNT",
                             Active = true,
-                            CreatedDate = new DateTime(2024, 10, 18, 3, 10, 21, 569, DateTimeKind.Utc).AddTicks(6975),
-                            CreatedUserId = "175cfee3d49645659babbe777e44c672",
+                            CreatedDate = new DateTime(2024, 10, 10, 9, 53, 11, 330, DateTimeKind.Utc).AddTicks(5583),
+                            CreatedUserId = "37bfce64b4524690a83c8780485ec21c",
                             Description = "This is where you can view sales orders that are to be received or dispatched.",
                             GroupName = "Dashboard",
                             Icon = "bx bx-home-alt",
@@ -462,8 +465,8 @@ namespace DataManager.Services.Migrations
                         {
                             ModuleId = "QCMT",
                             Active = true,
-                            CreatedDate = new DateTime(2024, 10, 18, 3, 10, 21, 569, DateTimeKind.Utc).AddTicks(6979),
-                            CreatedUserId = "175cfee3d49645659babbe777e44c672",
+                            CreatedDate = new DateTime(2024, 10, 10, 9, 53, 11, 330, DateTimeKind.Utc).AddTicks(5585),
+                            CreatedUserId = "37bfce64b4524690a83c8780485ec21c",
                             Description = "This is where user can create Inspection Plans for specific items.",
                             GroupName = "Quality Control",
                             Icon = "bx bx-search-alt",
@@ -478,8 +481,8 @@ namespace DataManager.Services.Migrations
                         {
                             ModuleId = "QCOR",
                             Active = true,
-                            CreatedDate = new DateTime(2024, 10, 18, 3, 10, 21, 569, DateTimeKind.Utc).AddTicks(6983),
-                            CreatedUserId = "175cfee3d49645659babbe777e44c672",
+                            CreatedDate = new DateTime(2024, 10, 10, 9, 53, 11, 330, DateTimeKind.Utc).AddTicks(5588),
+                            CreatedUserId = "37bfce64b4524690a83c8780485ec21c",
                             Description = "This is where user can input QC Order details.",
                             GroupName = "Quality Control",
                             Icon = "bx bx-user-check",
@@ -494,8 +497,8 @@ namespace DataManager.Services.Migrations
                         {
                             ModuleId = "COAP",
                             Active = true,
-                            CreatedDate = new DateTime(2024, 10, 18, 3, 10, 21, 569, DateTimeKind.Utc).AddTicks(6987),
-                            CreatedUserId = "175cfee3d49645659babbe777e44c672",
+                            CreatedDate = new DateTime(2024, 10, 10, 9, 53, 11, 330, DateTimeKind.Utc).AddTicks(5590),
+                            CreatedUserId = "37bfce64b4524690a83c8780485ec21c",
                             Description = "This is where user can approve and print certificate of irradiation.",
                             GroupName = "Quality Control",
                             Icon = "fa fa-person-circle-check",
@@ -510,8 +513,8 @@ namespace DataManager.Services.Migrations
                         {
                             ModuleId = "BNMP",
                             Active = true,
-                            CreatedDate = new DateTime(2024, 10, 18, 3, 10, 21, 569, DateTimeKind.Utc).AddTicks(6991),
-                            CreatedUserId = "175cfee3d49645659babbe777e44c672",
+                            CreatedDate = new DateTime(2024, 10, 10, 9, 53, 11, 330, DateTimeKind.Utc).AddTicks(5593),
+                            CreatedUserId = "37bfce64b4524690a83c8780485ec21c",
                             Description = "This is where user can see map the bins.",
                             GroupName = "Bins",
                             Icon = "bx bx-map-pin",
@@ -526,8 +529,8 @@ namespace DataManager.Services.Migrations
                         {
                             ModuleId = "BNDB",
                             Active = true,
-                            CreatedDate = new DateTime(2024, 10, 18, 3, 10, 21, 569, DateTimeKind.Utc).AddTicks(6994),
-                            CreatedUserId = "175cfee3d49645659babbe777e44c672",
+                            CreatedDate = new DateTime(2024, 10, 10, 9, 53, 11, 330, DateTimeKind.Utc).AddTicks(5595),
+                            CreatedUserId = "37bfce64b4524690a83c8780485ec21c",
                             Description = "This is where user can see the Bin Map and Bin Status.",
                             GroupName = "Bins",
                             Icon = "bx bx-map-alt",
@@ -542,8 +545,8 @@ namespace DataManager.Services.Migrations
                         {
                             ModuleId = "RSCD",
                             Active = true,
-                            CreatedDate = new DateTime(2024, 10, 18, 3, 10, 21, 569, DateTimeKind.Utc).AddTicks(6997),
-                            CreatedUserId = "175cfee3d49645659babbe777e44c672",
+                            CreatedDate = new DateTime(2024, 10, 10, 9, 53, 11, 330, DateTimeKind.Utc).AddTicks(5597),
+                            CreatedUserId = "37bfce64b4524690a83c8780485ec21c",
                             Description = "This is where user can view the Receiving Schedule.",
                             GroupName = "Schedules",
                             Icon = "bx bxs-truck",
@@ -558,8 +561,8 @@ namespace DataManager.Services.Migrations
                         {
                             ModuleId = "DSCD",
                             Active = true,
-                            CreatedDate = new DateTime(2024, 10, 18, 3, 10, 21, 569, DateTimeKind.Utc).AddTicks(7001),
-                            CreatedUserId = "175cfee3d49645659babbe777e44c672",
+                            CreatedDate = new DateTime(2024, 10, 10, 9, 53, 11, 330, DateTimeKind.Utc).AddTicks(5600),
+                            CreatedUserId = "37bfce64b4524690a83c8780485ec21c",
                             Description = "This is where user can view the Dispatch Schedule.",
                             GroupName = "Schedules",
                             Icon = "bx bx-package",
@@ -574,8 +577,8 @@ namespace DataManager.Services.Migrations
                         {
                             ModuleId = "ISCD",
                             Active = true,
-                            CreatedDate = new DateTime(2024, 10, 18, 3, 10, 21, 569, DateTimeKind.Utc).AddTicks(7005),
-                            CreatedUserId = "175cfee3d49645659babbe777e44c672",
+                            CreatedDate = new DateTime(2024, 10, 10, 9, 53, 11, 330, DateTimeKind.Utc).AddTicks(5602),
+                            CreatedUserId = "37bfce64b4524690a83c8780485ec21c",
                             Description = "This is where user can view the Irradiation Schedule.",
                             GroupName = "Schedules",
                             Icon = "bx bx-shield",
@@ -590,8 +593,8 @@ namespace DataManager.Services.Migrations
                         {
                             ModuleId = "BLPR",
                             Active = true,
-                            CreatedDate = new DateTime(2024, 10, 18, 3, 10, 21, 569, DateTimeKind.Utc).AddTicks(7008),
-                            CreatedUserId = "175cfee3d49645659babbe777e44c672",
+                            CreatedDate = new DateTime(2024, 10, 10, 9, 53, 11, 330, DateTimeKind.Utc).AddTicks(5604),
+                            CreatedUserId = "37bfce64b4524690a83c8780485ec21c",
                             Description = "This is where user can print bin labels.",
                             GroupName = "Forms and Reports",
                             Icon = "bx bx-file",
@@ -606,8 +609,8 @@ namespace DataManager.Services.Migrations
                         {
                             ModuleId = "ILPR",
                             Active = true,
-                            CreatedDate = new DateTime(2024, 10, 18, 3, 10, 21, 569, DateTimeKind.Utc).AddTicks(7012),
-                            CreatedUserId = "175cfee3d49645659babbe777e44c672",
+                            CreatedDate = new DateTime(2024, 10, 10, 9, 53, 11, 330, DateTimeKind.Utc).AddTicks(5606),
+                            CreatedUserId = "37bfce64b4524690a83c8780485ec21c",
                             Description = "This is where user can print irradiation labels.",
                             GroupName = "Forms and Reports",
                             Icon = "bx bx-file",
@@ -622,8 +625,8 @@ namespace DataManager.Services.Migrations
                         {
                             ModuleId = "PLPR",
                             Active = true,
-                            CreatedDate = new DateTime(2024, 10, 18, 3, 10, 21, 569, DateTimeKind.Utc).AddTicks(7016),
-                            CreatedUserId = "175cfee3d49645659babbe777e44c672",
+                            CreatedDate = new DateTime(2024, 10, 10, 9, 53, 11, 330, DateTimeKind.Utc).AddTicks(5608),
+                            CreatedUserId = "37bfce64b4524690a83c8780485ec21c",
                             Description = "This is where user can print pallet labels.",
                             GroupName = "Forms and Reports",
                             Icon = "bx bx-file",
@@ -638,8 +641,8 @@ namespace DataManager.Services.Migrations
                         {
                             ModuleId = "RCVN",
                             Active = true,
-                            CreatedDate = new DateTime(2024, 10, 18, 3, 10, 21, 569, DateTimeKind.Utc).AddTicks(7019),
-                            CreatedUserId = "175cfee3d49645659babbe777e44c672",
+                            CreatedDate = new DateTime(2024, 10, 10, 9, 53, 11, 330, DateTimeKind.Utc).AddTicks(5611),
+                            CreatedUserId = "37bfce64b4524690a83c8780485ec21c",
                             Description = "This is where user can receive sales orders.",
                             GroupName = "Inventory",
                             Icon = "bx bx-archive-in",
@@ -654,8 +657,8 @@ namespace DataManager.Services.Migrations
                         {
                             ModuleId = "INVT",
                             Active = true,
-                            CreatedDate = new DateTime(2024, 10, 18, 3, 10, 21, 569, DateTimeKind.Utc).AddTicks(7023),
-                            CreatedUserId = "175cfee3d49645659babbe777e44c672",
+                            CreatedDate = new DateTime(2024, 10, 10, 9, 53, 11, 330, DateTimeKind.Utc).AddTicks(5613),
+                            CreatedUserId = "37bfce64b4524690a83c8780485ec21c",
                             Description = "This is where user can transfer inventory automatically.",
                             GroupName = "Inventory",
                             Icon = "bx bx-transfer",
@@ -670,8 +673,8 @@ namespace DataManager.Services.Migrations
                         {
                             ModuleId = "DSPT",
                             Active = true,
-                            CreatedDate = new DateTime(2024, 10, 18, 3, 10, 21, 569, DateTimeKind.Utc).AddTicks(7029),
-                            CreatedUserId = "175cfee3d49645659babbe777e44c672",
+                            CreatedDate = new DateTime(2024, 10, 10, 9, 53, 11, 330, DateTimeKind.Utc).AddTicks(5615),
+                            CreatedUserId = "37bfce64b4524690a83c8780485ec21c",
                             Description = "This is where user can release items.",
                             GroupName = "Inventory",
                             Icon = "bx bx-archive-out",
@@ -686,8 +689,8 @@ namespace DataManager.Services.Migrations
                         {
                             ModuleId = "MNTR",
                             Active = true,
-                            CreatedDate = new DateTime(2024, 10, 18, 3, 10, 21, 569, DateTimeKind.Utc).AddTicks(7032),
-                            CreatedUserId = "175cfee3d49645659babbe777e44c672",
+                            CreatedDate = new DateTime(2024, 10, 10, 9, 53, 11, 330, DateTimeKind.Utc).AddTicks(5618),
+                            CreatedUserId = "37bfce64b4524690a83c8780485ec21c",
                             Description = "This is where user can transfer inventory manually.",
                             GroupName = "Inventory",
                             Icon = "bx bx-transfer",
@@ -702,8 +705,8 @@ namespace DataManager.Services.Migrations
                         {
                             ModuleId = "FRMR",
                             Active = true,
-                            CreatedDate = new DateTime(2024, 10, 18, 3, 10, 21, 569, DateTimeKind.Utc).AddTicks(7036),
-                            CreatedUserId = "175cfee3d49645659babbe777e44c672",
+                            CreatedDate = new DateTime(2024, 10, 10, 9, 53, 11, 330, DateTimeKind.Utc).AddTicks(5620),
+                            CreatedUserId = "37bfce64b4524690a83c8780485ec21c",
                             Description = "This is where user can print forms and reports.",
                             GroupName = "Forms and Reports",
                             Icon = "bx bx-library",
@@ -718,8 +721,8 @@ namespace DataManager.Services.Migrations
                         {
                             ModuleId = "CNFG",
                             Active = true,
-                            CreatedDate = new DateTime(2024, 10, 18, 3, 10, 21, 569, DateTimeKind.Utc).AddTicks(7040),
-                            CreatedUserId = "175cfee3d49645659babbe777e44c672",
+                            CreatedDate = new DateTime(2024, 10, 10, 9, 53, 11, 330, DateTimeKind.Utc).AddTicks(5622),
+                            CreatedUserId = "37bfce64b4524690a83c8780485ec21c",
                             Description = "This is where user can adjust system configurations",
                             GroupName = "Administration",
                             Icon = "bx bx-cog",
@@ -734,8 +737,8 @@ namespace DataManager.Services.Migrations
                         {
                             ModuleId = "EBOP",
                             Active = true,
-                            CreatedDate = new DateTime(2024, 10, 18, 3, 10, 21, 569, DateTimeKind.Utc).AddTicks(7043),
-                            CreatedUserId = "175cfee3d49645659babbe777e44c672",
+                            CreatedDate = new DateTime(2024, 10, 10, 9, 53, 11, 330, DateTimeKind.Utc).AddTicks(5624),
+                            CreatedUserId = "37bfce64b4524690a83c8780485ec21c",
                             Description = "This is where user can view and verify sales orders that are to be irradiated",
                             GroupName = "Quality Control",
                             Icon = "bx bxs-radiation",
@@ -750,8 +753,8 @@ namespace DataManager.Services.Migrations
                         {
                             ModuleId = "DPNT",
                             Active = true,
-                            CreatedDate = new DateTime(2024, 10, 18, 3, 10, 21, 569, DateTimeKind.Utc).AddTicks(7047),
-                            CreatedUserId = "175cfee3d49645659babbe777e44c672",
+                            CreatedDate = new DateTime(2024, 10, 10, 9, 53, 11, 330, DateTimeKind.Utc).AddTicks(5626),
+                            CreatedUserId = "37bfce64b4524690a83c8780485ec21c",
                             Description = "This is where user can view and confirm sales orders that are to be dispatched",
                             GroupName = "Dashboard",
                             Icon = "bx bx-export",
@@ -766,8 +769,8 @@ namespace DataManager.Services.Migrations
                         {
                             ModuleId = "RCNT",
                             Active = true,
-                            CreatedDate = new DateTime(2024, 10, 18, 3, 10, 21, 569, DateTimeKind.Utc).AddTicks(7050),
-                            CreatedUserId = "175cfee3d49645659babbe777e44c672",
+                            CreatedDate = new DateTime(2024, 10, 10, 9, 53, 11, 330, DateTimeKind.Utc).AddTicks(5628),
+                            CreatedUserId = "37bfce64b4524690a83c8780485ec21c",
                             Description = "This is where user can view and confirm sales orders that are to be received",
                             GroupName = "Dashboard",
                             Icon = "bx bx-import",
@@ -777,22 +780,6 @@ namespace DataManager.Services.Migrations
                             Name = "Receiving Notifications",
                             SubGroupName = "-",
                             WebLink = "/ReceivingNotifications"
-                        },
-                        new
-                        {
-                            ModuleId = "POSM",
-                            Active = true,
-                            CreatedDate = new DateTime(2024, 10, 18, 3, 10, 21, 569, DateTimeKind.Utc).AddTicks(7054),
-                            CreatedUserId = "175cfee3d49645659babbe777e44c672",
-                            Description = "This is where user can view and update Position",
-                            GroupName = "Administration",
-                            Icon = "-",
-                            IconGroup = "bx bx-home-circle",
-                            IconSubGroup = "fa-solid fa-users",
-                            LineNum = 24,
-                            Name = "Position Management",
-                            SubGroupName = "Users",
-                            WebLink = "/PositionManagement"
                         });
                 });
 
@@ -1232,11 +1219,6 @@ namespace DataManager.Services.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Classification")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnOrder(5);
-
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("DATETIME2(7)");
 
@@ -1254,8 +1236,7 @@ namespace DataManager.Services.Migrations
 
                     b.Property<string>("PosName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnOrder(3);
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("DATETIME2(7)");
@@ -1347,8 +1328,8 @@ namespace DataManager.Services.Migrations
                         {
                             Id = 1,
                             Company = "",
-                            CreatedDate = new DateTime(2024, 10, 18, 3, 10, 21, 569, DateTimeKind.Utc).AddTicks(5579),
-                            CreatedUserId = "175cfee3d49645659babbe777e44c672",
+                            CreatedDate = new DateTime(2024, 10, 10, 9, 53, 11, 330, DateTimeKind.Utc).AddTicks(4797),
+                            CreatedUserId = "37bfce64b4524690a83c8780485ec21c",
                             Department = "Administration",
                             Email = "admin@gmail.com",
                             FirstName = "Company",
@@ -1357,7 +1338,7 @@ namespace DataManager.Services.Migrations
                             IsPhoneConfirmed = false,
                             LastName = "Admin",
                             MiddleName = "",
-                            UserId = "175cfee3d49645659babbe777e44c672"
+                            UserId = "37bfce64b4524690a83c8780485ec21c"
                         });
                 });
 
@@ -1397,16 +1378,16 @@ namespace DataManager.Services.Migrations
                         new
                         {
                             UserGroupId = 1,
-                            CreatedDate = new DateTime(2024, 10, 18, 3, 10, 21, 569, DateTimeKind.Utc).AddTicks(6061),
-                            CreatedUserId = "175cfee3d49645659babbe777e44c672",
+                            CreatedDate = new DateTime(2024, 10, 10, 9, 53, 11, 330, DateTimeKind.Utc).AddTicks(4880),
+                            CreatedUserId = "37bfce64b4524690a83c8780485ec21c",
                             GroupName = "Unset",
                             IsActive = true
                         },
                         new
                         {
                             UserGroupId = 2,
-                            CreatedDate = new DateTime(2024, 10, 18, 3, 10, 21, 569, DateTimeKind.Utc).AddTicks(6065),
-                            CreatedUserId = "175cfee3d49645659babbe777e44c672",
+                            CreatedDate = new DateTime(2024, 10, 10, 9, 53, 11, 330, DateTimeKind.Utc).AddTicks(4882),
+                            CreatedUserId = "37bfce64b4524690a83c8780485ec21c",
                             GroupName = "Administrator",
                             IsActive = true
                         });
@@ -1483,9 +1464,9 @@ namespace DataManager.Services.Migrations
                     b.HasData(
                         new
                         {
-                            UserId = "175cfee3d49645659babbe777e44c672",
-                            CreatedDate = new DateTime(2024, 10, 18, 3, 10, 21, 569, DateTimeKind.Utc).AddTicks(5563),
-                            CreatedUserId = "175cfee3d49645659babbe777e44c672",
+                            UserId = "37bfce64b4524690a83c8780485ec21c",
+                            CreatedDate = new DateTime(2024, 10, 10, 9, 53, 11, 330, DateTimeKind.Utc).AddTicks(4789),
+                            CreatedUserId = "37bfce64b4524690a83c8780485ec21c",
                             FailedAttemptCount = 0,
                             IsActive = true,
                             IsLocked = true,
@@ -1549,8 +1530,8 @@ namespace DataManager.Services.Migrations
                             Id = -1,
                             CanCreate = true,
                             CanUpdate = true,
-                            CreatedDate = new DateTime(2024, 10, 18, 3, 10, 21, 569, DateTimeKind.Utc).AddTicks(6366),
-                            CreatedUserId = "175cfee3d49645659babbe777e44c672",
+                            CreatedDate = new DateTime(2024, 10, 10, 9, 53, 11, 330, DateTimeKind.Utc).AddTicks(5169),
+                            CreatedUserId = "37bfce64b4524690a83c8780485ec21c",
                             IsReadOnly = true,
                             ModuleId = "BLPR",
                             UserGroupId = 2
@@ -1560,8 +1541,8 @@ namespace DataManager.Services.Migrations
                             Id = -2,
                             CanCreate = true,
                             CanUpdate = true,
-                            CreatedDate = new DateTime(2024, 10, 18, 3, 10, 21, 569, DateTimeKind.Utc).AddTicks(6506),
-                            CreatedUserId = "175cfee3d49645659babbe777e44c672",
+                            CreatedDate = new DateTime(2024, 10, 10, 9, 53, 11, 330, DateTimeKind.Utc).AddTicks(5185),
+                            CreatedUserId = "37bfce64b4524690a83c8780485ec21c",
                             IsReadOnly = true,
                             ModuleId = "ILPR",
                             UserGroupId = 2
@@ -1571,8 +1552,8 @@ namespace DataManager.Services.Migrations
                             Id = -3,
                             CanCreate = true,
                             CanUpdate = true,
-                            CreatedDate = new DateTime(2024, 10, 18, 3, 10, 21, 569, DateTimeKind.Utc).AddTicks(6524),
-                            CreatedUserId = "175cfee3d49645659babbe777e44c672",
+                            CreatedDate = new DateTime(2024, 10, 10, 9, 53, 11, 330, DateTimeKind.Utc).AddTicks(5197),
+                            CreatedUserId = "37bfce64b4524690a83c8780485ec21c",
                             IsReadOnly = true,
                             ModuleId = "PLPR",
                             UserGroupId = 2
@@ -1582,8 +1563,8 @@ namespace DataManager.Services.Migrations
                             Id = -4,
                             CanCreate = true,
                             CanUpdate = true,
-                            CreatedDate = new DateTime(2024, 10, 18, 3, 10, 21, 569, DateTimeKind.Utc).AddTicks(6541),
-                            CreatedUserId = "175cfee3d49645659babbe777e44c672",
+                            CreatedDate = new DateTime(2024, 10, 10, 9, 53, 11, 330, DateTimeKind.Utc).AddTicks(5216),
+                            CreatedUserId = "37bfce64b4524690a83c8780485ec21c",
                             IsReadOnly = true,
                             ModuleId = "BNDB",
                             UserGroupId = 2
@@ -1593,8 +1574,8 @@ namespace DataManager.Services.Migrations
                             Id = -5,
                             CanCreate = true,
                             CanUpdate = true,
-                            CreatedDate = new DateTime(2024, 10, 18, 3, 10, 21, 569, DateTimeKind.Utc).AddTicks(6557),
-                            CreatedUserId = "175cfee3d49645659babbe777e44c672",
+                            CreatedDate = new DateTime(2024, 10, 10, 9, 53, 11, 330, DateTimeKind.Utc).AddTicks(5227),
+                            CreatedUserId = "37bfce64b4524690a83c8780485ec21c",
                             IsReadOnly = true,
                             ModuleId = "BNMP",
                             UserGroupId = 2
@@ -1604,8 +1585,8 @@ namespace DataManager.Services.Migrations
                             Id = -6,
                             CanCreate = true,
                             CanUpdate = true,
-                            CreatedDate = new DateTime(2024, 10, 18, 3, 10, 21, 569, DateTimeKind.Utc).AddTicks(6577),
-                            CreatedUserId = "175cfee3d49645659babbe777e44c672",
+                            CreatedDate = new DateTime(2024, 10, 10, 9, 53, 11, 330, DateTimeKind.Utc).AddTicks(5240),
+                            CreatedUserId = "37bfce64b4524690a83c8780485ec21c",
                             IsReadOnly = true,
                             ModuleId = "COAP",
                             UserGroupId = 2
@@ -1615,8 +1596,8 @@ namespace DataManager.Services.Migrations
                             Id = -7,
                             CanCreate = true,
                             CanUpdate = true,
-                            CreatedDate = new DateTime(2024, 10, 18, 3, 10, 21, 569, DateTimeKind.Utc).AddTicks(6595),
-                            CreatedUserId = "175cfee3d49645659babbe777e44c672",
+                            CreatedDate = new DateTime(2024, 10, 10, 9, 53, 11, 330, DateTimeKind.Utc).AddTicks(5252),
+                            CreatedUserId = "37bfce64b4524690a83c8780485ec21c",
                             IsReadOnly = true,
                             ModuleId = "QCMT",
                             UserGroupId = 2
@@ -1626,8 +1607,8 @@ namespace DataManager.Services.Migrations
                             Id = -8,
                             CanCreate = true,
                             CanUpdate = true,
-                            CreatedDate = new DateTime(2024, 10, 18, 3, 10, 21, 569, DateTimeKind.Utc).AddTicks(6612),
-                            CreatedUserId = "175cfee3d49645659babbe777e44c672",
+                            CreatedDate = new DateTime(2024, 10, 10, 9, 53, 11, 330, DateTimeKind.Utc).AddTicks(5265),
+                            CreatedUserId = "37bfce64b4524690a83c8780485ec21c",
                             IsReadOnly = true,
                             ModuleId = "QCOR",
                             UserGroupId = 2
@@ -1637,8 +1618,8 @@ namespace DataManager.Services.Migrations
                             Id = -9,
                             CanCreate = true,
                             CanUpdate = true,
-                            CreatedDate = new DateTime(2024, 10, 18, 3, 10, 21, 569, DateTimeKind.Utc).AddTicks(6628),
-                            CreatedUserId = "175cfee3d49645659babbe777e44c672",
+                            CreatedDate = new DateTime(2024, 10, 10, 9, 53, 11, 330, DateTimeKind.Utc).AddTicks(5276),
+                            CreatedUserId = "37bfce64b4524690a83c8780485ec21c",
                             IsReadOnly = true,
                             ModuleId = "DBNT",
                             UserGroupId = 2
@@ -1648,8 +1629,8 @@ namespace DataManager.Services.Migrations
                             Id = -10,
                             CanCreate = true,
                             CanUpdate = true,
-                            CreatedDate = new DateTime(2024, 10, 18, 3, 10, 21, 569, DateTimeKind.Utc).AddTicks(6647),
-                            CreatedUserId = "175cfee3d49645659babbe777e44c672",
+                            CreatedDate = new DateTime(2024, 10, 10, 9, 53, 11, 330, DateTimeKind.Utc).AddTicks(5289),
+                            CreatedUserId = "37bfce64b4524690a83c8780485ec21c",
                             IsReadOnly = true,
                             ModuleId = "DSBD",
                             UserGroupId = 2
@@ -1659,8 +1640,8 @@ namespace DataManager.Services.Migrations
                             Id = -11,
                             CanCreate = true,
                             CanUpdate = true,
-                            CreatedDate = new DateTime(2024, 10, 18, 3, 10, 21, 569, DateTimeKind.Utc).AddTicks(6666),
-                            CreatedUserId = "175cfee3d49645659babbe777e44c672",
+                            CreatedDate = new DateTime(2024, 10, 10, 9, 53, 11, 330, DateTimeKind.Utc).AddTicks(5301),
+                            CreatedUserId = "37bfce64b4524690a83c8780485ec21c",
                             IsReadOnly = true,
                             ModuleId = "DSCD",
                             UserGroupId = 2
@@ -1670,8 +1651,8 @@ namespace DataManager.Services.Migrations
                             Id = -12,
                             CanCreate = true,
                             CanUpdate = true,
-                            CreatedDate = new DateTime(2024, 10, 18, 3, 10, 21, 569, DateTimeKind.Utc).AddTicks(6684),
-                            CreatedUserId = "175cfee3d49645659babbe777e44c672",
+                            CreatedDate = new DateTime(2024, 10, 10, 9, 53, 11, 330, DateTimeKind.Utc).AddTicks(5312),
+                            CreatedUserId = "37bfce64b4524690a83c8780485ec21c",
                             IsReadOnly = true,
                             ModuleId = "ISCD",
                             UserGroupId = 2
@@ -1681,8 +1662,8 @@ namespace DataManager.Services.Migrations
                             Id = -13,
                             CanCreate = true,
                             CanUpdate = true,
-                            CreatedDate = new DateTime(2024, 10, 18, 3, 10, 21, 569, DateTimeKind.Utc).AddTicks(6700),
-                            CreatedUserId = "175cfee3d49645659babbe777e44c672",
+                            CreatedDate = new DateTime(2024, 10, 10, 9, 53, 11, 330, DateTimeKind.Utc).AddTicks(5328),
+                            CreatedUserId = "37bfce64b4524690a83c8780485ec21c",
                             IsReadOnly = true,
                             ModuleId = "RSCD",
                             UserGroupId = 2
@@ -1692,8 +1673,8 @@ namespace DataManager.Services.Migrations
                             Id = -14,
                             CanCreate = true,
                             CanUpdate = true,
-                            CreatedDate = new DateTime(2024, 10, 18, 3, 10, 21, 569, DateTimeKind.Utc).AddTicks(6718),
-                            CreatedUserId = "175cfee3d49645659babbe777e44c672",
+                            CreatedDate = new DateTime(2024, 10, 10, 9, 53, 11, 330, DateTimeKind.Utc).AddTicks(5364),
+                            CreatedUserId = "37bfce64b4524690a83c8780485ec21c",
                             IsReadOnly = true,
                             ModuleId = "DSPT",
                             UserGroupId = 2
@@ -1703,8 +1684,8 @@ namespace DataManager.Services.Migrations
                             Id = -15,
                             CanCreate = true,
                             CanUpdate = true,
-                            CreatedDate = new DateTime(2024, 10, 18, 3, 10, 21, 569, DateTimeKind.Utc).AddTicks(6738),
-                            CreatedUserId = "175cfee3d49645659babbe777e44c672",
+                            CreatedDate = new DateTime(2024, 10, 10, 9, 53, 11, 330, DateTimeKind.Utc).AddTicks(5375),
+                            CreatedUserId = "37bfce64b4524690a83c8780485ec21c",
                             IsReadOnly = true,
                             ModuleId = "INVT",
                             UserGroupId = 2
@@ -1714,8 +1695,8 @@ namespace DataManager.Services.Migrations
                             Id = -16,
                             CanCreate = true,
                             CanUpdate = true,
-                            CreatedDate = new DateTime(2024, 10, 18, 3, 10, 21, 569, DateTimeKind.Utc).AddTicks(6751),
-                            CreatedUserId = "175cfee3d49645659babbe777e44c672",
+                            CreatedDate = new DateTime(2024, 10, 10, 9, 53, 11, 330, DateTimeKind.Utc).AddTicks(5387),
+                            CreatedUserId = "37bfce64b4524690a83c8780485ec21c",
                             IsReadOnly = true,
                             ModuleId = "MNTR",
                             UserGroupId = 2
@@ -1725,8 +1706,8 @@ namespace DataManager.Services.Migrations
                             Id = -17,
                             CanCreate = true,
                             CanUpdate = true,
-                            CreatedDate = new DateTime(2024, 10, 18, 3, 10, 21, 569, DateTimeKind.Utc).AddTicks(6761),
-                            CreatedUserId = "175cfee3d49645659babbe777e44c672",
+                            CreatedDate = new DateTime(2024, 10, 10, 9, 53, 11, 330, DateTimeKind.Utc).AddTicks(5399),
+                            CreatedUserId = "37bfce64b4524690a83c8780485ec21c",
                             IsReadOnly = true,
                             ModuleId = "RCVN",
                             UserGroupId = 2
@@ -1736,8 +1717,8 @@ namespace DataManager.Services.Migrations
                             Id = -18,
                             CanCreate = true,
                             CanUpdate = true,
-                            CreatedDate = new DateTime(2024, 10, 18, 3, 10, 21, 569, DateTimeKind.Utc).AddTicks(6772),
-                            CreatedUserId = "175cfee3d49645659babbe777e44c672",
+                            CreatedDate = new DateTime(2024, 10, 10, 9, 53, 11, 330, DateTimeKind.Utc).AddTicks(5420),
+                            CreatedUserId = "37bfce64b4524690a83c8780485ec21c",
                             IsReadOnly = true,
                             ModuleId = "USRG",
                             UserGroupId = 2
@@ -1747,8 +1728,8 @@ namespace DataManager.Services.Migrations
                             Id = -19,
                             CanCreate = true,
                             CanUpdate = true,
-                            CreatedDate = new DateTime(2024, 10, 18, 3, 10, 21, 569, DateTimeKind.Utc).AddTicks(6783),
-                            CreatedUserId = "175cfee3d49645659babbe777e44c672",
+                            CreatedDate = new DateTime(2024, 10, 10, 9, 53, 11, 330, DateTimeKind.Utc).AddTicks(5432),
+                            CreatedUserId = "37bfce64b4524690a83c8780485ec21c",
                             IsReadOnly = true,
                             ModuleId = "USRM",
                             UserGroupId = 2
@@ -1758,8 +1739,8 @@ namespace DataManager.Services.Migrations
                             Id = -20,
                             CanCreate = true,
                             CanUpdate = true,
-                            CreatedDate = new DateTime(2024, 10, 18, 3, 10, 21, 569, DateTimeKind.Utc).AddTicks(6794),
-                            CreatedUserId = "175cfee3d49645659babbe777e44c672",
+                            CreatedDate = new DateTime(2024, 10, 10, 9, 53, 11, 330, DateTimeKind.Utc).AddTicks(5443),
+                            CreatedUserId = "37bfce64b4524690a83c8780485ec21c",
                             IsReadOnly = true,
                             ModuleId = "CNFG",
                             UserGroupId = 2
@@ -1769,8 +1750,8 @@ namespace DataManager.Services.Migrations
                             Id = -21,
                             CanCreate = true,
                             CanUpdate = true,
-                            CreatedDate = new DateTime(2024, 10, 18, 3, 10, 21, 569, DateTimeKind.Utc).AddTicks(6803),
-                            CreatedUserId = "175cfee3d49645659babbe777e44c672",
+                            CreatedDate = new DateTime(2024, 10, 10, 9, 53, 11, 330, DateTimeKind.Utc).AddTicks(5501),
+                            CreatedUserId = "37bfce64b4524690a83c8780485ec21c",
                             IsReadOnly = true,
                             ModuleId = "EBOP",
                             UserGroupId = 2
@@ -1780,8 +1761,8 @@ namespace DataManager.Services.Migrations
                             Id = -22,
                             CanCreate = true,
                             CanUpdate = true,
-                            CreatedDate = new DateTime(2024, 10, 18, 3, 10, 21, 569, DateTimeKind.Utc).AddTicks(6814),
-                            CreatedUserId = "175cfee3d49645659babbe777e44c672",
+                            CreatedDate = new DateTime(2024, 10, 10, 9, 53, 11, 330, DateTimeKind.Utc).AddTicks(5515),
+                            CreatedUserId = "37bfce64b4524690a83c8780485ec21c",
                             IsReadOnly = true,
                             ModuleId = "DPNT",
                             UserGroupId = 2
@@ -1791,21 +1772,10 @@ namespace DataManager.Services.Migrations
                             Id = -23,
                             CanCreate = true,
                             CanUpdate = true,
-                            CreatedDate = new DateTime(2024, 10, 18, 3, 10, 21, 569, DateTimeKind.Utc).AddTicks(6826),
-                            CreatedUserId = "175cfee3d49645659babbe777e44c672",
+                            CreatedDate = new DateTime(2024, 10, 10, 9, 53, 11, 330, DateTimeKind.Utc).AddTicks(5527),
+                            CreatedUserId = "37bfce64b4524690a83c8780485ec21c",
                             IsReadOnly = true,
                             ModuleId = "RCNT",
-                            UserGroupId = 2
-                        },
-                        new
-                        {
-                            Id = -24,
-                            CanCreate = true,
-                            CanUpdate = true,
-                            CreatedDate = new DateTime(2024, 10, 18, 3, 10, 21, 569, DateTimeKind.Utc).AddTicks(6836),
-                            CreatedUserId = "175cfee3d49645659babbe777e44c672",
-                            IsReadOnly = true,
-                            ModuleId = "POSM",
                             UserGroupId = 2
                         });
                 });

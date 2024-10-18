@@ -1,0 +1,190 @@
+﻿@using Application.BlazorServer.Controls.UI_Macros
+
+@layout MainLayout
+@page "/Authorization"
+
+<PageTitle> Authorization</PageTitle>
+
+<MacroBreadcrumbs Breadcrumbs="Breadcrumbs"></MacroBreadcrumbs>
+
+<MacroBody>
+	<MacroContainer>
+		<div class="col-3">
+			<div class="nav-align-top">
+				<ul class="nav nav-tabs" role="tablist">
+					<li class="nav-item">
+						@*						<a class="nav-link active" href="javascript:void(0);" data-bs-toggle="tab"
+						data-bs-target="#custom-tabs-user">User</a>*@
+						<button type="button" class="nav-link active" role="tab" data-bs-toggle="tab"
+								data-bs-target="#custom-tabs-user">
+							User
+						</button>
+					</li>
+					<li class="nav-item">
+						@*						<a class="nav-link" href="javascript:void(0);" data-bs-toggle="tab"
+						data-bs-target="#custom-tabs-group">Group</a>*@
+						<button type="button" class="nav-link" role="tab" data-bs-toggle="tab"
+								data-bs-target="#custom-tabs-group">
+							Group
+						</button>
+					</li>
+				</ul>
+				<div class="tab-content" id="custom-tabs-four-tabContent">
+					<div class="tab-pane fade show active" id="custom-tabs-user" role="tabpanel" aria-labelledby="custom-tabs-four-user-tab">
+						<div class="row">
+							<div class="card border border-primary">
+								<div class="card-body box-profile">
+									<div class="nav flex-column nav-tabs" id="vert-tabs-tab-users" aria-orientation="vertical" style="display: block; height: 400px; overflow-y: auto;">
+										@*Sample Data here*@
+										<a class="nav-link" data-access-id="1" data-toggle="pill" href="#vert-tabs-1-user" role="tab" aria-controls="vert-tabs-1" aria-selected="true">admin</a><a class="nav-link" data-access-id="2" data-toggle="pill" href="#vert-tabs-2-user" role="tab" aria-controls="vert-tabs-2" aria-selected="true">m.aurelio</a><a class="nav-link" data-access-id="3" data-toggle="pill" href="#vert-tabs-3-user" role="tab" aria-controls="vert-tabs-3" aria-selected="true">k.rusiana</a><a class="nav-link" data-access-id="4" data-toggle="pill" href="#vert-tabs-4-user" role="tab" aria-controls="vert-tabs-4" aria-selected="true">m.ferranco</a><a class="nav-link" data-access-id="5" data-toggle="pill" href="#vert-tabs-5-user" role="tab" aria-controls="vert-tabs-5" aria-selected="true">a.bucayan</a><a class="nav-link" data-access-id="6" data-toggle="pill" href="#vert-tabs-6-user" role="tab" aria-controls="vert-tabs-6" aria-selected="true">r.obis</a><a class="nav-link" data-access-id="7" data-toggle="pill" href="#vert-tabs-7-user" role="tab" aria-controls="vert-tabs-7" aria-selected="true">m.valdezco</a><a class="nav-link" data-access-id="8" data-toggle="pill" href="#vert-tabs-8-user" role="tab" aria-controls="vert-tabs-8" aria-selected="true">a.progoso</a><a class="nav-link" data-access-id="9" data-toggle="pill" href="#vert-tabs-9-user" role="tab" aria-controls="vert-tabs-9" aria-selected="true">m.poyaoan</a><a class="nav-link" data-access-id="10" data-toggle="pill" href="#vert-tabs-10-user" role="tab" aria-controls="vert-tabs-10" aria-selected="true">j.mondia</a><a class="nav-link" data-access-id="11" data-toggle="pill" href="#vert-tabs-11-user" role="tab" aria-controls="vert-tabs-11" aria-selected="true">n.cumla</a><a class="nav-link" data-access-id="12" data-toggle="pill" href="#vert-tabs-12-user" role="tab" aria-controls="vert-tabs-12" aria-selected="true">e.alde</a><a class="nav-link" data-access-id="13" data-toggle="pill" href="#vert-tabs-13-user" role="tab" aria-controls="vert-tabs-13" aria-selected="true">a.dagale</a><a class="nav-link" data-access-id="14" data-toggle="pill" href="#vert-tabs-14-user" role="tab" aria-controls="vert-tabs-14" aria-selected="true">g.sullera</a><a class="nav-link" data-access-id="15" data-toggle="pill" href="#vert-tabs-15-user" role="tab" aria-controls="vert-tabs-15" aria-selected="true">e.soriano</a><a class="nav-link" data-access-id="16" data-toggle="pill" href="#vert-tabs-16-user" role="tab" aria-controls="vert-tabs-16" aria-selected="true">a.pulumbarit</a><a class="nav-link" data-access-id="17" data-toggle="pill" href="#vert-tabs-17-user" role="tab" aria-controls="vert-tabs-17" aria-selected="true">r.bernido</a><a class="nav-link" data-access-id="18" data-toggle="pill" href="#vert-tabs-18-user" role="tab" aria-controls="vert-tabs-18" aria-selected="true">c.soriano</a><a class="nav-link" data-access-id="19" data-toggle="pill" href="#vert-tabs-19-user" role="tab" aria-controls="vert-tabs-19" aria-selected="true">a.macavinta</a><a class="nav-link" data-access-id="20" data-toggle="pill" href="#vert-tabs-20-user" role="tab" aria-controls="vert-tabs-20" aria-selected="true">a.gabito</a><a class="nav-link" data-access-id="21" data-toggle="pill" href="#vert-tabs-21-user" role="tab" aria-controls="vert-tabs-21" aria-selected="true">whs.occ</a>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="tab-pane fade" id="custom-tabs-group" role="tabpanel" aria-labelledby="custom-tabs-four-profile-tab">
+						<div class="row">
+							<div class="card mb-4 border border-primary">
+								<div class="card-body box-profile">
+									<div class="nav flex-column nav-tabs" id="vert-tabs-tab-users" aria-orientation="vertical" style="display: block; height: 400px; overflow-y: auto;">
+										@*Sample Data here*@
+										<a class="nav-link" data-access-id="1" data-toggle="pill" href="#vert-tabs-1-user" role="tab" aria-controls="vert-tabs-1" aria-selected="true">admin</a><a class="nav-link" data-access-id="2" data-toggle="pill" href="#vert-tabs-2-user" role="tab" aria-controls="vert-tabs-2" aria-selected="true">m.aurelio</a><a class="nav-link" data-access-id="3" data-toggle="pill" href="#vert-tabs-3-user" role="tab" aria-controls="vert-tabs-3" aria-selected="true">k.rusiana</a><a class="nav-link" data-access-id="4" data-toggle="pill" href="#vert-tabs-4-user" role="tab" aria-controls="vert-tabs-4" aria-selected="true">m.ferranco</a><a class="nav-link" data-access-id="5" data-toggle="pill" href="#vert-tabs-5-user" role="tab" aria-controls="vert-tabs-5" aria-selected="true">a.bucayan</a><a class="nav-link" data-access-id="6" data-toggle="pill" href="#vert-tabs-6-user" role="tab" aria-controls="vert-tabs-6" aria-selected="true">r.obis</a><a class="nav-link" data-access-id="7" data-toggle="pill" href="#vert-tabs-7-user" role="tab" aria-controls="vert-tabs-7" aria-selected="true">m.valdezco</a><a class="nav-link" data-access-id="8" data-toggle="pill" href="#vert-tabs-8-user" role="tab" aria-controls="vert-tabs-8" aria-selected="true">a.progoso</a><a class="nav-link" data-access-id="9" data-toggle="pill" href="#vert-tabs-9-user" role="tab" aria-controls="vert-tabs-9" aria-selected="true">m.poyaoan</a><a class="nav-link" data-access-id="10" data-toggle="pill" href="#vert-tabs-10-user" role="tab" aria-controls="vert-tabs-10" aria-selected="true">j.mondia</a><a class="nav-link" data-access-id="11" data-toggle="pill" href="#vert-tabs-11-user" role="tab" aria-controls="vert-tabs-11" aria-selected="true">n.cumla</a><a class="nav-link" data-access-id="12" data-toggle="pill" href="#vert-tabs-12-user" role="tab" aria-controls="vert-tabs-12" aria-selected="true">e.alde</a><a class="nav-link" data-access-id="13" data-toggle="pill" href="#vert-tabs-13-user" role="tab" aria-controls="vert-tabs-13" aria-selected="true">a.dagale</a><a class="nav-link" data-access-id="14" data-toggle="pill" href="#vert-tabs-14-user" role="tab" aria-controls="vert-tabs-14" aria-selected="true">g.sullera</a><a class="nav-link" data-access-id="15" data-toggle="pill" href="#vert-tabs-15-user" role="tab" aria-controls="vert-tabs-15" aria-selected="true">e.soriano</a><a class="nav-link" data-access-id="16" data-toggle="pill" href="#vert-tabs-16-user" role="tab" aria-controls="vert-tabs-16" aria-selected="true">a.pulumbarit</a><a class="nav-link" data-access-id="17" data-toggle="pill" href="#vert-tabs-17-user" role="tab" aria-controls="vert-tabs-17" aria-selected="true">r.bernido</a><a class="nav-link" data-access-id="18" data-toggle="pill" href="#vert-tabs-18-user" role="tab" aria-controls="vert-tabs-18" aria-selected="true">c.soriano</a><a class="nav-link" data-access-id="19" data-toggle="pill" href="#vert-tabs-19-user" role="tab" aria-controls="vert-tabs-19" aria-selected="true">a.macavinta</a><a class="nav-link" data-access-id="20" data-toggle="pill" href="#vert-tabs-20-user" role="tab" aria-controls="vert-tabs-20" aria-selected="true">a.gabito</a><a class="nav-link" data-access-id="21" data-toggle="pill" href="#vert-tabs-21-user" role="tab" aria-controls="vert-tabs-21" aria-selected="true">whs.occ</a>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="col-9">
+			<div class="nav-align-top">
+				<ul class="nav nav-tabs" role="tablist">
+					<li class="nav-item">
+						<button type="button" class="nav-link active" role="tab" data-bs-toggle="tab"
+								data-bs-target="#custom-tabs-authorizations">
+							Authorizations
+						</button>
+					</li>
+				</ul>
+				<div class="tab-content" id="vert-tabs-tabContent-users">
+					@*Sample Data here*@
+					<div class="tab-pane text-left fade active show" id="custom-tabs-authorizations" role="tabpanel" aria-labelledby="custom-tabs-authorizations">
+						<div class="card p-0 border border-primary">
+							<div class="p-0" style="height: 443px;">
+								<div class="row row-cols-2 m-2">
+									<div class="col">
+										<h5 class="m-2">Subject</h5>
+									</div>
+									<div class="col">
+										<h5 class="m-2">Authorization</h5>
+									</div>
+								</div>
+								<div class="row row-cols-1 ml-2 mr-2">
+									<div class="col">
+										@*<div class="accordion mt-3 accordion-without-arrow">
+										<div class="card accordion-item border-1">
+										<h2 class="accordion-header d-flex align-items-center">
+										<button type="button"
+										class="accordion-button"
+										data-bs-toggle="collapse"
+										data-bs-target="#accordionWithIcon-1"
+										aria-expanded="true">
+										<i class="bx bx-chevron-down-square me-2"></i>
+										Administration
+										</button>
+										<select id="select-4-other-tree float-right" class="form-control" style="width: 100%;">
+										<option value="Read">Read-Only</option>
+										<option value="Update">Can-Update</option>
+										<option value="Create">Can-Create</option>
+										<option value="Full">Full Authorization</option>
+										<option value="No">No Authorization</option>
+										</select>
+										</h2>
+										<div id="accordionWithIcon-1" class="accordion-collapse collapse show">
+										<div class="accordion-body">
+
+										</div>
+										</div>
+										</div>
+										</div>*@
+										<div class="row row-cols-2">
+											<div class="col pe-0">
+												<button class="me-1 btn-selector"
+														type="button"
+														data-bs-toggle="collapse"
+														data-bs-target="#collapseExample"
+														aria-expanded="false"
+														aria-controls="collapseExample">
+														<i class="bx bx-chevron-right"></i>
+													Administration
+												</button>
+											</div>
+											<div class="col ps-0">
+												<select id="select-4-other-tree float-right" class="form-control w-100 rounded-0">
+													<option value="Read">Read-Only</option>
+													<option value="Update">Can-Update</option>
+													<option value="Create">Can-Create</option>
+													<option value="Full">Full Authorization</option>
+													<option value="No">No Authorization</option>
+												</select>
+											</div>
+										</div>
+
+										<div class="collapse" id="collapseExample">
+											<div class="d-grid d-sm-flex p-3 border">
+												<div class="row row-cols-2">
+													<div class="col pe-0">
+														<button class="me-1 btn-selector"
+																type="button"
+																data-bs-toggle="collapse"
+																data-bs-target="#collapseExample"
+																aria-expanded="false"
+																aria-controls="collapseExample">
+															Administration
+														</button>
+													</div>
+													<div class="col ps-0">
+														<select id="select-4-other-tree float-right" class="form-control w-100 rounded-0">
+															<option value="Read">Read-Only</option>
+															<option value="Update">Can-Update</option>
+															<option value="Create">Can-Create</option>
+															<option value="Full">Full Authorization</option>
+															<option value="No">No Authorization</option>
+														</select>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-12 col-sm-12 px-3 mt-3">
+							<div class="row" style="height: 20px;">
+								<div class="col-9 col-sm-9">
+									<button type="button" class="btn btn-secondary btn-sm text-center" id="full-authorization">Full Authorizations</button>
+									<button type="button" class="btn btn-secondary btn-sm text-center" id="no-authorization">No Authorizations</button>
+									<button type="button" class="btn btn-secondary btn-sm text-center" id="read-authorization">Read Only</button>
+									<button type="button" class="btn btn-secondary btn-sm text-center" id="create-authorization">Can Create</button>
+									<button type="button" class="btn btn-secondary btn-sm text-center" id="update-authorization">Can Update</button>
+								</div>
+								<div class="col-3 col-sm-3">
+									<button type="button" class="btn btn-secondary btn-sm float-end mx-1" id="collapse-select">Collapse</button>
+									<button type="button" class="btn btn-secondary btn-sm float-end mx-1" id="expand-select">Expand</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="card-body pt-0 pb-2">
+			<div class="mb-3 mt-3">
+				<a type="button" href="~/Home/Index" class="btn btn-danger float-left">Cancel</a>
+				<button type="button" class="btn btn-success float-end" id="save-authorization">Save Authorization/s</button>
+			</div>
+		</div>
+	</MacroContainer>
+</MacroBody>
+

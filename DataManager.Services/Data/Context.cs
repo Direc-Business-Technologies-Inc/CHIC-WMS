@@ -7,6 +7,8 @@ public class Context : DbContext
 	public DbSet<UserGroups> UserGroup { get; set; }
 	public DbSet<UserLogins> UserLogin { get; set; }
 	public DbSet<UserModules> UserModule { get; set; }
+	public DbSet<PositionManagement> PositionManagement { get; set; }
+
 	public DbSet<BinMapping> BinMappings { get; set; }
 	public DbSet<BinMappingPin> BinMappingPins { get; set; }
 	public DbSet<InspectionPlan> InspectionPlans { get; set; }
@@ -266,7 +268,7 @@ public class Context : DbContext
 		{
 			"BLPR", "ILPR", "PLPR", "BNDB", "BNMP", "COAP", "QCMT", "QCOR", "DBNT",
 			"DSBD", "DSCD", "ISCD", "RSCD", "DSPT", "INVT", "MNTR", "RCVN", "USRG",
-			"USRM", "CNFG", "EBOP", "DPNT", "RCNT"
+			"USRM", "CNFG", "EBOP", "DPNT", "RCNT","POSM"
 		};
 
 		foreach (var moduleId in moduleIds)
@@ -684,6 +686,22 @@ public class Context : DbContext
 				GroupName = "Dashboard",
 				IconSubGroup = "-",
 				SubGroupName = "-",
+				CreatedDate = DateTime.UtcNow,
+				CreatedUserId = userId,
+				Active = true
+			},
+			new Modules
+			{
+				ModuleId = "POSM",
+				LineNum = 24,
+				Name = "Position Management",
+				Description = "This is where user can view and update Position",
+				Icon = "-",
+				WebLink = "/PositionManagement",
+				IconGroup = "bx bx-home-circle",
+				GroupName = "Administration",
+				IconSubGroup = "fa-solid fa-users",
+				SubGroupName = "Users",
 				CreatedDate = DateTime.UtcNow,
 				CreatedUserId = userId,
 				Active = true
